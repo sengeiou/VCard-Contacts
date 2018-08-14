@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\build\\intermediates\\res\\merged\\debug\\layout-land\\dialpad_key.xml",
+        "source": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\src\\main\\res\\layout-land\\dialpad_key.xml"
+    },
+    {
+        "merged": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\build\\intermediates\\res\\merged\\debug\\layout-land\\dialpad_key_pound.xml",
+        "source": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\src\\main\\res\\layout-land\\dialpad_key_pound.xml"
+    },
+    {
+        "merged": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\build\\intermediates\\res\\merged\\debug\\layout-land\\dialpad_key_one.xml",
+        "source": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\src\\main\\res\\layout-land\\dialpad_key_one.xml"
+    },
+    {
+        "merged": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\build\\intermediates\\res\\merged\\debug\\layout-land\\dialpad_key_zero.xml",
+        "source": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\src\\main\\res\\layout-land\\dialpad_key_zero.xml"
+    },
+    {
+        "merged": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\build\\intermediates\\res\\merged\\debug\\layout-land\\dialpad_key_star.xml",
+        "source": "E:\\Chebyr\\Technical\\Research\\ContactsClone\\phonecommon\\src\\main\\res\\layout-land\\dialpad_key_star.xml"
+    }
+]

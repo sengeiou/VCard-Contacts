@@ -8,7 +8,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/androidframeworkex" />
+            <option value="$PROJECT_DIR$/androidvcard" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/contacts" />
+            <option value="$PROJECT_DIR$/contactscommon" />
+            <option value="$PROJECT_DIR$/phonecommon" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

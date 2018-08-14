@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "28.0.1"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.guava:guava:26.0-android'
+    implementation project(':phonecommon')
+    implementation project(':androidvcard')
+    implementation project(':androidframeworkex')
+    // https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber
+    implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.4.4'
+
+    // https://mvnrepository.com/artifact/com.googlecode.libphonenumber/geocoder
+    implementation group: 'com.googlecode.libphonenumber', name: 'prefixmapper', version: '2.46'
+    implementation group: 'com.googlecode.libphonenumber', name: 'geocoder', version: '2.46'
+
+    // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+
+}
