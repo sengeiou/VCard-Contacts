@@ -15,14 +15,14 @@
      limitations under the License.
 -->
 
-<com.chebyr.contacts.editor.CompactPhotoEditorView
+<com.chebyr.vcardrealm.contacts.editor.CompactPhotoEditorView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/photo_editor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal">
 
-    <com.chebyr.contacts.widget.QuickContactImageView
+    <com.chebyr.vcardrealm.contacts.widget.QuickContactImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -52,4 +52,4 @@
             android:background="@drawable/item_background_material_dark"
             android:contentDescription="@string/compact_editor_change_photo_content_description" />
 
-</com.chebyr.contacts.editor.CompactPhotoEditorView>
+</com.chebyr.vcardrealm.contacts.editor.CompactPhotoEditorView>

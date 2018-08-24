@@ -15,7 +15,7 @@
 -->
 
 <!-- A readonly version of item_photo_editor.xml shown in the readonly raw contact editor. -->
-<view class="com.chebyr.contacts.editor.PhotoEditorView"
+<view class="com.chebyr.vcardrealm.contacts.editor.PhotoEditorView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

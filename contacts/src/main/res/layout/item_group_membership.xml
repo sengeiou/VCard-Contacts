@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.chebyr.contacts.editor.GroupMembershipView
+<com.chebyr.vcardrealm.contacts.editor.GroupMembershipView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/group_membership_view"
     android:layout_width="match_parent"
@@ -38,4 +38,4 @@
         android:layout_marginBottom="@dimen/editor_padding_between_editor_views"
         android:paddingRight="@dimen/editor_spinner_right_padding_workaround"/>
 
-</com.chebyr.contacts.editor.GroupMembershipView>
+</com.chebyr.vcardrealm.contacts.editor.GroupMembershipView>

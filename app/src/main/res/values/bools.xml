@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <bool name="show_home_icon">false</bool>
+    <bool name="quickcontact_two_panel">false</bool>
 
 </resources>

@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.chebyr.contacts.editor.RawContactReadOnlyEditorView
+<com.chebyr.vcardrealm.contacts.editor.RawContactReadOnlyEditorView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -83,4 +83,4 @@
         android:layout_height="@dimen/divider_line_height"
         android:background="@color/divider_line_color_light" />
 
-</com.chebyr.contacts.editor.RawContactReadOnlyEditorView>
+</com.chebyr.vcardrealm.contacts.editor.RawContactReadOnlyEditorView>

@@ -127,13 +127,13 @@
         <!--
          Backwards compatibility: somebody may have hard coded this activity name
         -->
-        <activity-alias android:name="ContactsListActivity" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity"/>
+        <!--activity-alias android:name="ContactsListActivity" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity"/-->
         <!--  Backwards compatibility: "Contacts" from Honeycomb  -->
-        <activity-alias android:name=".activities.ContactsFrontDoor" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity" android:exported="true"/>
+        <!--activity-alias android:name=".activities.ContactsFrontDoor" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity" android:exported="true"/-->
         <!--
          Backwards compatibility: "Contacts" from Gingerbread and earlier
         -->
-        <activity-alias android:name="DialtactsContactsEntryActivity" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity" android:exported="true"/>
+        <!--activity-alias android:name="DialtactsContactsEntryActivity" android:targetActivity="com.chebyr.contacts.activities.PeopleActivity" android:exported="true"/-->
         <!--  Used to set options  -->
         <activity android:name="com.chebyr.contacts.preference.ContactsPreferenceActivity" android:label="@string/activity_title_settings" android:theme="@style/ContactsPreferencesTheme" android:exported="false"/>
         <!--  Used to filter contacts list by account  -->

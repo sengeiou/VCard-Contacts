@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/VCardContacts.iml" filepath="$PROJECT_DIR$/VCardContacts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VCard-Contacts.iml" filepath="$PROJECT_DIR$/VCard-Contacts.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidframeworkex/androidframeworkex.iml" filepath="$PROJECT_DIR$/androidframeworkex/androidframeworkex.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidvcard/androidvcard.iml" filepath="$PROJECT_DIR$/androidvcard/androidvcard.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

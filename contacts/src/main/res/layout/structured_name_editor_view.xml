@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<com.chebyr.contacts.editor.StructuredNameEditorView
+<com.chebyr.vcardrealm.contacts.editor.StructuredNameEditorView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -50,4 +50,4 @@
         layout="@layout/edit_delete_button"
         android:visibility="gone" />
 
-</com.chebyr.contacts.editor.StructuredNameEditorView>
+</com.chebyr.vcardrealm.contacts.editor.StructuredNameEditorView>
