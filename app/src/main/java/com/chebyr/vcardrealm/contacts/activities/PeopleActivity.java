@@ -124,8 +124,9 @@ public class PeopleActivity extends ContactsActivity implements
     private View mFloatingActionButtonContainer;
     private boolean wasLastFabAnimationScaleIn = false;
 
-    private ContactTileListFragment.Listener mFavoritesFragmentListener =
-            new StrequentContactListFragmentListener();
+    //Removing Favourites
+    //private ContactTileListFragment.Listener mFavoritesFragmentListener =
+            //new StrequentContactListFragmentListener();
 
     private ContactListFilterController mContactListFilterController;
 
@@ -139,7 +140,8 @@ public class PeopleActivity extends ContactsActivity implements
      * Showing a list of Contacts. Also used for showing search results in search mode.
      */
     private MultiSelectContactsListFragment mAllFragment;
-    private ContactTileListFragment mFavoritesFragment;
+    //Removing Favourites
+    // private ContactTileListFragment mFavoritesFragment;
 
     /** ViewPager for swipe */
     private ViewPager mTabPager;
@@ -308,7 +310,8 @@ public class PeopleActivity extends ContactsActivity implements
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         mTabTitles = new String[TabState.COUNT];
-        mTabTitles[TabState.FAVORITES] = getString(R.string.favorites_tab_label);
+        //Removing Favourites
+        //mTabTitles[TabState.FAVORITES] = getString(R.string.favorites_tab_label);
         mTabTitles[TabState.ALL] = getString(R.string.all_contacts_tab_label);
         mTabPager = getView(R.id.tab_pager);
         mTabPagerAdapter = new TabPagerAdapter();
@@ -330,7 +333,8 @@ public class PeopleActivity extends ContactsActivity implements
         }
         mViewPagerTabs.setViewPager(mTabPager);
 
-        final String FAVORITE_TAG = "tab-pager-favorite";
+        //Removing Favourites
+        //final String FAVORITE_TAG = "tab-pager-favorite";
         final String ALL_TAG = "tab-pager-all";
 
         // Create the fragments and add as children of the view pager.
@@ -339,34 +343,44 @@ public class PeopleActivity extends ContactsActivity implements
         // However, if it's after screen rotation, the fragments have been re-created by
         // the fragment manager, so first see if there're already the target fragments
         // existing.
-        mFavoritesFragment = (ContactTileListFragment)
-                fragmentManager.findFragmentByTag(FAVORITE_TAG);
+
+        //Removing Favourites
+        //mFavoritesFragment = (ContactTileListFragment)
+                //fragmentManager.findFragmentByTag(FAVORITE_TAG);
         mAllFragment = (MultiSelectContactsListFragment)
                 fragmentManager.findFragmentByTag(ALL_TAG);
 
-        if (mFavoritesFragment == null) {
-            mFavoritesFragment = new ContactTileListFragment();
+        //Removing Favourites
+        //if (mFavoritesFragment == null) {
+        if(mAllFragment == null){
+            //Removing Favourites
+            // mFavoritesFragment = new ContactTileListFragment();
             mAllFragment = new MultiSelectContactsListFragment();
 
-            transaction.add(R.id.tab_pager, mFavoritesFragment, FAVORITE_TAG);
+            //Removing Favourites
+            // transaction.add(R.id.tab_pager, mFavoritesFragment, FAVORITE_TAG);
             transaction.add(R.id.tab_pager, mAllFragment, ALL_TAG);
         }
 
-        mFavoritesFragment.setListener(mFavoritesFragmentListener);
+        //Removing Favourites
+        // mFavoritesFragment.setListener(mFavoritesFragmentListener);
 
         mAllFragment.setOnContactListActionListener(new ContactBrowserActionListener());
         mAllFragment.setCheckBoxListListener(new CheckBoxListListener());
 
         // Hide all fragments for now.  We adjust visibility when we get onSelectedTabChanged()
         // from ActionBarAdapter.
-        transaction.hide(mFavoritesFragment);
+
+        //Removing Favourites
+        // transaction.hide(mFavoritesFragment);
         transaction.hide(mAllFragment);
 
         transaction.commitAllowingStateLoss();
         fragmentManager.executePendingTransactions();
 
         // Setting Properties after fragment is created
-        mFavoritesFragment.setDisplayType(DisplayType.STREQUENT);
+        //Removing Favourites
+        // mFavoritesFragment.setDisplayType(DisplayType.STREQUENT);
 
         mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(),
                 portraitViewPagerTabs, landscapeViewPagerTabs, toolbar);
@@ -473,9 +487,10 @@ public class PeopleActivity extends ContactsActivity implements
 
                 case ContactsRequest.ACTION_FREQUENT:
                 case ContactsRequest.ACTION_STREQUENT:
-                case ContactsRequest.ACTION_STARRED:
-                    tabToOpen = TabState.FAVORITES;
-                    break;
+                    //Removing Favourites
+                    // case ContactsRequest.ACTION_STARRED:
+                    //tabToOpen = TabState.FAVORITES;
+                    //break;
                 case ContactsRequest.ACTION_VIEW_CONTACT:
                     tabToOpen = TabState.ALL;
                     break;
@@ -625,10 +640,11 @@ public class PeopleActivity extends ContactsActivity implements
     private void showEmptyStateForTab(int tab) {
         if (mContactsUnavailableFragment != null) {
             switch (getTabPositionForTextDirection(tab)) {
-                case TabState.FAVORITES:
-                    mContactsUnavailableFragment.setMessageText(
-                            R.string.listTotalAllContactsZeroStarred, -1);
-                    break;
+                //Removing Favourites
+                //case TabState.FAVORITES:
+                    //mContactsUnavailableFragment.setMessageText(
+                            //R.string.listTotalAllContactsZeroStarred, -1);
+                    //break;
                 case TabState.ALL:
                     mContactsUnavailableFragment.setMessageText(R.string.noContacts, -1);
                     break;
@@ -729,9 +745,10 @@ public class PeopleActivity extends ContactsActivity implements
                     return 0; // Only 1 page in search mode
                 }
             } else {
-                if (object == mFavoritesFragment) {
-                    return getTabPositionForTextDirection(TabState.FAVORITES);
-                }
+                //Removing Favourites
+                //if (object == mFavoritesFragment) {
+                    //return getTabPositionForTextDirection(TabState.FAVORITES);
+                //}
                 if (object == mAllFragment) {
                     return getTabPositionForTextDirection(TabState.ALL);
                 }
@@ -754,9 +771,11 @@ public class PeopleActivity extends ContactsActivity implements
                 }
                 return mAllFragment;
             } else {
-                if (position == TabState.FAVORITES) {
-                    return mFavoritesFragment;
-                } else if (position == TabState.ALL) {
+                //Removing Favourites
+                //if (position == TabState.FAVORITES) {
+                    //return mFavoritesFragment;
+                //} else
+                    if (position == TabState.ALL) {
                     return mAllFragment;
                 }
             }
@@ -1094,10 +1113,11 @@ public class PeopleActivity extends ContactsActivity implements
             helpMenu.setVisible(false);
         } else {
             switch (getTabPositionForTextDirection(mActionBarAdapter.getCurrentTab())) {
-                case TabState.FAVORITES:
-                    contactsFilterMenu.setVisible(false);
-                    clearFrequentsMenu.setVisible(hasFrequents());
-                    break;
+                //Removing Favourites
+                //case TabState.FAVORITES:
+                    //contactsFilterMenu.setVisible(false);
+                    //clearFrequentsMenu.setVisible(hasFrequents());
+                    //break;
                 case TabState.ALL:
                     contactsFilterMenu.setVisible(true);
                     clearFrequentsMenu.setVisible(false);
@@ -1130,7 +1150,8 @@ public class PeopleActivity extends ContactsActivity implements
      * @return
      */
     private boolean hasFrequents() {
-        return mFavoritesFragment.hasFrequents();
+        //Removing Favourites return mFavoritesFragment.hasFrequents();
+        return false;
     }
 
     private void makeMenuItemVisible(Menu menu, int itemId, boolean visible) {

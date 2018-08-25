@@ -108,10 +108,10 @@ public class ActionBarAdapter implements OnCloseListener {
     private boolean mShowHomeIcon;
 
     public interface TabState {
-        public static int FAVORITES = 0;
-        public static int ALL = 1;
+        //Removing Favourites public static int FAVORITES = 0;
+        public static int ALL = 0; //Removing Favourites 1;
 
-        public static int COUNT = 2;
+        public static int COUNT = 1;// Removing Favourites 2;
         public static int DEFAULT = ALL;
     }
 
