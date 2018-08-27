@@ -1516,7 +1516,17 @@ public class QuickContactActivity extends ContactsActivity
                 alternateIcon = res.getDrawable(R.mipmap.ic_message_24dp);
                 alternateContentDescription.append(res.getString(R.string.sms_custom, header));
 
-                if (CallUtil.isCallWithSubjectSupported(context)) {
+                boolean isCallWithSubjectSupported;
+                try
+                {
+                    isCallWithSubjectSupported = CallUtil.isCallWithSubjectSupported(context);
+                }
+                catch(Exception e)
+                {
+                    isCallWithSubjectSupported = false;
+                }
+
+                if (isCallWithSubjectSupported) {
                     thirdIcon = res.getDrawable(R.drawable.ic_call_note_white_24dp);
                     thirdAction = ExpandingEntryCardView.Entry.ACTION_CALL_WITH_SUBJECT;
                     thirdContentDescription =

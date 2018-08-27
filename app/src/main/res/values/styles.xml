@@ -149,7 +149,7 @@
     <!-- Text in the action bar at the top of the screen -->
     <style name="ContactsActionBarTitleText"
         parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/actionbar_text_color</item>
+        <item name="android:textColor">@color/searchbox_text_color</item>
     </style>
 
     <!-- Styling for the tab bar; handles styling of the divider line. -->

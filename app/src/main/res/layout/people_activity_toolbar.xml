@@ -15,6 +15,7 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_parent"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -25,25 +26,14 @@
         android:id="@+id/toolbar_frame"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/actionbar_background_color">
+        android:background="@color/background_primary">
 
         <Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
             android:id="@+id/toolbar"
-            style="@style/ContactsToolbarStyle" />
+            style="@style/ContactsToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize" />
 
     </FrameLayout>
-
-    <!--com.android.contacts.common.list.ViewPagerTabs
-        android:id="@+id/lists_pager_header"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:textAllCaps="true"
-        android:orientation="horizontal"
-        android:layout_gravity="top"
-        android:layout_weight="0"
-        android:layout_below="@id/toolbar"
-        style="@style/ContactsActionBarTabTextStyle" /-->
 
 </LinearLayout>
