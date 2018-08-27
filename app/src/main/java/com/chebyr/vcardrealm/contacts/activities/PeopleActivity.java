@@ -23,18 +23,14 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.UserManager;
 import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.ProviderStatus;
 import android.provider.Settings;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,7 +40,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -57,9 +52,7 @@ import com.android.contacts.common.interactions.ImportExportDialogFragment;
 import com.android.contacts.common.list.ContactEntryListFragment;
 import com.android.contacts.common.list.ContactListFilter;
 import com.android.contacts.common.list.ContactListFilterController;
-import com.android.contacts.common.list.ContactTileAdapter.DisplayType;
 import com.android.contacts.common.list.DirectoryListLoader;
-import com.android.contacts.common.list.ViewPagerTabs;
 import com.android.contacts.common.preference.DisplayOptionsPreferenceFragment;
 import com.android.contacts.common.util.AccountFilterUtil;
 import com.android.contacts.common.util.Constants;
@@ -69,13 +62,11 @@ import com.android.contacts.common.widget.FloatingActionButtonController;
 
 import com.chebyr.vcardrealm.contacts.ContactsActivity;
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.activities.ActionBarAdapter.TabState;
 import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
 import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.ContactMultiDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.JoinContactsDialogFragment;
 import com.chebyr.vcardrealm.contacts.interactions.JoinContactsDialogFragment.JoinContactsListener;
-import com.chebyr.vcardrealm.contacts.list.ContactTileListFragment;
 import com.chebyr.vcardrealm.contacts.list.ContactsIntentResolver;
 import com.chebyr.vcardrealm.contacts.list.ContactsRequest;
 import com.chebyr.vcardrealm.contacts.list.ContactsUnavailableFragment;
@@ -124,10 +115,6 @@ public class PeopleActivity extends ContactsActivity implements
     private View mFloatingActionButtonContainer;
     private boolean wasLastFabAnimationScaleIn = false;
 
-    //Removing Favourites
-    //private ContactTileListFragment.Listener mFavoritesFragmentListener =
-            //new StrequentContactListFragmentListener();
-
     private ContactListFilterController mContactListFilterController;
 
     private ContactsUnavailableFragment mContactsUnavailableFragment;
@@ -140,15 +127,6 @@ public class PeopleActivity extends ContactsActivity implements
      * Showing a list of Contacts. Also used for showing search results in search mode.
      */
     private MultiSelectContactsListFragment mAllFragment;
-    //Removing Favourites
-    // private ContactTileListFragment mFavoritesFragment;
-
-    /** ViewPager for swipe */
-    private ViewPager mTabPager;
-    private ViewPagerTabs mViewPagerTabs;
-    private TabPagerAdapter mTabPagerAdapter;
-    private String[] mTabTitles;
-    private final TabPagerListener mTabPagerListener = new TabPagerListener();
 
     private boolean mEnableDebugMenuOptions;
 
@@ -309,83 +287,15 @@ public class PeopleActivity extends ContactsActivity implements
         // Hide all tabs (the current tab will later be reshown once a tab is selected)
         final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        mTabTitles = new String[TabState.COUNT];
-        //Removing Favourites
-        //mTabTitles[TabState.FAVORITES] = getString(R.string.favorites_tab_label);
-        mTabTitles[TabState.ALL] = getString(R.string.all_contacts_tab_label);
-        mTabPager = getView(R.id.tab_pager);
-        mTabPagerAdapter = new TabPagerAdapter();
-        mTabPager.setAdapter(mTabPagerAdapter);
-        mTabPager.setOnPageChangeListener(mTabPagerListener);
-
         // Configure toolbar and toolbar tabs. If in landscape mode, we  configure tabs differntly.
         final Toolbar toolbar = getView(R.id.toolbar);
         setActionBar(toolbar);
-        final ViewPagerTabs portraitViewPagerTabs
-                = (ViewPagerTabs) findViewById(R.id.lists_pager_header);
-        // Remove Landscape mode
-        //ViewPagerTabs landscapeViewPagerTabs = null;
-        //if (portraitViewPagerTabs ==  null) {
-            //landscapeViewPagerTabs = (ViewPagerTabs) getLayoutInflater().inflate(
-                    //R.layout.people_activity_tabs_lands, toolbar, /* attachToRoot = */ false);
-            //mViewPagerTabs = landscapeViewPagerTabs;
-        //} else {
-            mViewPagerTabs = portraitViewPagerTabs;
-        //}
-        mViewPagerTabs.setViewPager(mTabPager);
 
-        //Removing Favourites
-        //final String FAVORITE_TAG = "tab-pager-favorite";
-        final String ALL_TAG = "tab-pager-all";
-
-        // Create the fragments and add as children of the view pager.
-        // The pager adapter will only change the visibility; it'll never create/destroy
-        // fragments.
-        // However, if it's after screen rotation, the fragments have been re-created by
-        // the fragment manager, so first see if there're already the target fragments
-        // existing.
-
-        //Removing Favourites
-        //mFavoritesFragment = (ContactTileListFragment)
-                //fragmentManager.findFragmentByTag(FAVORITE_TAG);
-        mAllFragment = (MultiSelectContactsListFragment)
-                fragmentManager.findFragmentByTag(ALL_TAG);
-
-        //Removing Favourites
-        //if (mFavoritesFragment == null) {
-        if(mAllFragment == null){
-            //Removing Favourites
-            // mFavoritesFragment = new ContactTileListFragment();
-            mAllFragment = new MultiSelectContactsListFragment();
-
-            //Removing Favourites
-            // transaction.add(R.id.tab_pager, mFavoritesFragment, FAVORITE_TAG);
-            transaction.add(R.id.tab_pager, mAllFragment, ALL_TAG);
-        }
-
-        //Removing Favourites
-        // mFavoritesFragment.setListener(mFavoritesFragmentListener);
-
+        mAllFragment = (MultiSelectContactsListFragment) fragmentManager.findFragmentById(R.id.contacts_container);
         mAllFragment.setOnContactListActionListener(new ContactBrowserActionListener());
         mAllFragment.setCheckBoxListListener(new CheckBoxListListener());
 
-        // Hide all fragments for now.  We adjust visibility when we get onSelectedTabChanged()
-        // from ActionBarAdapter.
-
-        //Removing Favourites
-        // transaction.hide(mFavoritesFragment);
-        transaction.hide(mAllFragment);
-
-        transaction.commitAllowingStateLoss();
-        fragmentManager.executePendingTransactions();
-
-        // Setting Properties after fragment is created
-        //Removing Favourites
-        // mFavoritesFragment.setDisplayType(DisplayType.STREQUENT);
-
-        // Remove Landscape mode
-        mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(),
-                portraitViewPagerTabs, /*landscapeViewPagerTabs,*/ toolbar);
+        mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(), toolbar);
         mActionBarAdapter.initialize(savedState, mRequest);
 
         // Add shadow under toolbar
@@ -445,9 +355,7 @@ public class PeopleActivity extends ContactsActivity implements
         // called.  See also: onSaveInstanceState
         mActionBarAdapter.setListener(this);
         mDisableOptionItemSelected = false;
-        if (mTabPager != null) {
-            mTabPager.setOnPageChangeListener(mTabPagerListener);
-        }
+
         // Current tab may have changed since the last onSaveInstanceState().  Make sure
         // the actual contents match the tab.
         updateFragmentsVisibility();
@@ -474,34 +382,22 @@ public class PeopleActivity extends ContactsActivity implements
             ContactListFilter filter = null;
             int actionCode = mRequest.getActionCode();
             boolean searchMode = mRequest.isSearchMode();
-            final int tabToOpen;
+
             switch (actionCode) {
                 case ContactsRequest.ACTION_ALL_CONTACTS:
                     filter = ContactListFilter.createFilterWithType(
                             ContactListFilter.FILTER_TYPE_ALL_ACCOUNTS);
-                    tabToOpen = TabState.ALL;
                     break;
                 case ContactsRequest.ACTION_CONTACTS_WITH_PHONES:
                     filter = ContactListFilter.createFilterWithType(
                             ContactListFilter.FILTER_TYPE_WITH_PHONE_NUMBERS_ONLY);
-                    tabToOpen = TabState.ALL;
                     break;
 
                 case ContactsRequest.ACTION_FREQUENT:
                 case ContactsRequest.ACTION_STREQUENT:
-                    //Removing Favourites
-                    // case ContactsRequest.ACTION_STARRED:
-                    //tabToOpen = TabState.FAVORITES;
-                    //break;
                 case ContactsRequest.ACTION_VIEW_CONTACT:
-                    tabToOpen = TabState.ALL;
-                    break;
                 default:
-                    tabToOpen = -1;
                     break;
-            }
-            if (tabToOpen != -1) {
-                mActionBarAdapter.setCurrentTab(tabToOpen);
             }
 
             if (filter != null) {
@@ -616,235 +512,45 @@ public class PeopleActivity extends ContactsActivity implements
 
     /**
      * Updates the fragment/view visibility according to the current mode, such as
-     * {@link ActionBarAdapter#isSearchMode()} and {@link ActionBarAdapter#getCurrentTab()}.
+     * {@link ActionBarAdapter#isSearchMode()} and {@link ActionBarAdapter#// Disable ViewPagergetCurrentTab()}.
      */
     private void updateFragmentsVisibility() {
-        int tab = mActionBarAdapter.getCurrentTab();
+        // Disable ViewPager int tab = mActionBarAdapter.getCurrentTab();
 
         if (mActionBarAdapter.isSearchMode() || mActionBarAdapter.isSelectionMode()) {
-            mTabPagerAdapter.setTabsHidden(true);
+            // Disable ViewPager mTabPagerAdapter.setTabsHidden(true);
         } else {
             // No smooth scrolling if quitting from the search/selection mode.
-            final boolean wereTabsHidden = mTabPagerAdapter.areTabsHidden()
-                    || mActionBarAdapter.isSelectionMode();
-            mTabPagerAdapter.setTabsHidden(false);
-            if (mTabPager.getCurrentItem() != tab) {
-                mTabPager.setCurrentItem(tab, !wereTabsHidden);
-            }
+            // Disable ViewPager final boolean wereTabsHidden = mTabPagerAdapter.areTabsHidden()
+            // Disable ViewPager || mActionBarAdapter.isSelectionMode();
+            // Disable ViewPager mTabPagerAdapter.setTabsHidden(false);
+            // Disable ViewPager if (mTabPager.getCurrentItem() != tab) {
+            // Disable ViewPager mTabPager.setCurrentItem(tab, !wereTabsHidden);
+            // Disable ViewPager}
         }
         if (!mActionBarAdapter.isSelectionMode()) {
             mAllFragment.displayCheckBoxes(false);
         }
         invalidateOptionsMenu();
-        showEmptyStateForTab(tab);
+        // Disable ViewPager showEmptyStateForTab(tab);
     }
 
     private void showEmptyStateForTab(int tab) {
         if (mContactsUnavailableFragment != null) {
-            switch (getTabPositionForTextDirection(tab)) {
+            //switch (getTabPositionForTextDirection(tab)) {
                 //Removing Favourites
                 //case TabState.FAVORITES:
                     //mContactsUnavailableFragment.setMessageText(
                             //R.string.listTotalAllContactsZeroStarred, -1);
                     //break;
-                case TabState.ALL:
+                //case 0://TabState.ALL:
                     mContactsUnavailableFragment.setMessageText(R.string.noContacts, -1);
-                    break;
-            }
+                    //break;
+            //}
             // When using the mContactsUnavailableFragment the ViewPager doesn't contain two views.
             // Therefore, we have to trick the ViewPagerTabs into thinking we have changed tabs
             // when the mContactsUnavailableFragment changes. Otherwise the tab strip won't move.
-            mViewPagerTabs.onPageScrolled(tab, 0, 0);
-        }
-    }
-
-    private class TabPagerListener implements ViewPager.OnPageChangeListener {
-
-        // This package-protected constructor is here because of a possible compiler bug.
-        // PeopleActivity$1.class should be generated due to the private outer/inner class access
-        // needed here.  But for some reason, PeopleActivity$1.class is missing.
-        // Since $1 class is needed as a jvm work around to get access to the inner class,
-        // changing the constructor to package-protected or public will solve the problem.
-        // To verify whether $1 class is needed, javap PeopleActivity$TabPagerListener and look for
-        // references to PeopleActivity$1.
-        //
-        // When the constructor is private and PeopleActivity$1.class is missing, proguard will
-        // correctly catch this and throw warnings and error out the build on user/userdebug builds.
-        //
-        // All private inner classes below also need this fix.
-        TabPagerListener() {}
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            if (!mTabPagerAdapter.areTabsHidden()) {
-                mViewPagerTabs.onPageScrollStateChanged(state);
-            }
-        }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (!mTabPagerAdapter.areTabsHidden()) {
-                mViewPagerTabs.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            // Make sure not in the search mode, in which case position != TabState.ordinal().
-            if (!mTabPagerAdapter.areTabsHidden()) {
-                mActionBarAdapter.setCurrentTab(position, false);
-                mViewPagerTabs.onPageSelected(position);
-                showEmptyStateForTab(position);
-                invalidateOptionsMenu();
-            }
-        }
-    }
-
-    /**
-     * Adapter for the {@link ViewPager}.  Unlike {@link FragmentPagerAdapter},
-     * {@link #instantiateItem} returns existing fragments, and {@link #instantiateItem}/
-     * {@link #destroyItem} show/hide fragments instead of attaching/detaching.
-     *
-     * In search mode, we always show the "all" fragment, and disable the swipe.  We change the
-     * number of items to 1 to disable the swipe.
-     *
-     * TODO figure out a more straight way to disable swipe.
-     */
-    private class TabPagerAdapter extends PagerAdapter {
-        private final FragmentManager mFragmentManager;
-        private FragmentTransaction mCurTransaction = null;
-
-        private boolean mAreTabsHiddenInTabPager;
-
-        private Fragment mCurrentPrimaryItem;
-
-        public TabPagerAdapter() {
-            mFragmentManager = getFragmentManager();
-        }
-
-        public boolean areTabsHidden() {
-            return mAreTabsHiddenInTabPager;
-        }
-
-        public void setTabsHidden(boolean hideTabs) {
-            if (hideTabs == mAreTabsHiddenInTabPager) {
-                return;
-            }
-            mAreTabsHiddenInTabPager = hideTabs;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getCount() {
-            return mAreTabsHiddenInTabPager ? 1 : TabState.COUNT;
-        }
-
-        /** Gets called when the number of items changes. */
-        @Override
-        public int getItemPosition(Object object) {
-            if (mAreTabsHiddenInTabPager) {
-                if (object == mAllFragment) {
-                    return 0; // Only 1 page in search mode
-                }
-            } else {
-                //Removing Favourites
-                //if (object == mFavoritesFragment) {
-                    //return getTabPositionForTextDirection(TabState.FAVORITES);
-                //}
-                if (object == mAllFragment) {
-                    return getTabPositionForTextDirection(TabState.ALL);
-                }
-            }
-            return POSITION_NONE;
-        }
-
-        @Override
-        public void startUpdate(ViewGroup container) {
-        }
-
-        private Fragment getFragment(int position) {
-            position = getTabPositionForTextDirection(position);
-            if (mAreTabsHiddenInTabPager) {
-                if (position != 0) {
-                    // This has only been observed in monkey tests.
-                    // Let's log this issue, but not crash
-                    Log.w(TAG, "Request fragment at position=" + position + ", eventhough we " +
-                            "are in search mode");
-                }
-                return mAllFragment;
-            } else {
-                //Removing Favourites
-                //if (position == TabState.FAVORITES) {
-                    //return mFavoritesFragment;
-                //} else
-                    if (position == TabState.ALL) {
-                    return mAllFragment;
-                }
-            }
-            throw new IllegalArgumentException("position: " + position);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            if (mCurTransaction == null) {
-                mCurTransaction = mFragmentManager.beginTransaction();
-            }
-            Fragment f = getFragment(position);
-            mCurTransaction.show(f);
-
-            // Non primary pages are not visible.
-            f.setUserVisibleHint(f == mCurrentPrimaryItem);
-            return f;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            if (mCurTransaction == null) {
-                mCurTransaction = mFragmentManager.beginTransaction();
-            }
-            mCurTransaction.hide((Fragment) object);
-        }
-
-        @Override
-        public void finishUpdate(ViewGroup container) {
-            if (mCurTransaction != null) {
-                mCurTransaction.commitAllowingStateLoss();
-                mCurTransaction = null;
-                mFragmentManager.executePendingTransactions();
-            }
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return ((Fragment) object).getView() == view;
-        }
-
-        @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            Fragment fragment = (Fragment) object;
-            if (mCurrentPrimaryItem != fragment) {
-                if (mCurrentPrimaryItem != null) {
-                    mCurrentPrimaryItem.setUserVisibleHint(false);
-                }
-                if (fragment != null) {
-                    fragment.setUserVisibleHint(true);
-                }
-                mCurrentPrimaryItem = fragment;
-            }
-        }
-
-        @Override
-        public Parcelable saveState() {
-            return null;
-        }
-
-        @Override
-        public void restoreState(Parcelable state, ClassLoader loader) {
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTabTitles[position];
+            // Disable ViewPager mViewPagerTabs.onPageScrolled(tab, 0, 0);
         }
     }
 
@@ -902,9 +608,9 @@ public class PeopleActivity extends ContactsActivity implements
         if (mProviderStatus.equals(ProviderStatus.STATUS_NORMAL)) {
             // Ensure that the mTabPager is visible; we may have made it invisible below.
             contactsUnavailableView.setVisibility(View.GONE);
-            if (mTabPager != null) {
+            /*if (mTabPager != null) {
                 mTabPager.setVisibility(View.VISIBLE);
-            }
+            }*/
 
             if (mAllFragment != null) {
                 mAllFragment.setEnabled(true);
@@ -944,11 +650,11 @@ public class PeopleActivity extends ContactsActivity implements
             // Show the contactsUnavailableView, and hide the mTabPager so that we don't
             // see it sliding in underneath the contactsUnavailableView at the edges.
             contactsUnavailableView.setVisibility(View.VISIBLE);
-            if (mTabPager != null) {
+            /*if (mTabPager != null) {
                 mTabPager.setVisibility(View.GONE);
             }
 
-            showEmptyStateForTab(mActionBarAdapter.getCurrentTab());
+            showEmptyStateForTab(mActionBarAdapter.getCurrentTab());*/
         }
 
         invalidateOptionsMenuIfNeeded();
@@ -1045,24 +751,6 @@ public class PeopleActivity extends ContactsActivity implements
         }
     }
 
-    private final class StrequentContactListFragmentListener
-            implements ContactTileListFragment.Listener {
-        StrequentContactListFragmentListener() {}
-
-        @Override
-        public void onContactSelected(Uri contactUri, Rect targetRect) {
-            final Intent intent = ImplicitIntentsUtil.composeQuickContactIntent(contactUri,
-                    QuickContactActivity.MODE_FULLY_EXPANDED);
-            ImplicitIntentsUtil.startActivityInApp(PeopleActivity.this, intent);
-        }
-
-        @Override
-        public void onCallNumberDirectly(String phoneNumber) {
-            // No need to call phone number directly from People app.
-            Log.w(TAG, "unexpected invocation of onCallNumberDirectly()");
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!areContactsAvailable()) {
@@ -1114,17 +802,17 @@ public class PeopleActivity extends ContactsActivity implements
             clearFrequentsMenu.setVisible(false);
             helpMenu.setVisible(false);
         } else {
-            switch (getTabPositionForTextDirection(mActionBarAdapter.getCurrentTab())) {
+            //switch (getTabPositionForTextDirection(mActionBarAdapter.getCurrentTab())) {
                 //Removing Favourites
                 //case TabState.FAVORITES:
                     //contactsFilterMenu.setVisible(false);
                     //clearFrequentsMenu.setVisible(hasFrequents());
                     //break;
-                case TabState.ALL:
+                //case 0://TabState.ALL:
                     contactsFilterMenu.setVisible(true);
                     clearFrequentsMenu.setVisible(false);
-                    break;
-            }
+                    //break;
+            //
             helpMenu.setVisible(ContactsBindHelpUtils.isHelpAndFeedbackAvailable());
         }
         final boolean showMiscOptions = !isSearchOrSelectionMode;
@@ -1374,9 +1062,6 @@ public class PeopleActivity extends ContactsActivity implements
         // TODO Figure out a better way to deal with the issue.
         mDisableOptionItemSelected = true;
         mActionBarAdapter.setListener(null);
-        if (mTabPager != null) {
-            mTabPager.setOnPageChangeListener(null);
-        }
     }
 
     @Override
@@ -1414,15 +1099,5 @@ public class PeopleActivity extends ContactsActivity implements
         default:
             Log.wtf(TAG, "Unexpected onClick event from " + view);
         }
-    }
-
-    /**
-     * Returns the tab position adjusted for the text direction.
-     */
-    private int getTabPositionForTextDirection(int position) {
-        if (isRTL()) {
-            return TabState.COUNT - 1 - position;
-        }
-        return position;
     }
 }
