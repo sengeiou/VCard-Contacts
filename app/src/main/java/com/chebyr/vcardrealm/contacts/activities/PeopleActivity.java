@@ -323,14 +323,15 @@ public class PeopleActivity extends ContactsActivity implements
         setActionBar(toolbar);
         final ViewPagerTabs portraitViewPagerTabs
                 = (ViewPagerTabs) findViewById(R.id.lists_pager_header);
-        ViewPagerTabs landscapeViewPagerTabs = null;
-        if (portraitViewPagerTabs ==  null) {
-            landscapeViewPagerTabs = (ViewPagerTabs) getLayoutInflater().inflate(
-                    R.layout.people_activity_tabs_lands, toolbar, /* attachToRoot = */ false);
-            mViewPagerTabs = landscapeViewPagerTabs;
-        } else {
+        // Remove Landscape mode
+        //ViewPagerTabs landscapeViewPagerTabs = null;
+        //if (portraitViewPagerTabs ==  null) {
+            //landscapeViewPagerTabs = (ViewPagerTabs) getLayoutInflater().inflate(
+                    //R.layout.people_activity_tabs_lands, toolbar, /* attachToRoot = */ false);
+            //mViewPagerTabs = landscapeViewPagerTabs;
+        //} else {
             mViewPagerTabs = portraitViewPagerTabs;
-        }
+        //}
         mViewPagerTabs.setViewPager(mTabPager);
 
         //Removing Favourites
@@ -382,8 +383,9 @@ public class PeopleActivity extends ContactsActivity implements
         //Removing Favourites
         // mFavoritesFragment.setDisplayType(DisplayType.STREQUENT);
 
+        // Remove Landscape mode
         mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(),
-                portraitViewPagerTabs, landscapeViewPagerTabs, toolbar);
+                portraitViewPagerTabs, /*landscapeViewPagerTabs,*/ toolbar);
         mActionBarAdapter.initialize(savedState, mRequest);
 
         // Add shadow under toolbar

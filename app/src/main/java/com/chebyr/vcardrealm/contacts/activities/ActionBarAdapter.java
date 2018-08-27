@@ -85,7 +85,8 @@ public class ActionBarAdapter implements OnCloseListener {
     /** The view that represents tabs when we are in portrait mode **/
     private View mPortraitTabs;
     /** The view that represents tabs when we are in landscape mode **/
-    private View mLandscapeTabs;
+    // Remove Landscape mode
+    //private View mLandscapeTabs;
     private View mSearchContainer;
     private View mSelectionContainer;
 
@@ -117,14 +118,15 @@ public class ActionBarAdapter implements OnCloseListener {
 
     private int mCurrentTab = TabState.DEFAULT;
 
+    // Remove Landscape mode
     public ActionBarAdapter(Activity activity, Listener listener, ActionBar actionBar,
-                            View portraitTabs, View landscapeTabs, Toolbar toolbar) {
+                            View portraitTabs, /*View landscapeTabs,*/ Toolbar toolbar) {
         mActivity = activity;
         mListener = listener;
         mActionBar = actionBar;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
         mPortraitTabs = portraitTabs;
-        mLandscapeTabs = landscapeTabs;
+        //mLandscapeTabs = landscapeTabs;
         mToolbar = toolbar;
         mToolBarFrame = (FrameLayout) mToolbar.getParent();
         mMaxToolbarContentInsetStart = mToolbar.getContentInsetStart();
@@ -402,7 +404,8 @@ public class ActionBarAdapter implements OnCloseListener {
         // to adding the desired container.
         if (skipAnimation || isSwitchingFromSearchToSelection) {
             if (isTabHeightChanging || isSwitchingFromSearchToSelection) {
-                mToolbar.removeView(mLandscapeTabs);
+                // Remove Landscape mode
+                //mToolbar.removeView(mLandscapeTabs);
                 mToolbar.removeView(mSearchContainer);
                 mToolBarFrame.removeView(mSelectionContainer);
                 if (mSelectionMode) {
@@ -413,7 +416,8 @@ public class ActionBarAdapter implements OnCloseListener {
                     addSearchContainer();
                 } else {
                     setPortraitTabHeight(mMaxPortraitTabHeight);
-                    addLandscapeViewPagerTabs();
+                    // Remove Landscape mode
+                    //addLandscapeViewPagerTabs();
                 }
                 updateDisplayOptions(isSearchModeChanging);
             }
@@ -422,7 +426,8 @@ public class ActionBarAdapter implements OnCloseListener {
 
         // Handle a switch to/from selection mode, due to UI interaction.
         if (isSelectionModeChanging) {
-            mToolbar.removeView(mLandscapeTabs);
+            // Remove Landscape mode
+            //mToolbar.removeView(mLandscapeTabs);
             if (mSelectionMode) {
                 addSelectionContainer();
                 mSelectionContainer.setAlpha(0);
@@ -439,7 +444,8 @@ public class ActionBarAdapter implements OnCloseListener {
                     @Override
                     public void run() {
                         updateDisplayOptions(isSearchModeChanging);
-                        addLandscapeViewPagerTabs();
+                        // Remove Landscape mode
+                        //addLandscapeViewPagerTabs();
                         mToolBarFrame.removeView(mSelectionContainer);
                     }
                 });
@@ -448,7 +454,8 @@ public class ActionBarAdapter implements OnCloseListener {
 
         // Handle a switch to/from search mode, due to UI interaction.
         if (isSearchModeChanging) {
-            mToolbar.removeView(mLandscapeTabs);
+            // Remove Landscape mode
+            //mToolbar.removeView(mLandscapeTabs);
             if (mSearchMode) {
                 addSearchContainer();
                 mSearchContainer.setAlpha(0);
@@ -462,7 +469,8 @@ public class ActionBarAdapter implements OnCloseListener {
                     @Override
                     public void run() {
                         updateDisplayOptions(isSearchModeChanging);
-                        addLandscapeViewPagerTabs();
+                        // Remove Landscape mode
+                        //addLandscapeViewPagerTabs();
                         mToolbar.removeView(mSearchContainer);
                     }
                 });
@@ -491,12 +499,13 @@ public class ActionBarAdapter implements OnCloseListener {
         }
     }
 
-    private void addLandscapeViewPagerTabs() {
+    // Remove Landscape mode
+    /*private void addLandscapeViewPagerTabs() {
         if (mLandscapeTabs != null) {
             mToolbar.removeView(mLandscapeTabs);
             mToolbar.addView(mLandscapeTabs);
         }
-    }
+    }*/
 
     private void addSearchContainer() {
         mToolbar.removeView(mSearchContainer);

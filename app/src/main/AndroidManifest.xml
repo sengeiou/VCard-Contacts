@@ -46,7 +46,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.chebyr.vcardrealm.contacts.activities.PeopleActivity" android:label="@string/launcherActivityLabel" android:theme="@style/PeopleTheme" android:clearTaskOnLaunch="true" android:launchMode="singleTop">
+        <activity
+            android:name="com.chebyr.vcardrealm.contacts.activities.PeopleActivity"
+            android:label="@string/launcherActivityLabel"
+            android:theme="@style/PeopleTheme"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
