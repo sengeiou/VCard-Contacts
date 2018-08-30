@@ -7,30 +7,30 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-public class ContactCardsView extends RecyclerView implements ContactCardsViewAdapter.OnItemClickCallBack
+public class ContactCardsListView extends RecyclerView implements ContactCardsListViewAdapter.OnItemClickCallBack
 {
-    private ContactCardsViewAdapter mContactCardsViewAdapter;
+    private ContactCardsListViewAdapter mContactCardsListViewAdapter;
 
-    public ContactCardsView(Context context)
+    public ContactCardsListView(Context context)
     {
         super(context);
     }
 
-    public ContactCardsView(Context context, AttributeSet attributeSet)
+    public ContactCardsListView(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
     }
 
     public void initialize(Activity activity)
     {
-        mContactCardsViewAdapter = new ContactCardsViewAdapter(this);
+        mContactCardsListViewAdapter = new ContactCardsListViewAdapter(this);
 
         setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(activity);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         setLayoutManager(llm);
         setItemAnimator(new DefaultItemAnimator());
-        setAdapter(mContactCardsViewAdapter);
+        setAdapter(mContactCardsListViewAdapter);
 
         addOnScrollListener(new RecyclerView.OnScrollListener()
         {
@@ -38,14 +38,14 @@ public class ContactCardsView extends RecyclerView implements ContactCardsViewAd
             public void onScrollStateChanged(RecyclerView recyclerView, int newState)
             {
                 super.onScrollStateChanged(recyclerView, newState);
-                mContactCardsViewAdapter.onScrollStateChanged(newState);
+                mContactCardsListViewAdapter.onScrollStateChanged(newState);
             }
         });
     }
 
     public void addData(String path)
     {
-        mContactCardsViewAdapter.addData(path);
+        mContactCardsListViewAdapter.addData(path);
     }
 
     @Override

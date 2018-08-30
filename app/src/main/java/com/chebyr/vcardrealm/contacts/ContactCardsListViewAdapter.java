@@ -4,19 +4,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 import java.util.ArrayList;
 
-public class ContactCardsViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ContactCardsListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static String TAG = "ContactCardsViewAdapter";
+    private static String TAG = "ContactCardsListViewAdapter";
     private ArrayList<String> contactCardPaths;
 
     private OnItemClickCallBack callBack;
 
-    public ContactCardsViewAdapter(OnItemClickCallBack callBack)
+    public ContactCardsListViewAdapter(OnItemClickCallBack callBack)
     {
         this.callBack        = callBack;
         contactCardPaths = new ArrayList<>();
@@ -73,40 +71,15 @@ public class ContactCardsViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             super(itemView);
 
             contactCard = itemView.findViewById(R.id.contact_card);
-            WebSettings webSettings = contactCard.getSettings();
-            webSettings.setLoadWithOverviewMode(true);
-            webSettings.setUseWideViewPort(true);
-            //webSettings.setBlockNetworkImage(true);
-            webSettings.setBlockNetworkLoads(true);
-            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-            //webSettings.setOffscreenPreRaster(true);
         }
 
         public void setHtml(String html)
         {
-            contactCard.loadUrl(html);
-
-            //contactCard.loadData("<html><body>Hello, world!</body></html>", "text/html", "UTF-8");
-//            Log.d(TAG, "Width: " + contactCard.getWidth() + " Height: " + contactCard.getHeight());
+            contactCard.setHtml(html);
         }
 
         public void setWebViewClickListener()
         {
-
-        }
-
-        public void onClickPeYehCallKaro()
-        {
-            WebView.HitTestResult hitTestResult = contactCard.getHitTestResult();
-            switch (hitTestResult.getType())
-            {
-                case WebView.HitTestResult.EMAIL_TYPE:
-                case WebView.HitTestResult.GEO_TYPE:
-                case WebView.HitTestResult.PHONE_TYPE:
-                case WebView.HitTestResult.SRC_ANCHOR_TYPE:
-            }
-
-            hitTestResult.getExtra();
 
         }
     }

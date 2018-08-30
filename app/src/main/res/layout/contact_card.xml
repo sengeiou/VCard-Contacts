@@ -17,6 +17,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/contact_card"/>
+        android:id="@+id/contact_card">
+
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/web_view"/>
+
+    </com.chebyr.vcardrealm.contacts.ContactCard>
 
 </android.support.constraint.ConstraintLayout>

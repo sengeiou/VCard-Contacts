@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ContactCardsFragment extends Fragment implements ContactCardsView.OnItemClickCallBack
+public class ContactCardsFragment extends Fragment implements ContactCardsListView.OnItemClickCallBack
 {
-    private ContactCardsView mContactCardsView;
-    private ContactCardsView.OnItemClickCallBack callBack;
+    private ContactCardsListView mContactCardsListView;
+    private ContactCardsListView.OnItemClickCallBack callBack;
 
     public ContactCardsFragment()
     {
@@ -32,29 +32,29 @@ public class ContactCardsFragment extends Fragment implements ContactCardsView.O
         Activity activity = getActivity();
 
         View rootView = inflater.inflate(R.layout.contact_list_fragment, container, false);
-        mContactCardsView = rootView.findViewById(R.id.contact_cards_view);
-        mContactCardsView.initialize(activity);
+        mContactCardsListView = rootView.findViewById(R.id.contact_cards_view);
+        mContactCardsListView.initialize(activity);
 
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
-        mContactCardsView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
+        mContactCardsListView.addData("file:///android_asset/business_card.html");
 
         return rootView;
     }
