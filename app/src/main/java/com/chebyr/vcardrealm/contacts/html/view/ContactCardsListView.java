@@ -1,11 +1,14 @@
-package com.chebyr.vcardrealm.contacts;
+package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.app.Activity;
+import android.arch.paging.PagedList;
 import android.content.Context;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+
+import com.chebyr.vcardrealm.contacts.html.Contact;
 
 public class ContactCardsListView extends RecyclerView implements ContactCardsListViewAdapter.OnItemClickCallBack
 {
@@ -23,7 +26,8 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
 
     public void initialize(Activity activity)
     {
-        mContactCardsListViewAdapter = new ContactCardsListViewAdapter(this);
+        mContactCardsListViewAdapter = new ContactCardsListViewAdapter();
+        mContactCardsListViewAdapter.setCallback(this);
 
         setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(activity);
@@ -41,6 +45,11 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
                 mContactCardsListViewAdapter.onScrollStateChanged(newState);
             }
         });
+    }
+
+    public void setContactPagedList(PagedList<Contact> contactPagedList)
+    {
+        mContactCardsListViewAdapter.setContactPagedList(contactPagedList);
     }
 
     public void addData(String path)

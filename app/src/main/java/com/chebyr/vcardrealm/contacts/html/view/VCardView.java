@@ -1,9 +1,8 @@
-package com.chebyr.vcardrealm.html;
+package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
@@ -13,8 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.chebyr.vcardrealm.contacts.Contact;
-import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardDocument;
 
 /* VCardView is the View displayed to the user during editing and runtime callerID. It generates VCard display
 based on the format defined in VCardSettings and contact details from the contact ContactAccessor */

@@ -21,6 +21,10 @@ android {
     lintOptions {
         disable 'LongLogTag'
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -36,10 +40,15 @@ dependencies {
 
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
+// LiveData + ViewModel
+
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'android.arch.paging:runtime:1.0.1'
+
     implementation 'com.google.guava:guava:26.0-android'
 
     implementation 'org.jsoup:jsoup:1.11.3'
-        testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
     //api project(':contacts')
     implementation project(':androidframeworkex')

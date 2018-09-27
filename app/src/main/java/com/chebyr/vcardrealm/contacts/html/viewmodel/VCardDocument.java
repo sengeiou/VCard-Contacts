@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.html;
+package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
 /* VCardDocument is the in memory XML representation of the format of the VCard used for VCardView.
 Also handles the  file read / write operations to internal / external storage media / assets directory as well as bundle*/
@@ -7,10 +7,8 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebViewClient;
 
-import com.chebyr.vcardrealm.contacts.Contact;
+import com.chebyr.vcardrealm.contacts.html.Contact;
 
 import java.io.InputStream;
 
@@ -402,7 +400,7 @@ public class VCardDocument
 
     public void updateContactDetails(Contact contact)
     {
-        if(contact.photo != null)
+        if(contact.photoStream != null)
         {
             // TODO: photoView.setImageBitmap(contact.photo);
             //photoView.setVisibility(VISIBLE);
@@ -427,7 +425,7 @@ public class VCardDocument
         setContactField(phoneNumbersView, contact.phoneNumbers);
         setContactField(eMailsView, contact.eMails);
         setContactField(IMsView, contact.IMs);
-        setContactField(webSiteView, contact.webSite);
+        setContactField(webSiteView, contact.website);
         setContactField(notesView, contact.notes);
     }
 

@@ -1,28 +1,11 @@
-package com.chebyr.vcardrealm.html;
+package com.chebyr.vcardrealm.contacts.html;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-public class VCardDesigner extends Fragment implements View.OnClickListener, View.OnDragListener
+public class VCardDesigner extends Fragment// implements View.OnClickListener, View.OnDragListener
 {
     public static final String TAG = "VCardDesigner";
-    StudioActivity mActivity;
+/*    StudioActivity mActivity;
 
     private BackgroundCanvas backgroundCanvas;
     VCardView mVCardView;
@@ -260,5 +243,5 @@ public class VCardDesigner extends Fragment implements View.OnClickListener, Vie
             }
         }
     }
-
+*/
 }

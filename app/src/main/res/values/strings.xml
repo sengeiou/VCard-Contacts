@@ -780,4 +780,7 @@
          the overlay will fill this in during build time. -->
     <string name="help_url_people_edit"></string>
 
+    <!-- Used for the AlphabetIndexer in ContactCardsFragment to provide quick navigation by alphabet using ListView fast scroll. -->
+    <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <!-- When using ContactsContract.Contacts#CONTENT_FILTER_URI to search contacts, a match occurs when using a number of different fields, such as name, e-mail address, address, phone number, etc. When a match occurs that is not the name, there is currently no way to tell which other field was matched. This string is displayed in the secondary display text in ContactCardsFragment when a search query match occurs that is not the display name. -->
 </resources>

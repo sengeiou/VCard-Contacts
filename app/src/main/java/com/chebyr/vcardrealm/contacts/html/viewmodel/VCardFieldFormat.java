@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.html;
+package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
 public class VCardFieldFormat
 {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chebyr.vcardrealm.contacts;
+package com.chebyr.vcardrealm.contacts.html;
 
 import android.annotation.TargetApi;
 import android.os.StrictMode;

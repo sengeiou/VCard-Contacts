@@ -1,26 +1,14 @@
-package com.chebyr.vcardrealm.html;
+package com.chebyr.vcardrealm.contacts.html;
 
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.SeekBar;
-
-import java.util.ArrayList;
-import java.util.List;
-import android.util.Log;
 
 /* VCardEditor provides for editing the VCardSettings used for VCardView */
 
-public class VCardEditor extends Fragment implements SeekBar.OnSeekBarChangeListener
+public class VCardEditor extends Fragment //implements SeekBar.OnSeekBarChangeListener
 {
     public static final String TAG = "VCardEditor";
-
+/*
     StudioActivity mActivity;
     VCardDocument vCardDocument;
 
@@ -126,4 +114,5 @@ public class VCardEditor extends Fragment implements SeekBar.OnSeekBarChangeList
     {
 
     }
+    */
 }

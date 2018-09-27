@@ -22,8 +22,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 
-import com.android.contacts.common.list.ContactListItemView;
+//import com.android.contacts.common.list.ContactListItemView;
 import com.android.contacts.common.list.DefaultContactListAdapter;
+import com.chebyr.vcardrealm.contacts.html.view.ContactCardListItemView;
 
 import java.util.TreeSet;
 
@@ -108,11 +109,11 @@ public class MultiSelectEntryContactListAdapter extends DefaultContactListAdapte
     @Override
     protected void bindView(View itemView, int partition, Cursor cursor, int position) {
         super.bindView(itemView, partition, cursor, position);
-        final ContactListItemView view = (ContactListItemView)itemView;
+        final ContactCardListItemView view = (ContactCardListItemView)itemView;
         bindCheckBox(view, cursor, position);
     }
 
-    private void bindCheckBox(ContactListItemView view, Cursor cursor, int position) {
+    private void bindCheckBox(ContactCardListItemView view, Cursor cursor, int position) {
         // Disable clicking on the first entry when showing check boxes. We do this by
         // telling the view to handle clicking itself.
         view.setClickable(position == 0 && hasProfile() && mDisplayCheckBoxes);
