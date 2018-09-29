@@ -1,9 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.app.Activity;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.paging.PagedList;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.Contact;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactList;
 import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactsViewModel;
 
 /**
@@ -44,7 +42,7 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
 
         ContactsViewModel model = ViewModelProviders.of(this).get(ContactsViewModel.class);
         model.setFilter("");
-        LiveData<PagedList<Contact>> contactsList = model.getContactsList();
+        ContactList contactsList = model.getContactList();
 
         contactsList.observe(this, contactPagedList ->
         {

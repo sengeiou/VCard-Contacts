@@ -1,39 +1,57 @@
 package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 
 import android.arch.paging.PagedList;
-import android.content.ContentResolver;
+import android.content.Context;
 
 import com.chebyr.vcardrealm.contacts.html.Contact;
-import com.chebyr.vcardrealm.contacts.html.model.ContactsRepository;
+import com.chebyr.vcardrealm.contacts.html.model.ContactRepository;
 
-public class ContactsViewModel extends ViewModel
+public class ContactsViewModel extends AndroidViewModel implements ContactRepository.Callback
 {
-    private ContactsRepository contactsRepository;
+    private static String TAG = ContactsViewModel.class.getSimpleName();
+
+    Context context;
+
+    private ContactRepository contactRepository;
     
     private MutableLiveData<String> modelFilter = new MutableLiveData<>();
-    private LiveData<PagedList<Contact>> contactsList;
+    private ContactList contactList = new ContactList();
 
-    public ContactsViewModel(ContentResolver contentResolver)
+    private ContactRepository.Callback callback;
+
+    public ContactsViewModel(Application application)
     {
-        contactsRepository = new ContactsRepository(contentResolver);
+        super(application);
+        this.context = application;
+
+        contactRepository = new ContactRepository(application, this);
     }
 
     public void setFilter(String filterState)
     {
         modelFilter.postValue(filterState);
 
-        contactsList = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactsRepository.loadContactsList(txFilterState));
+        contactList =  (ContactList) Transformations.switchMap(modelFilter,
+                (String txFilterState) -> contactRepository.loadContactList(txFilterState));
     }
     
-    public LiveData<PagedList<Contact>> getContactsList()
+    public ContactList getContactList()
     {
-        return contactsList;
+        return contactList;
     }
 
+    @Override
+    public void onDataSetChanged() {
+    }
+
+    public Contact lookupNumber(String incomingNumber)
+    {
+        return contactList.lookupNumber(incomingNumber);
+    }
 }

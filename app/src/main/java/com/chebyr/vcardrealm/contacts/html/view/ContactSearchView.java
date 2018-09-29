@@ -12,7 +12,7 @@ import android.support.v7.widget.SearchView;
 
 import java.util.Locale;
 
-public class ContactSearchView implements SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener
+public class ContactSearchView implements SearchView.OnQueryTextListener
 {
     private static String TAG = ContactSearchView.class.getSimpleName();
 
@@ -43,7 +43,7 @@ public class ContactSearchView implements SearchView.OnQueryTextListener, MenuIt
         // Retrieves the SearchView from the search menu item
         //final SearchView searchView = (SearchView) searchItem.getActionView();
 
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         Log.d(TAG, "searchView: " + searchView.toString());
 
@@ -61,7 +61,39 @@ public class ContactSearchView implements SearchView.OnQueryTextListener, MenuIt
         // Set listeners for SearchView
         searchView.setOnQueryTextListener(this);
 
-        MenuItemCompat.setOnActionExpandListener(searchItem, this);
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener()
+        {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item)
+            {
+                // Nothing to do when the action item is expanded
+                Log.d(TAG, "onMenuItemActionExpand: " + item.toString());
+
+                return true;
+            }
+
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item)
+            {
+                Log.d(TAG, "onMenuItemActionCollapse: " + item.toString());
+                // When the user collapses the SearchView the current search string is cleared and the loader restarted.
+                if (!searchTermEmpty)
+                {
+                    callback.onSelectionCleared();
+                }
+                mSearchTerm = null;
+                searchTermEmpty = true;
+
+                // contacts.setSearchTerm(null);
+
+                // Restarts the contact loader the necessary content Uri from mSearchTerm.
+                //stopContactLoader();
+                //startContactLoader();
+                return true;
+            }
+
+        });
 
         if (mSearchTerm != null)
         {
@@ -130,35 +162,6 @@ public class ContactSearchView implements SearchView.OnQueryTextListener, MenuIt
         return true;
     }
 
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item)
-    {
-        // Nothing to do when the action item is expanded
-        Log.d(TAG, "onMenuItemActionExpand: " + item.toString());
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item)
-    {
-        Log.d(TAG, "onMenuItemActionCollapse: " + item.toString());
-        // When the user collapses the SearchView the current search string is cleared and the loader restarted.
-        if (!searchTermEmpty)
-        {
-            callback.onSelectionCleared();
-        }
-        mSearchTerm = null;
-        searchTermEmpty = true;
-
-        // contacts.setSearchTerm(null);
-
-        // Restarts the contact loader the necessary content Uri from mSearchTerm.
-        //stopContactLoader();
-        //startContactLoader();
-        return true;
-    }
 
     @Override
     public boolean onQueryTextSubmit(String queryText)
