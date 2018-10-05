@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.model;
+package com.chebyr.vcardrealm.contacts.html.repository;
 
 import android.content.Context;
 import android.database.Cursor;

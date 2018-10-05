@@ -11,12 +11,11 @@ import android.view.ViewGroup;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.Contact;
 
-import java.util.ArrayList;
-
 public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, RecyclerView.ViewHolder> {
 
-    private static String TAG = "ContactCardsListViewAdapter";
-    private ArrayList<String> contactCardPaths;
+    private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
+
+    private PagedList<Contact> contactPagedList;
 
     private OnItemClickCallBack callBack;
 
@@ -44,18 +43,19 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
     public void setCallback(OnItemClickCallBack callBack)
     {
         this.callBack        = callBack;
-        contactCardPaths = new ArrayList<>();
     }
 
     public void setContactPagedList(PagedList<Contact> contactPagedList)
     {
-
+        this.contactPagedList = contactPagedList;
     }
 
     public void addData(String path)
     {
-        contactCardPaths.add(path);
-        notifyItemInserted(contactCardPaths.size() - 1);
+        Contact contact = new Contact(path);
+        contactPagedList.add(contact);
+
+        notifyItemInserted(contactPagedList.size() - 1);
     }
 
     @Override
@@ -71,13 +71,14 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
         ContactCardsViewHolder viewHolder = (ContactCardsViewHolder) holder;
-        viewHolder.setHtml(contactCardPaths.get(position));
+        Contact contact = contactPagedList.get(position);
+        viewHolder.setContact(contact);
         viewHolder.setWebViewClickListener();
     }
 
     @Override
     public int getItemCount() {
-        return contactCardPaths.size();
+        return contactPagedList.size();
     }
 
     public void onScrollStateChanged(int newState)
@@ -96,18 +97,23 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
 
     public static class ContactCardsViewHolder extends RecyclerView.ViewHolder
     {
-        ContactCardListItemView contactCardListItemView;
+        ContactCardView contactCardView;
 
         public ContactCardsViewHolder(View itemView)
         {
             super(itemView);
 
-            contactCardListItemView = itemView.findViewById(R.id.contact_card);
+            contactCardView = itemView.findViewById(R.id.contact_card);
         }
 
-        public void setHtml(String html)
+        public void setContact(Contact contact)
         {
-            contactCardListItemView.setHtml(html);
+            contactCardView.setContactPhoto(contact.photoStream);
+            contactCardView.setBackgroundPhoto(contact.backgroundPhotoStream);
+            contactCardView.setLogoPhoto(contact.logoPhotoStream);
+
+            String html = contact.getHtml();
+            contactCardView.loadUrl(html);
         }
 
         public void setWebViewClickListener()

@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardDocument;
+import com.chebyr.vcardrealm.contacts.html.repository.VCardDOMParser;
 
 /* VCardView is the View displayed to the user during editing and runtime callerID. It generates VCard display
 based on the format defined in VCardSettings and contact details from the contact ContactAccessor */
@@ -22,10 +22,9 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
     private static final String TAG = "VCardView";
     public static boolean runtimeMode;
 
-    private VCardDocument vCardDocument;
+    private VCardDOMParser vCardDOMParser;
 
     public WindowManager.LayoutParams mLayoutParams;
-
 
     public VCardView(Context context, AttributeSet attr)
     {
@@ -48,10 +47,10 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
         // TYPE_SYSTEM_OVERLAY system overlay windows, which need to be displayed on top of everything else.
     }
 
-    public void setVCardDocument(VCardDocument vCardDocument)
+    public void setVCardDocument(VCardDOMParser vCardDOMParser)
     {
-        Log.d(TAG, "Set new vCardDocument for:"+this);
-        this.vCardDocument = vCardDocument;
+        Log.d(TAG, "Set new vCardDOMParser for:"+this);
+        this.vCardDOMParser = vCardDOMParser;
     }
 
     @Override
@@ -97,14 +96,14 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
         setY(newYPosition);
         setVisibility(View.VISIBLE);
 
-        vCardDocument.setLayoutTopMargin(newYPosition);
+        vCardDOMParser.setLayoutTopMargin(newYPosition);
     }
 
 
 
     public void updateLayout()
     {
-        if(isInEditMode() || !vCardDocument.isVCardAssigned)
+        if(isInEditMode() || !vCardDOMParser.isVCardAssigned)
             return;
 
         // Ideally, VCard would be dynamically inflated at runtime from user selected layout template
@@ -113,11 +112,11 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
         // Till the feature is provided, use template files identical to layout files and parse manually.
 
         mLayoutParams.x = 0;
-        mLayoutParams.y = vCardDocument.getLayoutTopMargin();
+        mLayoutParams.y = vCardDOMParser.getLayoutTopMargin();
         mLayoutParams.gravity = Gravity.TOP;
 
-        int backgroundColor = (int)vCardDocument.getBackgroundColor();
-        int backgroundAlpha = (int)vCardDocument.getBackgroundAlpha(); //0 means fully transparent, and 255 means fully opaque.
+        int backgroundColor = (int) vCardDOMParser.getBackgroundColor();
+        int backgroundAlpha = (int) vCardDOMParser.getBackgroundAlpha(); //0 means fully transparent, and 255 means fully opaque.
 
         ColorDrawable backgroundDrawable = (ColorDrawable)getBackground();
         //backgroundDrawable.setAlpha(backgroundAlpha);
@@ -127,6 +126,6 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
 
         Log.d(TAG, "Layout Top:" + mLayoutParams.y + " backgroundAlpha:" + backgroundAlpha + " backgroundColor:" + backgroundColor);
 
-        vCardDocument.applyFormat();
+        vCardDOMParser.applyFormat();
     }
 }

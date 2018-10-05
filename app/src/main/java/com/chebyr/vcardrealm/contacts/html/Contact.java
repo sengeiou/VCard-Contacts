@@ -6,9 +6,40 @@ import java.io.InputStream;
 
 public class Contact
 {
+    public long contactID;
+    public String lookupKey;
+    public Uri contactUri;
+    public String photoUriString;
+
+    public String incomingNumber;
+    public Uri photoURI;
+    public InputStream photoStream;
+    public String displayName;
+    public String organization;
+    public String jobTitle;
+    public String phoneNumbers;
+    public String IMs;
+    public String eMails;
+    public String nickName;
+    public String groups;
+    public String address;
+    public String website;
+    public String notes;
+
+    public InputStream logoPhotoStream;
+    public InputStream backgroundPhotoStream;
+    public String templateHtml;
+
+    public String path;
+
     public Contact()
     {
 
+    }
+
+    public Contact(String path)
+    {
+        this.path = path;
     }
 
     public Contact(Long id, String lookupKey, String name)
@@ -32,28 +63,8 @@ public class Contact
         return false;
     }
 
-    public long contactID;
-    public String lookupKey;
-    public Uri contactUri;
-    public String photoUriString;
-
-
-    public String incomingNumber;
-    public Uri photoURI;
-    public InputStream photoStream;
-    public String displayName;
-    public String organization;
-    public String jobTitle;
-    public String phoneNumbers;
-    public String IMs;
-    public String eMails;
-    public String nickName;
-    public String groups;
-    public String address;
-    public String website;
-    public String notes;
-
-    public InputStream logoPhotoStream;
-    public InputStream backgroundPhotoStream;
-    public String templateHtml;
+    public String getHtml()
+    {
+        return null;
+    }
 }

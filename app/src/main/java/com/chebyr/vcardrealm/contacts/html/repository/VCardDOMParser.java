@@ -1,6 +1,6 @@
-package com.chebyr.vcardrealm.contacts.html.viewmodel;
+package com.chebyr.vcardrealm.contacts.html.repository;
 
-/* VCardDocument is the in memory XML representation of the format of the VCard used for VCardView.
+/* VCardDOMParser is the in memory XML representation of the format of the VCard used for VCardView.
 Also handles the  file read / write operations to internal / external storage media / assets directory as well as bundle*/
 
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.chebyr.vcardrealm.contacts.html.Contact;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardFieldFormat;
 
 import java.io.InputStream;
 
@@ -16,9 +17,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class VCardDocument
+public class VCardDOMParser
 {
-    private static final String TAG = "VCardDocument";
+    private static final String TAG = VCardDOMParser.class.getSimpleName();
+
+    private Context context;
 
     private static String photoID = "contact_photo";
     private static String incomingNumberID = "incoming_number";
@@ -34,6 +37,8 @@ public class VCardDocument
     private static String webSiteID = "website";
     private static String notesID = "notes";
 
+    private Document document;
+    private Element documentElement;
     private Element photoView;
     private Element incomingNumberView;
     private Element displayNameView;
@@ -48,13 +53,9 @@ public class VCardDocument
     private Element webSiteView;
     private Element notesView;
 
-    Context context;
-    Document document;
-    Element documentElement;
-
     public boolean isVCardAssigned = false;
 
-    public VCardDocument(Context context)
+    public VCardDOMParser(Context context)
     {
     }
 
@@ -63,6 +64,20 @@ public class VCardDocument
         try
         {
             document = Jsoup.parse(inputStream, "UTF-8", "");
+
+            photoView = document.getElementById(photoID);
+            incomingNumberView = document.getElementById(incomingNumberID);
+            displayNameView = document.getElementById(displayNameID);
+            nickNameView = document.getElementById(nickNameID);
+            jobTitleView = document.getElementById(jobTitleID);
+            organizationView = document.getElementById(organizationID);
+            addressView = document.getElementById(addressID);
+            groupView = document.getElementById(groupID);
+            phoneNumbersView = document.getElementById(phoneNumbersID);
+            eMailsView = document.getElementById(eMailsID);
+            IMsView = document.getElementById(IMsID);
+            webSiteView = document.getElementById(webSiteID);
+            notesView = document.getElementById(notesID);
 
             isVCardAssigned = true;
 //            Log.d(TAG, "Loaded new document. documentElement.name: " + documentElement.getTagName());
@@ -101,7 +116,7 @@ public class VCardDocument
 //            Log.d(TAG, "documentElement:" + documentElement);
 //            Log.d(TAG, "get format for ID:" + ID);
 
-        Element element = getElementByID(ID);
+        Element element = document.getElementById(ID);
 
 //            Log.d(TAG, "Element:" + element);
 
@@ -121,7 +136,7 @@ public class VCardDocument
 
     public boolean updateFieldAttribute(String ID, VCardAttributeType vCardAttribute, Number value)
     {
-        Element element = getElementByID(ID);
+        Element element = document.getElementById(ID);
         if(element == null)
         {
 //            Log.d(TAG, "Field:" + ID +" not found in XML document");
@@ -184,11 +199,6 @@ public class VCardDocument
             }
         }
         return true;
-    }
-
-    private Element getElementByID(String ID)
-    {
-        return document.getElementById(ID);
     }
 
     public long getBackgroundColor()
@@ -404,15 +414,18 @@ public class VCardDocument
         {
             // TODO: photoView.setImageBitmap(contact.photo);
             //photoView.setVisibility(VISIBLE);
+            photoView.attr("visibility", "hidden");
         }
         else if(contact.photoURI != null)
         {
             photoView.attr("src", contact.photoURI.getPath());
             //photoView.setVisibility(VISIBLE);
+            photoView.attr("display", "block");
         }
         else
         {
             //photoView.setVisibility(INVISIBLE);
+            photoView.attr("visibility", "hidden");
         }
 
         setContactField(incomingNumberView, contact.incomingNumber);
@@ -429,15 +442,15 @@ public class VCardDocument
         setContactField(notesView, contact.notes);
     }
 
-    public void setContactField(Element contactField, String value)
+    public void setContactField(Element element, String value)
     {
         if(value != null)
         {
-            contactField.text(value);
+            element.text(value);
         }
         else
         {
-            contactField.text("");
+            element.text("");
         }
     }
 

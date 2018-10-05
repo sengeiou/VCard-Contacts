@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactList;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactsViewModel;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -40,7 +40,7 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
         mContactCardsListView = rootView.findViewById(R.id.contact_cards_view);
         mContactCardsListView.initialize(activity);
 
-        ContactsViewModel model = ViewModelProviders.of(this).get(ContactsViewModel.class);
+        ContactViewModel model = ViewModelProviders.of(this).get(ContactViewModel.class);
         model.setFilter("");
         ContactList contactsList = model.getContactList();
 

@@ -10,7 +10,7 @@ public class VCardEditor extends Fragment //implements SeekBar.OnSeekBarChangeLi
     public static final String TAG = "VCardEditor";
 /*
     StudioActivity mActivity;
-    VCardDocument vCardDocument;
+    VCardDOMParser vCardDocument;
 
     SeekBar bgTransparency;
     RecyclerView fieldListView;

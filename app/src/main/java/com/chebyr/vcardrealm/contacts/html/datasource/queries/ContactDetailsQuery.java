@@ -1,9 +1,9 @@
-package com.chebyr.vcardrealm.contacts.html.model.queries;
+package com.chebyr.vcardrealm.contacts.html.datasource.queries;
 
 import android.net.Uri;
 import android.provider.ContactsContract;
 
-public interface ContactDataQuery
+public interface ContactDetailsQuery
 {
     int QUERY_ID = 2;
 
