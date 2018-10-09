@@ -11,16 +11,22 @@ import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 
-public class ContactList extends MediatorLiveData<PagedList<Contact>>
+import java.util.ArrayList;
+import java.util.List;
+
+public class ContactList extends MediatorLiveData<List<Contact>>
 {
     private static String TAG = ContactList.class.getSimpleName();
+    private static int pageSize = 10;
 
     public ContactList()
     {
-        // Use to filter
-        //Stream<Contact> contactStream;
-        //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
+        setValue(new ContactArrayList());
     }
+    
+    // Use to filter
+    //Stream<Contact> contactStream;
+    //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
 
     public void mergeContactData(LiveData<PagedList<ContactData>> contactLiveData, LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData, LiveData<PagedList<GroupData>> groupLiveData)
     {
@@ -28,15 +34,20 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
 
         addSource(contactLiveData, contactDataList ->
         {
+            Log.d(TAG, "contactDataList - No of contacts: " + contactDataList.size());
             for(ContactData contactData: contactDataList)
             {
-                PagedList<Contact> contactPagedList = getValue();
+                Log.d(TAG, "contactData: " + contactData.displayName);
+
+                List<Contact> contactPagedList = getValue();
+                Log.d(TAG, "contactPagedList: " + contactPagedList);
+
                 Contact contact = contactPagedList.get((int)contactData.contactID);
                 if(contact == null)
                 {
                     Contact newContact = new Contact();
                     newContact.data = contactData;
-                    contactPagedList.add((int)contactData.contactID, newContact);
+                    contactPagedList.add(newContact);
                 }
                 else
                 {
@@ -49,13 +60,13 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
         {
             for(ContactDetailsData contactDetailsData: contactDetailsDataList)
             {
-                PagedList<Contact> contactPagedList = getValue();
+                List<Contact> contactPagedList = getValue();
                 Contact contact = contactPagedList.get((int)contactDetailsData.contactID);
                 if(contact == null)
                 {
                     Contact newContact = new Contact();
                     newContact.details = contactDetailsData;
-                    contactPagedList.add((int)contactDetailsData.contactID, newContact);
+                    contactPagedList.add(newContact);
                 }
                 else
                 {
@@ -68,13 +79,13 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
         {
             for(GroupData groupData: groupDataList)
             {
-                PagedList<Contact> contactPagedList = getValue();
+                List<Contact> contactPagedList = getValue();
                 Contact contact = contactPagedList.get((int)groupData.contactID);
                 if(contact == null)
                 {
                     Contact newContact = new Contact();
                     newContact.groupData = groupData;
-                    contactPagedList.add((int)groupData.contactID, newContact);
+                    contactPagedList.add(newContact);
                 }
                 else
                 {
@@ -109,5 +120,19 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
     public Contact lookupNumber(String incomingNumber)
     {
         return null;
+    }
+
+    private class ContactArrayList extends ArrayList<Contact>
+    {
+        @Override
+        public Contact get(int index)
+        {
+            for(Contact contact: this)
+            {
+                if(contact.data.contactID == index)
+                    return contact;
+            }
+            return null;
+        }
     }
 }

@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.Contact;
 
+import java.util.List;
+
 public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, RecyclerView.ViewHolder> {
 
     private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
 
-    private PagedList<Contact> contactPagedList;
+    private List<Contact> contactPagedList;
 
     private OnItemClickCallBack callBack;
 
@@ -45,7 +47,7 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
         this.callBack        = callBack;
     }
 
-    public void setContactPagedList(PagedList<Contact> contactPagedList)
+    public void setContactPagedList(List<Contact> contactPagedList)
     {
         this.contactPagedList = contactPagedList;
     }

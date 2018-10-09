@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/androidframeworkex/androidframeworkex.iml" filepath="$PROJECT_DIR$/androidframeworkex/androidframeworkex.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidvcard/androidvcard.iml" filepath="$PROJECT_DIR$/androidvcard/androidvcard.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/contacts/contacts.iml" filepath="$PROJECT_DIR$/contacts/contacts.iml" />
       <module fileurl="file://$PROJECT_DIR$/contactscommon/contactscommon.iml" filepath="$PROJECT_DIR$/contactscommon/contactscommon.iml" />
       <module fileurl="file://$PROJECT_DIR$/phonecommon/phonecommon.iml" filepath="$PROJECT_DIR$/phonecommon/phonecommon.iml" />
     </modules>

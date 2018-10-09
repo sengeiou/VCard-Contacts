@@ -78,19 +78,19 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
     {
         for (contactCursor.moveToFirst(); !contactCursor.isAfterLast();contactCursor.moveToNext())
         {
-            ContactData contact = getContactData();
+            ContactData contact = getContactData(contactCursor);
 
         }
     }
 
-    public ContactData getContactData()
+    public ContactData getContactData(Cursor cursor)
     {
         ContactData contactData = new ContactData();
-        contactData.contactID = contactCursor.getLong(ContactQuery.ID);
-        contactData.lookupKey = contactCursor.getString(ContactQuery.LOOKUP_KEY);
+        contactData.contactID = cursor.getLong(ContactQuery.ID);
+        contactData.lookupKey = cursor.getString(ContactQuery.LOOKUP_KEY);
         contactData.contactUri = ContactsContract.Contacts.getLookupUri(contactData.contactID, contactData.lookupKey);
-        contactData.displayName = contactCursor.getString(ContactQuery.DISPLAY_NAME);
-        contactData.photoUriString = contactCursor.getString(ContactQuery.PHOTO_THUMBNAIL);
+        contactData.displayName = cursor.getString(ContactQuery.DISPLAY_NAME);
+        contactData.photoUriString = cursor.getString(ContactQuery.PHOTO_THUMBNAIL);
         if(contactData.photoUriString == null)
             contactData.photoUriString = "";
 
@@ -98,14 +98,14 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
     }
 
     private List<ContactData> getContacts(int limit, int offset) {
-        String[] PROJECTION = {
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.LOOKUP_KEY,
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
+//        String[] PROJECTION = {
+//                ContactsContract.Contacts._ID,
+//                ContactsContract.Contacts.LOOKUP_KEY,
+//                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY};
 
         // Get the cursor
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                PROJECTION,
+                ContactQuery.PROJECTION,
                 null,
                 null,
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY +
@@ -117,11 +117,12 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         List<ContactData> contacts = new ArrayList<>();
 
         while (!cursor.isLast()) {
-            Long id = cursor.getLong(cursor.getColumnIndex(PROJECTION[0]));
-            String lookupKey = cursor.getString(cursor.getColumnIndex(PROJECTION[0]));
-            String name = cursor.getString(cursor.getColumnIndex(PROJECTION[2]));
+            //Long id = cursor.getLong(cursor.getColumnIndex(PROJECTION[0]));
+            //String lookupKey = cursor.getString(cursor.getColumnIndex(PROJECTION[0]));
+            //String name = cursor.getString(cursor.getColumnIndex(PROJECTION[2]));
 
-            contacts.add(new ContactData(id, lookupKey, name));
+            ContactData contactData = getContactData(cursor);
+            contacts.add(contactData);//new ContactData(id, lookupKey, name));
             cursor.moveToNext();
         }
         cursor.close();

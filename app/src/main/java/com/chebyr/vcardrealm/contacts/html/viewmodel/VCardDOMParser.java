@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.repository;
+package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
 /* VCardDOMParser is the in memory XML representation of the format of the VCard used for VCardView.
 Also handles the  file read / write operations to internal / external storage media / assets directory as well as bundle*/
@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.chebyr.vcardrealm.contacts.html.Contact;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardFieldFormat;
 
 import java.io.InputStream;
 

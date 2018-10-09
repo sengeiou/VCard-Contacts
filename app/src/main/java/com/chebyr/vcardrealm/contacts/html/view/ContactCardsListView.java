@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 
 import com.chebyr.vcardrealm.contacts.html.Contact;
 
+import java.util.List;
+
 public class ContactCardsListView extends RecyclerView implements ContactCardsListViewAdapter.OnItemClickCallBack
 {
     private ContactCardsListViewAdapter mContactCardsListViewAdapter;
@@ -47,7 +49,7 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
         });
     }
 
-    public void setContactPagedList(PagedList<Contact> contactPagedList)
+    public void setContactPagedList(List<Contact> contactPagedList)
     {
         mContactCardsListViewAdapter.setContactPagedList(contactPagedList);
     }

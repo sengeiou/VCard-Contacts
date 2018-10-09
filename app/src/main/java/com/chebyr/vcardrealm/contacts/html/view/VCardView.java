@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.chebyr.vcardrealm.contacts.html.repository.VCardDOMParser;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardDOMParser;
 
 /* VCardView is the View displayed to the user during editing and runtime callerID. It generates VCard display
 based on the format defined in VCardSettings and contact details from the contact ContactAccessor */
