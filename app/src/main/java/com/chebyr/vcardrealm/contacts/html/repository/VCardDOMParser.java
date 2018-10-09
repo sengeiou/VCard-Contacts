@@ -428,18 +428,18 @@ public class VCardDOMParser
             photoView.attr("visibility", "hidden");
         }
 
-        setContactField(incomingNumberView, contact.incomingNumber);
-        setContactField(displayNameView, contact.displayName);
-        setContactField(nickNameView, contact.nickName);
-        setContactField(jobTitleView, contact.jobTitle);
-        setContactField(organizationView, contact.organization);
-        setContactField(addressView, contact.address);
-        setContactField(groupView, contact.groups);
-        setContactField(phoneNumbersView, contact.phoneNumbers);
-        setContactField(eMailsView, contact.eMails);
-        setContactField(IMsView, contact.IMs);
-        setContactField(webSiteView, contact.website);
-        setContactField(notesView, contact.notes);
+        setContactField(incomingNumberView, contact.data.incomingNumber);
+        setContactField(displayNameView, contact.data.displayName);
+        setContactField(nickNameView, contact.details.nickName);
+        setContactField(jobTitleView, contact.details.jobTitle);
+        setContactField(organizationView, contact.details.organization);
+        setContactField(addressView, contact.details.address);
+        setContactField(groupView, contact.groupData.groupTitle);
+        setContactField(phoneNumbersView, contact.details.phoneNumbers);
+        setContactField(eMailsView, contact.details.eMails);
+        setContactField(IMsView, contact.details.IMs);
+        setContactField(webSiteView, contact.details.website);
+        setContactField(notesView, contact.details.notes);
     }
 
     public void setContactField(Element element, String value)

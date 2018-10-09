@@ -5,6 +5,7 @@ import android.arch.paging.LivePagedListBuilder;
 
 import android.arch.paging.PagedList;
 import android.content.Context;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactDataSource;
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactDetailsDataSource;
@@ -24,6 +25,7 @@ public class ContactRepository
     private ContactDataSource.Factory contactsDataSourceFactory;
     private ContactDetailsDataSource.Factory contactDetailsDataSourceFactory;
     private GroupDataSource.Factory groupsDataSourceFactory;
+    public ContactsObserver.Callback callback;
 
     private PagedList.Config config;
 
@@ -37,6 +39,10 @@ public class ContactRepository
         contactsDataSourceFactory = new ContactDataSource.Factory(context, this);
         contactDetailsDataSourceFactory = new ContactDetailsDataSource.Factory(context, this);
         groupsDataSourceFactory = new GroupDataSource.Factory(context, this);
+
+        Log.d(TAG, contactDetailsDataSourceFactory.toString());
+        Log.d(TAG, contactDetailsDataSourceFactory.toString());
+        Log.d(TAG, groupsDataSourceFactory.toString());
     }
 
     public LiveData<PagedList<ContactData>> loadContactList(String filterState)

@@ -54,7 +54,7 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
 
     public void addData(String path)
     {
-        mContactCardsListViewAdapter.addData(path);
+        //mContactCardsListViewAdapter.addData(path);
     }
 
     @Override
@@ -65,6 +65,6 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
 
     public interface OnItemClickCallBack
     {
-        public void onSelectionCleared(int type, String extra);
+        void onSelectionCleared(int type, String extra);
     }
 }

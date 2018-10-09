@@ -77,8 +77,11 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
     }
 
     @Override
-    public int getItemCount() {
-        return contactPagedList.size();
+    public int getItemCount()
+    {
+        if (contactPagedList!= null)
+            return contactPagedList.size();
+        return 0;
     }
 
     public void onScrollStateChanged(int newState)

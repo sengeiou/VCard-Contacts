@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.GroupsQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
@@ -32,10 +31,9 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
 
     }
 
-    public String getGroups(Cursor contactDataCursor)
+    public GroupData getGroups(String groupRowID)
     {
-        String groupTitle = null;
-        String groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
+        GroupData groupData = new GroupData();
 
         // Get Titles from Groups table using groupIDs from groupRowID
         if(groupRowID != null)
@@ -43,19 +41,18 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
             String[] whereParameters = new String[] {groupRowID};
 
             Cursor groupCursor = contentResolver.query(GroupsQuery.URI, GroupsQuery.PROJECTION, GroupsQuery.SELECTION, whereParameters, null);
-            if(groupCursor == null)
-                return "";
 
-            if(groupCursor.moveToFirst())
+            if(groupCursor == null)
+                return groupData;
+
+            for(groupCursor.moveToFirst(); !groupCursor.isAfterLast(); groupCursor.moveToNext())
             {
-                groupTitle = groupCursor.getString(groupCursor.getColumnIndex(GroupsQuery.TITLE));
+                String group = groupCursor.getString(groupCursor.getColumnIndex(GroupsQuery.TITLE));
+                groupData.addGroup(group);
             }
             groupCursor.close();
-
-            if(groupTitle != null)
-                return groupTitle;
         }
-        return "";
+        return groupData;
     }
 
     public static class Factory extends DataSource.Factory<Integer, GroupData>

@@ -2,32 +2,25 @@ package com.chebyr.vcardrealm.contacts.html;
 
 import android.net.Uri;
 
+import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
+import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
+import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
+
 import java.io.InputStream;
 
 public class Contact
 {
-    public long contactID;
-    public String lookupKey;
+    public ContactData data;
+    public ContactDetailsData details;
+    public GroupData groupData;
+
     public Uri contactUri;
-    public String photoUriString;
-
-    public String incomingNumber;
     public Uri photoURI;
-    public InputStream photoStream;
-    public String displayName;
-    public String organization;
-    public String jobTitle;
-    public String phoneNumbers;
-    public String IMs;
-    public String eMails;
-    public String nickName;
-    public String groups;
-    public String address;
-    public String website;
-    public String notes;
 
+    public InputStream photoStream;
     public InputStream logoPhotoStream;
     public InputStream backgroundPhotoStream;
+
     public String templateHtml;
 
     public String path;
@@ -42,15 +35,26 @@ public class Contact
         this.path = path;
     }
 
-    public Contact(Long id, String lookupKey, String name)
-    {
-
-    }
-
     public long getId()
     {
-        return contactID;
+        return data.contactID;
     }
+
+    public void addContactData(ContactData contactData)
+    {
+        this.data = contactData;
+    }
+
+    public void addContactDetailsData(ContactDetailsData contactDetails)
+    {
+        this.details = contactDetails;
+    }
+
+    public void addGroupData(GroupData groupData)
+    {
+        this.groupData = groupData;
+    }
+
 
     @Override
     public boolean equals(Object object)
@@ -58,7 +62,7 @@ public class Contact
         if(object.getClass() == Contact.class)
         {
             Contact newContact = (Contact)object;
-            return contactID == newContact.contactID;
+            return data.contactID == newContact.data.contactID;
         }
         return false;
     }

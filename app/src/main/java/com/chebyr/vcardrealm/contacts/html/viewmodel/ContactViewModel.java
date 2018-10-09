@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.paging.PagedList;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.Contact;
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
@@ -39,12 +40,15 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     {
         modelFilter.postValue(filterState);
 
+        Log.d(TAG, "Set filter for ContactList loader");
         contactLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactList(txFilterState));
 
+        Log.d(TAG, "Set filter for ContactDetails loader");
         contactDetailsLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactDetailsList(txFilterState));
 
+        Log.d(TAG, "Set filter for Groups loader");
         groupLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadGroupsList(txFilterState));
 

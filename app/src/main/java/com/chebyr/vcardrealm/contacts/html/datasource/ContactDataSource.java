@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactsSectionIndexer;
@@ -33,11 +32,16 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
     private ContactsSectionIndexer contactsSectionIndexer;
     private DataSetObserver mDataSetObserver;
     private int mRowIdColumn;
+    private ContactsObserver.Callback callback;
+
+    private boolean mDataValid;
 
     public ContactDataSource(Context context, ContactRepository contactRepository)
     {
         this.context = context;
         contentResolver = context.getContentResolver();
+
+        callback = contactRepository.callback;
 
         // If there's a previously selected search item from a saved state then don't bother
         // initializing the loader as it will be restarted later when the query is populated into
@@ -48,19 +52,25 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
             startContactLoader("");
         }
         contactsSectionIndexer = new ContactsSectionIndexer(context, ContactQuery.SORT_KEY);
+        contactDetailsDataSource = new ContactDetailsDataSource(context, contactRepository);
+
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback callback)
     {
+        Log.d(TAG, "loadInitial. Read contacts. requestedLoadSize: " + params.requestedLoadSize + "requestedStartPosition :" + params.requestedStartPosition);
         List<ContactData> contacts = getContacts(params.requestedLoadSize, params.requestedStartPosition);
+        Log.d(TAG, "No of contacts read: " + contacts.size());
         callback.onResult(contacts, 0);
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback callback)
     {
+        Log.d(TAG, "loadRange. Read contacts. loadSize: " + params.loadSize+ "startPosition :" + params.startPosition);
         List<ContactData> contacts = getContacts(params.loadSize, params.startPosition);
+        Log.d(TAG, "No of contacts read: " + contacts.size());
         callback.onResult(contacts);
     }
 
@@ -75,33 +85,16 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
 
     public ContactData getContactData()
     {
-        ContactData contact = new ContactData();
-        contact.contactID = contactCursor.getLong(ContactQuery.ID);
-        contact.lookupKey = contactCursor.getString(ContactQuery.LOOKUP_KEY);
-        contact.contactUri = ContactsContract.Contacts.getLookupUri(contact.contactID, contact.lookupKey);
-        contact.displayName = contactCursor.getString(ContactQuery.DISPLAY_NAME);
-        contact.photoUriString = contactCursor.getString(ContactQuery.PHOTO_THUMBNAIL);
-        if(contact.photoUriString == null)
-            contact.photoUriString = "";
+        ContactData contactData = new ContactData();
+        contactData.contactID = contactCursor.getLong(ContactQuery.ID);
+        contactData.lookupKey = contactCursor.getString(ContactQuery.LOOKUP_KEY);
+        contactData.contactUri = ContactsContract.Contacts.getLookupUri(contactData.contactID, contactData.lookupKey);
+        contactData.displayName = contactCursor.getString(ContactQuery.DISPLAY_NAME);
+        contactData.photoUriString = contactCursor.getString(ContactQuery.PHOTO_THUMBNAIL);
+        if(contactData.photoUriString == null)
+            contactData.photoUriString = "";
 
-        contactDetailsDataSource = new ContactDetailsDataSource(context);
-
-        ContactDetailsData contactInfo = contactDetailsDataSource.getContactInfo(contact.contactID);
-
-        contact.organization = contactInfo.organization;
-        contact.jobTitle = contactInfo.jobTitle;
-        contact.nickName = contactInfo.nickName;
-        contact.website = contactInfo.website;
-        contact.address = contactInfo.address;
-        contact.phoneNumbers = contactInfo.phoneNumbers;
-        contact.IMs = contactInfo.IMs;
-        contact.notes = contactInfo.notes;
-        contact.eMails = contactInfo.eMails;
-        contact.groups = contactInfo.groups;
-
-        contact.incomingNumber = String.valueOf(contact.contactID);
-
-        return contact;
+        return contactData;
     }
 
     private List<ContactData> getContacts(int limit, int offset) {
@@ -157,7 +150,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         }
 
         mRowIdColumn = -1;
-        mDataSetObserver = new ContactsObserver(this);
+        mDataSetObserver = new ContactsObserver(callback);
         if (contactCursor != null)
         {
             contactCursor.registerDataSetObserver(mDataSetObserver);
@@ -168,17 +161,17 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
     {
         Log.d(TAG, "Lookup incomingNumber: " + incomingNumber);
 
-        ContactData contact = new ContactData();
+        ContactData contactData = new ContactData();
 
-        contact.incomingNumber = incomingNumber;
+        contactData.incomingNumber = incomingNumber;
 
-        contact.contactID = getContactProfile(incomingNumber, contact);
-        if(contact.contactID == 0)
+        contactData.contactID = getContactProfile(incomingNumber, contactData);
+        if(contactData.contactID == 0)
             return null;
 
         Log.d(TAG, "Contact found. Retrieving additional information");
 
-        String contractIDStr = String.valueOf(contact.contactID);
+        String contractIDStr = String.valueOf(contactData.contactID);
 /*
         getCompany(contractIDStr, contact);
 
@@ -192,7 +185,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         contact.website = getWebsite(contractIDStr);
         contact.notes = getNotes(contractIDStr);
 */
-        return contact;
+        return contactData;
     }
 
 
@@ -256,7 +249,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
 
     /* Overrides swapCursor to move the new Cursor into the AlphabetIndex as well as the CursorAdapter.
      Swap in a new Cursor, returning the old Cursor.  Unlike {@link #changeCursor(Cursor)}, the returned old Cursor is <em>not</em> closed. */
-    public Cursor swapCursor(Cursor newContactCursor)
+/*    public Cursor swapCursor(Cursor newContactCursor)
     {
         if(newContactCursor == contactCursor)
         {
@@ -299,7 +292,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
             callback.onDataSetChanged();
 
         return oldCursor;
-    }
+    }*/
 
     public long getItemId(int position)
     {
@@ -329,6 +322,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         @Override
         public DataSource<Integer, ContactData> create()
         {
+            Log.d(TAG, "Create Contact Data source");
             return new ContactDataSource(context, contactRepository);
         }
     }

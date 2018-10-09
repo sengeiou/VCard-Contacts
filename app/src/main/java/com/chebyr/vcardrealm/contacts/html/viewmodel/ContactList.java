@@ -15,21 +15,72 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
 {
     private static String TAG = ContactList.class.getSimpleName();
 
+    public ContactList()
+    {
+        // Use to filter
+        //Stream<Contact> contactStream;
+        //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
+    }
+
     public void mergeContactData(LiveData<PagedList<ContactData>> contactLiveData, LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData, LiveData<PagedList<GroupData>> groupLiveData)
     {
-        addSource(contactLiveData, contactData ->
+        Log.d(TAG, "Merge contact data");
+
+        addSource(contactLiveData, contactDataList ->
         {
-            int a = contactData;
+            for(ContactData contactData: contactDataList)
+            {
+                PagedList<Contact> contactPagedList = getValue();
+                Contact contact = contactPagedList.get((int)contactData.contactID);
+                if(contact == null)
+                {
+                    Contact newContact = new Contact();
+                    newContact.data = contactData;
+                    contactPagedList.add((int)contactData.contactID, newContact);
+                }
+                else
+                {
+                    contact.data = contactData;
+                }
+            }
         });
 
-        addSource(contactDetailsLiveData, contactDetailsData ->
+        addSource(contactDetailsLiveData, contactDetailsDataList ->
         {
-
+            for(ContactDetailsData contactDetailsData: contactDetailsDataList)
+            {
+                PagedList<Contact> contactPagedList = getValue();
+                Contact contact = contactPagedList.get((int)contactDetailsData.contactID);
+                if(contact == null)
+                {
+                    Contact newContact = new Contact();
+                    newContact.details = contactDetailsData;
+                    contactPagedList.add((int)contactDetailsData.contactID, newContact);
+                }
+                else
+                {
+                    contact.details = contactDetailsData;
+                }
+            }
         });
 
-        addSource(groupLiveData, groupData ->
+        addSource(groupLiveData, groupDataList ->
         {
-
+            for(GroupData groupData: groupDataList)
+            {
+                PagedList<Contact> contactPagedList = getValue();
+                Contact contact = contactPagedList.get((int)groupData.contactID);
+                if(contact == null)
+                {
+                    Contact newContact = new Contact();
+                    newContact.groupData = groupData;
+                    contactPagedList.add((int)groupData.contactID, newContact);
+                }
+                else
+                {
+                    contact.groupData = groupData;
+                }
+            }
         });
     }
 

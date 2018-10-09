@@ -7,8 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.chebyr.vcardrealm.contacts.html.Contact;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
+import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
@@ -35,11 +35,11 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
 
     }
 
-    public Contact getContactInfo(long contactID)
+    public ContactDetailsData getContactInfo(long contactID)
     {
-        Contact contact = new Contact();
+        ContactDetailsData contactDetails = new ContactDetailsData();
 
-        Cursor contactDataCursor = getContactData(contact.contactID);
+        Cursor contactDataCursor = getContactData(contactID);
         String mimeType;
         String separator = ", ";
 
@@ -51,33 +51,33 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
             {
                 case ContactDetailsQuery.ORGANIZATION_MIME:
                 {
-                    contact.organization = getCompany(contactDataCursor);
-                    contact.jobTitle = getJobTitle(contactDataCursor);
+                    contactDetails.organization = getCompany(contactDataCursor);
+                    contactDetails.jobTitle = getJobTitle(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.NICK_NAME_MIME:
                 {
-                    contact.nickName = getNickName(contactDataCursor);
+                    contactDetails.nickName = getNickName(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.WEBSITE_MIME:
                 {
-                    contact.website = getWebsite(contactDataCursor);
+                    contactDetails.website = getWebsite(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.ADDRESS_MIME:
                 {
-                    contact.address = getAddress(contactDataCursor);
+                    contactDetails.address = getAddress(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.PHONE_MIME:
                 {
                     String phone = getPhoneNumber(contactDataCursor);
 
-                    if ((contact.phoneNumbers.length() > 0) && (phone.length() > 0))
-                        contact.phoneNumbers += separator + phone;
+                    if ((contactDetails.phoneNumbers.length() > 0) && (phone.length() > 0))
+                        contactDetails.phoneNumbers += separator + phone;
                     else
-                        contact.phoneNumbers = phone;
+                        contactDetails.phoneNumbers = phone;
 
                     break;
                 }
@@ -85,44 +85,41 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
                 {
                     String instantMessenger = getIM(contactDataCursor);
 
-                    if ((contact.IMs.length() > 0) && (instantMessenger.length() > 0))
-                        contact.IMs += separator + instantMessenger;
+                    if ((contactDetails.IMs.length() > 0) && (instantMessenger.length() > 0))
+                        contactDetails.IMs += separator + instantMessenger;
                     else
-                        contact.IMs = instantMessenger;
+                        contactDetails.IMs = instantMessenger;
 
                     break;
                 }
                 case ContactDetailsQuery.NOTE_MIME:
                 {
-                    contact.notes = getNotes(contactDataCursor);
+                    contactDetails.notes = getNotes(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.EMAIL_MIME:
                 {
                     String email = getEmailAddresses(contactDataCursor);
 
-                    if ((contact.eMails.length() > 0) && (email.length() > 0))
-                        contact.eMails += separator + email;
+                    if ((contactDetails.eMails.length() > 0) && (email.length() > 0))
+                        contactDetails.eMails += separator + email;
                     else
-                        contact.eMails = email;
+                        contactDetails.eMails = email;
 
                     break;
                 }
                 case ContactDetailsQuery.GROUP_MIME:
                 {
-                    String group = groupDataSource.getGroups(contactDataCursor);
-                    if ((contact.groups.length() > 0) && (group.length() > 0))
-                        contact.groups += separator + group;
-                    else
-                        contact.groups = group;
+                    contactDetails.groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
 
+                    GroupData groupData = groupDataSource.getGroups(contactDetails.groupRowID);
                     break;
                 }
             }
         }
         contactDataCursor.close();
 
-        return contact;
+        return contactDetails;
     }
 
     public Cursor getContactData(long contactID)
