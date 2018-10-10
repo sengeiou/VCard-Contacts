@@ -5,13 +5,11 @@ import android.arch.paging.PositionalDataSource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +17,10 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 {
     private static String TAG = TemplateDataSource.class.getSimpleName();
 
+    private static String assetsPath = "file:///android_asset/";
+
     private ContentResolver contentResolver;
     private FileUtil fileUtil;
-
-    private String assetPath = "file:///android_asset/business_card.html";
 
     public TemplateDataSource(Context context, ContactRepository contactRepository)
     {
@@ -44,12 +42,18 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 
     public List<TemplateData> loadAssets(int noOfAssets, int startPosition)
     {
+        String templatePath = assetsPath + "business_card.html";
+        String logoPhotoPath = assetsPath + "logo.png";
+        String backgroundPhotoPath = assetsPath + "background.png";
+
         List<TemplateData> templateDataList = new ArrayList<>();
         for(int assetCount = startPosition; assetCount < startPosition + noOfAssets; assetCount++)
         {
             TemplateData templateData = new TemplateData();
 
-            templateData.inputStream = fileUtil.openVCardAsset(assetPath);
+            templateData.htmlStream = fileUtil.openVCardAsset(templatePath);
+            templateData.logoPhotoStream = fileUtil.openVCardAsset(logoPhotoPath);
+            templateData.backgroundPhotoStream = fileUtil.openVCardAsset(backgroundPhotoPath);
         }
         return templateDataList;
     }

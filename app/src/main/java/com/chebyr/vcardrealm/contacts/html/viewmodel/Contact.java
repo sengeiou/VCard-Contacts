@@ -13,28 +13,14 @@ public class Contact
 {
     public ContactData data;
     public ContactDetailsData details;
-    public GroupData groupData;
-    public TemplateData templateData;
-
-    public Uri contactUri;
-    public Uri photoURI;
-
-    public InputStream photoStream;
-    public InputStream logoPhotoStream;
-    public InputStream backgroundPhotoStream;
+    public GroupData groups;
+    public TemplateData template;
 
     public String templateHtml;
-
-    public String path;
 
     public Contact()
     {
 
-    }
-
-    public void setPath(String path)
-    {
-        this.path = path;
     }
 
     public long getId()
@@ -54,7 +40,7 @@ public class Contact
 
     public void addGroupData(GroupData groupData)
     {
-        this.groupData = groupData;
+        this.groups = groupData;
     }
 
 

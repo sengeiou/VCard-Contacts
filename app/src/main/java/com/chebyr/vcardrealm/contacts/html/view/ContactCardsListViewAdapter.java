@@ -104,9 +104,9 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
 
         public void setContact(Contact contact)
         {
-            contactCardView.setContactPhoto(contact.photoStream);
-            contactCardView.setBackgroundPhoto(contact.backgroundPhotoStream);
-            contactCardView.setLogoPhoto(contact.logoPhotoStream);
+            contactCardView.setContactPhoto(contact.data.photoStream);
+            contactCardView.setBackgroundPhoto(contact.template.backgroundPhotoStream);
+            contactCardView.setLogoPhoto(contact.template.logoPhotoStream);
 
             String html = contact.getHtml();
             contactCardView.loadUrl(html);

@@ -6,5 +6,7 @@ public class TemplateData
 {
     public long contactID;
 
-    public InputStream inputStream;
+    public InputStream htmlStream;
+    public InputStream logoPhotoStream;
+    public InputStream backgroundPhotoStream;
 }

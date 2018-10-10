@@ -45,7 +45,7 @@ public class ContactList extends MediatorLiveData<List<Contact>>
         addSource(templateLiveData, templateDataList -> addTemplates(templateDataList));
     }
 
-    public void addContactData(PagedList<ContactData> contactDataList)
+    private void addContactData(PagedList<ContactData> contactDataList)
     {
         Log.d(TAG, "contactDataList - No of contacts: " + contactDataList.size());
         for(ContactData contactData: contactDataList)
@@ -69,7 +69,7 @@ public class ContactList extends MediatorLiveData<List<Contact>>
         }
     }
 
-    public void addContactDetails(PagedList<ContactDetailsData> contactDetailsDataList)
+    private void addContactDetails(PagedList<ContactDetailsData> contactDetailsDataList)
     {
         for(ContactDetailsData contactDetailsData: contactDetailsDataList)
         {
@@ -88,7 +88,7 @@ public class ContactList extends MediatorLiveData<List<Contact>>
         }
     }
 
-    public void addGroups(PagedList<GroupData> groupDataList)
+    private void addGroups(PagedList<GroupData> groupDataList)
     {
         for(GroupData groupData: groupDataList)
         {
@@ -97,17 +97,17 @@ public class ContactList extends MediatorLiveData<List<Contact>>
             if(contact == null)
             {
                 Contact newContact = new Contact();
-                newContact.groupData = groupData;
+                newContact.groups = groupData;
                 contactPagedList.add(newContact);
             }
             else
             {
-                contact.groupData = groupData;
+                contact.groups = groupData;
             }
         }
     }
 
-    public void addTemplates(PagedList<TemplateData> templateDataList)
+    private void addTemplates(PagedList<TemplateData> templateDataList)
     {
         for(TemplateData templateData: templateDataList)
         {
@@ -116,31 +116,22 @@ public class ContactList extends MediatorLiveData<List<Contact>>
             if(contact == null)
             {
                 Contact newContact = new Contact();
-                newContact.templateData = templateData;
+                newContact.template = templateData;
                 contactPagedList.add(newContact);
             }
             else
             {
-                contact.templateData = templateData;
+                contact.template = templateData;
             }
-        }
 
-    }
-
-    public void generateVCards()
-    {
-        List<Contact> contactPagedList = getValue();
-
-        for(Contact contact: contactPagedList)
-        {
-            templateParser.parseInputStream(contact.templateData.inputStream);
+            templateParser.parseInputStream(contact.template.htmlStream);
         }
     }
 
     public Uri getContactUri(int position)
     {
         Contact contact = getValue().get(position);
-        return contact.contactUri;
+        return contact.data.contactUri;
     }
 
     public Contact getContact(int position)

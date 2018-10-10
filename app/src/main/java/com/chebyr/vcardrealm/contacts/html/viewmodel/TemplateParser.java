@@ -407,15 +407,15 @@ public class TemplateParser
 
     public void updateContactDetails(Contact contact)
     {
-        if(contact.photoStream != null)
+        if(contact.data.photoStream != null)
         {
             // TODO: photoView.setImageBitmap(contact.photo);
             //photoView.setVisibility(VISIBLE);
             photoView.attr("visibility", "hidden");
         }
-        else if(contact.photoURI != null)
+        else if(contact.data.photoURI != null)
         {
-            photoView.attr("src", contact.photoURI.getPath());
+            photoView.attr("src", contact.data.photoURI.getPath());
             //photoView.setVisibility(VISIBLE);
             photoView.attr("display", "block");
         }
@@ -431,7 +431,7 @@ public class TemplateParser
         setContactField(jobTitleView, contact.details.jobTitle);
         setContactField(organizationView, contact.details.organization);
         setContactField(addressView, contact.details.address);
-        setContactField(groupView, contact.groupData.groupTitle);
+        setContactField(groupView, contact.groups.groupTitle);
         setContactField(phoneNumbersView, contact.details.phoneNumbers);
         setContactField(eMailsView, contact.details.eMails);
         setContactField(IMsView, contact.details.IMs);

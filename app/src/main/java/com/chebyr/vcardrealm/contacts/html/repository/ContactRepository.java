@@ -63,7 +63,7 @@ public class ContactRepository
         return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
     }
 
-    public LiveData<PagedList<GroupData>> loadGroupsList(String filterState)
+    public LiveData<PagedList<GroupData>> loadGroupList(String filterState)
     {
         groupsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();

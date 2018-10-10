@@ -19,7 +19,7 @@ based on the format defined in VCardSettings and contact details from the contac
 
 public class VCardView extends LinearLayout implements View.OnLongClickListener
 {
-    private static final String TAG = "VCardView";
+    private static final String TAG = VCardView.class.getSimpleName();
     public static boolean runtimeMode;
 
     private TemplateParser templateParser;
@@ -40,7 +40,8 @@ public class VCardView extends LinearLayout implements View.OnLongClickListener
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
                 PixelFormat.TRANSLUCENT);
 
         // TYPE_PRIORITY_PHONE priority phone UI, which needs to be displayed even if the keyguard is active.

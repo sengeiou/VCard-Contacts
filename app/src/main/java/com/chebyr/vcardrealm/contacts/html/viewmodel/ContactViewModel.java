@@ -12,6 +12,7 @@ import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
+import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
 public class ContactViewModel extends AndroidViewModel implements ContactsObserver.Callback
@@ -24,6 +25,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     private LiveData<PagedList<ContactData>> contactLiveData = new MutableLiveData<>();
     private LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData = new MutableLiveData<>();
     private LiveData<PagedList<GroupData>> groupLiveData = new MutableLiveData<>();
+    private LiveData<PagedList<TemplateData>> templateLiveData = new MutableLiveData<>();
 
     private ContactList contactList;
 
@@ -51,9 +53,13 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
 
         Log.d(TAG, "Set filter for Groups loader");
         groupLiveData = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactRepository.loadGroupsList(txFilterState));
+                (String txFilterState) -> contactRepository.loadGroupList(txFilterState));
 
-        contactList.mergeContactData(contactLiveData, contactDetailsLiveData, groupLiveData);
+        Log.d(TAG, "Set filter for Templates loader");
+        templateLiveData = Transformations.switchMap(modelFilter,
+                (String txFilterState) -> contactRepository.loadTemplateList(txFilterState));
+
+        contactList.mergeContactData(contactLiveData, contactDetailsLiveData, groupLiveData, templateLiveData);
     }
     
     public ContactList getContactList()

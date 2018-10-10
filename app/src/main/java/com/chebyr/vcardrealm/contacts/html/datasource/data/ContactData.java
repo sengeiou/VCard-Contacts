@@ -2,6 +2,8 @@ package com.chebyr.vcardrealm.contacts.html.datasource.data;
 
 import android.net.Uri;
 
+import java.io.InputStream;
+
 public class ContactData
 {
     public long contactID;
@@ -10,6 +12,9 @@ public class ContactData
     public String displayName;
     public String photoUriString;
     public String incomingNumber;
+
+    public InputStream photoStream;
+    public Uri photoURI;
 
     public ContactData()
     {
