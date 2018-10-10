@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html;
+package com.chebyr.vcardrealm.contacts.html.view;
 
 
 import android.support.v4.app.Fragment;
@@ -10,7 +10,7 @@ public class VCardEditor extends Fragment //implements SeekBar.OnSeekBarChangeLi
     public static final String TAG = "VCardEditor";
 /*
     StudioActivity mActivity;
-    VCardDOMParser vCardDocument;
+    TemplateParser vCardDocument;
 
     SeekBar bgTransparency;
     RecyclerView fieldListView;

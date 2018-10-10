@@ -1,6 +1,5 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
-import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.Contact;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 
 import java.util.List;
 

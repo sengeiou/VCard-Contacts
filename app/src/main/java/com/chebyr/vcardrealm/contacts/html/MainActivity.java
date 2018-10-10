@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.chebyr.vcardrealm.contacts.BuildConfig;
 import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.html.utils.StrictModeDebugUtils;
 
 public class MainActivity extends AppCompatActivity
 {

@@ -1,14 +1,13 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.app.Activity;
-import android.arch.paging.PagedList;
 import android.content.Context;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import com.chebyr.vcardrealm.contacts.html.Contact;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 
 import java.util.List;
 

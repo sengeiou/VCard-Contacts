@@ -6,7 +6,6 @@ import android.arch.paging.PagedList;
 import android.net.Uri;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.Contact;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;

@@ -8,7 +8,6 @@ import android.arch.lifecycle.Transformations;
 import android.arch.paging.PagedList;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.Contact;
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
@@ -28,12 +27,15 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
 
     private ContactList contactList = new ContactList();
 
+    private TemplateParser templateParser;
+
     private ContactsObserver.Callback callback;
 
     public ContactViewModel(Application application)
     {
         super(application);
         contactRepository = new ContactRepository(application, this);
+        templateParser = new TemplateParser(application);
     }
 
     public void setFilter(String filterState)

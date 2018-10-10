@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html;
+package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.support.v4.app.Fragment;
 

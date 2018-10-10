@@ -1,6 +1,6 @@
 package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
-/* VCardDOMParser is the in memory XML representation of the format of the VCard used for VCardView.
+/* TemplateParser is the in memory XML representation of the format of the VCard used for VCardView.
 Also handles the  file read / write operations to internal / external storage media / assets directory as well as bundle*/
 
 import android.content.Context;
@@ -8,17 +8,15 @@ import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
-import com.chebyr.vcardrealm.contacts.html.Contact;
-
 import java.io.InputStream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class VCardDOMParser
+public class TemplateParser
 {
-    private static final String TAG = VCardDOMParser.class.getSimpleName();
+    private static final String TAG = TemplateParser.class.getSimpleName();
 
     private Context context;
 
@@ -54,7 +52,7 @@ public class VCardDOMParser
 
     public boolean isVCardAssigned = false;
 
-    public VCardDOMParser(Context context)
+    public TemplateParser(Context context)
     {
     }
 

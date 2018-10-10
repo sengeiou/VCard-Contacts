@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html;
+package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
 import android.net.Uri;
 
