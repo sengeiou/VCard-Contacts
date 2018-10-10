@@ -56,27 +56,6 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
             mContactCardsListView.setContactPagedList(contactPagedList);
         });
 
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-        mContactCardsListView.addData("file:///android_asset/business_card.html");
-
         return rootView;
     }
 

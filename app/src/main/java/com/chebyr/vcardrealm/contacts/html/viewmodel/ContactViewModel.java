@@ -25,17 +25,16 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     private LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData = new MutableLiveData<>();
     private LiveData<PagedList<GroupData>> groupLiveData = new MutableLiveData<>();
 
-    private ContactList contactList = new ContactList();
+    private ContactList contactList;
 
-    private TemplateParser templateParser;
 
     private ContactsObserver.Callback callback;
 
     public ContactViewModel(Application application)
     {
         super(application);
+        contactList = new ContactList(application);
         contactRepository = new ContactRepository(application, this);
-        templateParser = new TemplateParser(application);
     }
 
     public void setFilter(String filterState)

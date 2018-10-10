@@ -10,9 +10,10 @@ import android.util.Log;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.TemplateParser;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TemplateDataSource extends PositionalDataSource<TemplateData>
 {
@@ -20,41 +21,37 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 
     private ContentResolver contentResolver;
     private FileUtil fileUtil;
-    TemplateParser templateParser;
+
+    private String assetPath = "file:///android_asset/business_card.html";
 
     public TemplateDataSource(Context context, ContactRepository contactRepository)
     {
         contentResolver = context.getContentResolver();
         fileUtil = new FileUtil(context);
-        templateParser = new TemplateParser(context);
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<TemplateData> callback) {
-
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<TemplateData> callback)
+    {
+        callback.onResult(loadAssets(params.requestedLoadSize, params.requestedStartPosition), params.requestedStartPosition);
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<TemplateData> callback) {
-
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<TemplateData> callback)
+    {
+        callback.onResult(loadAssets(params.loadSize, params.startPosition));
     }
 
-    public boolean openVCardAsset(String assetName)
+    public List<TemplateData> loadAssets(int noOfAssets, int startPosition)
     {
-            InputStream inputStream = fileUtil.openVCardAsset(assetName);
-            return templateParser.parseInputStream(inputStream);
-    }
+        List<TemplateData> templateDataList = new ArrayList<>();
+        for(int assetCount = startPosition; assetCount < startPosition + noOfAssets; assetCount++)
+        {
+            TemplateData templateData = new TemplateData();
 
-    public boolean openVCardFile(String fileName)
-    {
-        InputStream inputStream = fileUtil.openVCardFile(fileName);
-        return templateParser.parseInputStream(inputStream);
-    }
-
-    public boolean openVCardURL(String urlString)
-    {
-        InputStream inputStream = fileUtil.openVCardURL(urlString);
-        return templateParser.parseInputStream(inputStream);
+            templateData.inputStream = fileUtil.openVCardAsset(assetPath);
+        }
+        return templateDataList;
     }
 
     public static class Factory extends DataSource.Factory<Integer, TemplateData>

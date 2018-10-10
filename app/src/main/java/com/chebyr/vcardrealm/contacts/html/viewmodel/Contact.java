@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
+import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 
 import java.io.InputStream;
 
@@ -13,6 +14,7 @@ public class Contact
     public ContactData data;
     public ContactDetailsData details;
     public GroupData groupData;
+    public TemplateData templateData;
 
     public Uri contactUri;
     public Uri photoURI;
@@ -30,7 +32,7 @@ public class Contact
 
     }
 
-    public Contact(String path)
+    public void setPath(String path)
     {
         this.path = path;
     }

@@ -1,4 +1,10 @@
 package com.chebyr.vcardrealm.contacts.html.datasource.data;
 
-public class TemplateData {
+import java.io.InputStream;
+
+public class TemplateData
+{
+    public long contactID;
+
+    public InputStream inputStream;
 }

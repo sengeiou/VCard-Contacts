@@ -53,11 +53,6 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
         mContactCardsListViewAdapter.setContactPagedList(contactPagedList);
     }
 
-    public void addData(String path)
-    {
-        //mContactCardsListViewAdapter.addData(path);
-    }
-
     @Override
     public void onSelectionCleared(int type, String extra)
     {

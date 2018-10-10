@@ -51,14 +51,6 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
         this.contactPagedList = contactPagedList;
     }
 
-    public void addData(String path)
-    {
-        Contact contact = new Contact(path);
-        contactPagedList.add(contact);
-
-        notifyItemInserted(contactPagedList.size() - 1);
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
