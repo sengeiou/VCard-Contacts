@@ -1,7 +1,6 @@
 package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
-/* TemplateParser is the in memory XML representation of the format of the VCard used for VCardView.
-Also handles the  file read / write operations to internal / external storage media / assets directory as well as bundle*/
+/* TemplateParser manages in memory HTML DOM representation of the format of the VCard Template */
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -56,11 +55,25 @@ public class TemplateParser
     {
     }
 
+    public String generateVCardHtml(Contact contact)
+    {
+        Log.d(TAG, "Generate VCard HTML: " + contact);
+        if((contact.template == null) || (contact.data == null))
+            return null;
+
+        Log.d(TAG, "contact.template.htmlStream: " + contact.template.htmlStream);
+
+        parseInputStream(contact.template.htmlStream);
+        updateContactDetails(contact);
+        return getVCardHTML();
+    }
+
     public boolean parseInputStream(InputStream inputStream)
     {
         try
         {
             document = Jsoup.parse(inputStream, "UTF-8", "");
+            Log.d(TAG, "Parsing html VCard: " + document);
 
             photoView = document.getElementById(photoID);
             incomingNumberView = document.getElementById(incomingNumberID);

@@ -17,7 +17,7 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 {
     private static String TAG = TemplateDataSource.class.getSimpleName();
 
-    private static String assetsPath = "file:///android_asset/";
+    private static String assetsPath = "";//file:///android_asset/";
 
     private ContentResolver contentResolver;
     private FileUtil fileUtil;
@@ -54,6 +54,8 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
             templateData.htmlStream = fileUtil.openVCardAsset(templatePath);
             templateData.logoPhotoStream = fileUtil.openVCardAsset(logoPhotoPath);
             templateData.backgroundPhotoStream = fileUtil.openVCardAsset(backgroundPhotoPath);
+
+            templateDataList.add(templateData);
         }
         return templateDataList;
     }

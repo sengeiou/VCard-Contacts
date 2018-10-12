@@ -10,7 +10,6 @@ import android.util.Log;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 
 import java.util.ArrayList;
@@ -39,92 +38,103 @@ public class ContactList extends MediatorLiveData<List<Contact>>
     {
         Log.d(TAG, "Merge contact data");
 
-        addSource(contactLiveData, contactDataList -> addContactData(contactDataList));
-        addSource(contactDetailsLiveData, contactDetailsDataList -> addContactDetails(contactDetailsDataList));
-        addSource(groupLiveData, groupDataList -> addGroups(groupDataList));
-        addSource(templateLiveData, templateDataList -> addTemplates(templateDataList));
+        addSource(contactLiveData, this::addContactDataList);//contactDataList -> addContactDataList(contactDataList));
+        addSource(contactDetailsLiveData, this::addContactDetailsList);//contactDetailsDataList -> addContactDetailsList(contactDetailsDataList));
+        addSource(groupLiveData, this::addGroupsList);//groupDataList -> addGroupsList(groupDataList));
+        addSource(templateLiveData, this::addTemplatesList);//templateDataList -> addTemplatesList(templateDataList));
     }
 
-    private void addContactData(PagedList<ContactData> contactDataList)
+    private void addContactDataList(PagedList<ContactData> contactDataList)
     {
-        Log.d(TAG, "contactDataList - No of contacts: " + contactDataList.size());
         for(ContactData contactData: contactDataList)
         {
-            Log.d(TAG, "contactData: " + contactData.displayName);
+            Log.d(TAG, "addContactDataList: " + contactData.displayName);
 
-            List<Contact> contactPagedList = getValue();
-            Log.d(TAG, "contactPagedList: " + contactPagedList);
+            ContactArrayList contactList = (ContactArrayList) getValue();
 
-            Contact contact = contactPagedList.get((int)contactData.contactID);
+            Contact contact = contactList.get((int)contactData.contactID);
+
             if(contact == null)
             {
-                Contact newContact = new Contact();
-                newContact.data = contactData;
-                contactPagedList.add(newContact);
+                contact = new Contact();
+                contact.data = contactData;
+                contactList.add(contact);
             }
             else
             {
                 contact.data = contactData;
             }
+
+            contact.templateHtml = templateParser.generateVCardHtml(contact);
         }
     }
 
-    private void addContactDetails(PagedList<ContactDetailsData> contactDetailsDataList)
+    private void addContactDetailsList(PagedList<ContactDetailsData> contactDetailsDataList)
     {
         for(ContactDetailsData contactDetailsData: contactDetailsDataList)
         {
-            List<Contact> contactPagedList = getValue();
+            Log.d(TAG, "addContactDetailsList: " + contactDetailsData.contactID);
+
+            ContactArrayList contactPagedList = (ContactArrayList)getValue();
             Contact contact = contactPagedList.get((int)contactDetailsData.contactID);
             if(contact == null)
             {
-                Contact newContact = new Contact();
-                newContact.details = contactDetailsData;
-                contactPagedList.add(newContact);
+                contact = new Contact();
+                contact.details = contactDetailsData;
+                contactPagedList.add(contact);
             }
             else
             {
                 contact.details = contactDetailsData;
             }
+
+            contact.templateHtml = templateParser.generateVCardHtml(contact);
         }
     }
 
-    private void addGroups(PagedList<GroupData> groupDataList)
+    private void addGroupsList(PagedList<GroupData> groupDataList)
     {
         for(GroupData groupData: groupDataList)
         {
-            List<Contact> contactPagedList = getValue();
+            Log.d(TAG, "addGroupsList: " + groupData.contactID);
+
+            ContactArrayList contactPagedList = (ContactArrayList)getValue();
             Contact contact = contactPagedList.get((int)groupData.contactID);
             if(contact == null)
             {
-                Contact newContact = new Contact();
-                newContact.groups = groupData;
-                contactPagedList.add(newContact);
+                contact = new Contact();
+                contact.groups = groupData;
+                contactPagedList.add(contact);
             }
             else
             {
                 contact.groups = groupData;
             }
+
+            contact.templateHtml = templateParser.generateVCardHtml(contact);
         }
     }
 
-    private void addTemplates(PagedList<TemplateData> templateDataList)
+    private void addTemplatesList(PagedList<TemplateData> templateDataList)
     {
         for(TemplateData templateData: templateDataList)
         {
-            List<Contact> contactPagedList = getValue();
+            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
+
+            ContactArrayList contactPagedList = (ContactArrayList)getValue();
             Contact contact = contactPagedList.get((int)templateData.contactID);
             if(contact == null)
             {
-                Contact newContact = new Contact();
-                newContact.template = templateData;
-                contactPagedList.add(newContact);
+                contact = new Contact();
+                contact.template = templateData;
+                contactPagedList.add(contact);
             }
             else
             {
                 contact.template = templateData;
             }
 
-            templateParser.parseInputStream(contact.template.htmlStream);
+            contact.templateHtml = templateParser.generateVCardHtml(contact);
         }
     }
 
@@ -160,8 +170,9 @@ public class ContactList extends MediatorLiveData<List<Contact>>
         {
             for(Contact contact: this)
             {
-                if(contact.data.contactID == index)
-                    return contact;
+                if(contact.data != null)
+                    if(contact.data.contactID == index)
+                        return contact;
             }
             return null;
         }
