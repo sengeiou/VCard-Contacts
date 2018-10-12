@@ -25,7 +25,6 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
 
     private ContentResolver contentResolver;
     private Context context;
-    private ContactDetailsDataSource contactDetailsDataSource;
 
     private Cursor contactCursor;
 
@@ -52,8 +51,6 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
             startContactLoader("");
         }
         contactsSectionIndexer = new ContactsSectionIndexer(context, ContactQuery.SORT_KEY);
-        contactDetailsDataSource = new ContactDetailsDataSource(context, contactRepository);
-
     }
 
     @Override

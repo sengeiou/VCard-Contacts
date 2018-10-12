@@ -18,6 +18,8 @@ import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 
+import java.util.List;
+
 public class ContactRepository
 {
     private static String TAG = ContactRepository.class.getSimpleName();
@@ -41,9 +43,9 @@ public class ContactRepository
                 .build();
 
         contactsDataSourceFactory = new ContactDataSource.Factory(context, this);
-        contactDetailsDataSourceFactory = new ContactDetailsDataSource.Factory(context, this);
-        groupsDataSourceFactory = new GroupDataSource.Factory(context, this);
-        templateDataSourceFactory = new TemplateDataSource.Factory(context, this);
+        contactDetailsDataSourceFactory = new ContactDetailsDataSource.Factory(context);
+        groupsDataSourceFactory = new GroupDataSource.Factory(context);
+        templateDataSourceFactory = new TemplateDataSource.Factory(context);
 
         Log.d(TAG, contactDetailsDataSourceFactory.toString());
         Log.d(TAG, contactDetailsDataSourceFactory.toString());
@@ -63,9 +65,21 @@ public class ContactRepository
         return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
     }
 
+    public LiveData<PagedList<ContactDetailsData>> loadContactDetailsList(List<ContactData> contactDataList)
+    {
+        contactDetailsDataSourceFactory.setContactDataList(contactDataList);
+        return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
+    }
+
     public LiveData<PagedList<GroupData>> loadGroupList(String filterState)
     {
         groupsDataSourceFactory.setFilter(filterState);
+        return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
+    }
+
+    public LiveData<PagedList<GroupData>> loadGroupList(List<ContactDetailsData> contactDetailsDataList)
+    {
+        groupsDataSourceFactory.setContactDetailsDataList(contactDetailsDataList);
         return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
     }
 

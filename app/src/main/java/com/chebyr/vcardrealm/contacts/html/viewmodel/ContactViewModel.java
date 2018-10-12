@@ -37,6 +37,15 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         super(application);
         contactList = new ContactList(application);
         contactRepository = new ContactRepository(application, this);
+
+        Log.d(TAG, "Set filter for ContactDetails loader");
+        contactDetailsLiveData = Transformations.switchMap(contactLiveData,
+                (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadContactDetailsList(contactDataPagedList));
+
+        Log.d(TAG, "Set filter for Groups loader");
+        groupLiveData = Transformations.switchMap(contactDetailsLiveData,
+                (PagedList<ContactDetailsData> contactDetailsDataPagedList) -> contactRepository.loadGroupList(contactDetailsDataPagedList));
+
     }
 
     public void setFilter(String filterState)

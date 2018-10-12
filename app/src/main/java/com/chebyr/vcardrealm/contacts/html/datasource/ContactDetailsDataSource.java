@@ -7,31 +7,36 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
+import java.util.List;
+
 public class ContactDetailsDataSource extends PositionalDataSource<ContactDetailsData>
 {
-    private Context context;
     private ContentResolver contentResolver;
-    private GroupDataSource groupDataSource;
     private Cursor contactDetailsCursor = null;
 
-    public ContactDetailsDataSource(Context context, ContactRepository contactRepository)
+    List<ContactData> contactDataList;
+
+    public ContactDetailsDataSource(Context context, List<ContactData> contactDataList)
     {
+        this.contactDataList = contactDataList;
         contentResolver = context.getContentResolver();
-        groupDataSource = new GroupDataSource(context, contactRepository);
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<ContactDetailsData> callback) {
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<ContactDetailsData> callback)
+    {
 
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ContactDetailsData> callback) {
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ContactDetailsData> callback)
+    {
 
     }
 
@@ -111,8 +116,6 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
                 case ContactDetailsQuery.GROUP_MIME:
                 {
                     contactDetails.groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
-
-                    GroupData groupData = groupDataSource.getGroups(contactDetails.groupRowID);
                     break;
                 }
             }
@@ -215,12 +218,11 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
     public static class Factory extends DataSource.Factory<Integer, ContactDetailsData>
     {
         private Context context;
-        private ContactRepository contactRepository;
+        private List<ContactData> contactDataList;
 
-        public Factory(Context context, ContactRepository contactRepository)
+        public Factory(Context context)
         {
             this.context = context;
-            this.contactRepository = contactRepository;
         }
 
         public void setFilter(String filterState)
@@ -228,10 +230,15 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
 
         }
 
+        public void setContactDataList(List<ContactData> contactDataList)
+        {
+            this.contactDataList = contactDataList;
+        }
+
         @Override
         public DataSource<Integer, ContactDetailsData> create()
         {
-            return new ContactDetailsDataSource(context, contactRepository);
+            return new ContactDetailsDataSource(context, contactDataList);
         }
     }
 

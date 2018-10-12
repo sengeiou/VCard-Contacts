@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
@@ -17,15 +18,18 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 {
     private static String TAG = TemplateDataSource.class.getSimpleName();
 
-    private static String assetsPath = "";//file:///android_asset/";
+    private static String assetsPath = "";
 
     private ContentResolver contentResolver;
     private FileUtil fileUtil;
+    List<ContactData> contactDataList;
 
-    public TemplateDataSource(Context context, ContactRepository contactRepository)
+
+    public TemplateDataSource(Context context, List<ContactData> contactDataList)
     {
         contentResolver = context.getContentResolver();
         fileUtil = new FileUtil(context);
+        this.contactDataList = contactDataList;
     }
 
     @Override
@@ -63,12 +67,18 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     public static class Factory extends DataSource.Factory<Integer, TemplateData>
     {
         private Context context;
-        private ContactRepository contactRepository;
 
-        public Factory(Context context, ContactRepository contactRepository)
+
+        List<ContactData> contactDataList;
+
+        public Factory(Context context)
         {
             this.context = context;
-            this.contactRepository = contactRepository;
+        }
+
+        public void setContactDataList(List<ContactData> contactDataList)
+        {
+            this.contactDataList = contactDataList;
         }
 
         public void setFilter(String filterState)
@@ -79,7 +89,7 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
         @Override
         public DataSource<Integer, TemplateData> create()
         {
-            return new TemplateDataSource(context, contactRepository);
+            return new TemplateDataSource(context, contactDataList);
         }
     }
 }

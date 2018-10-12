@@ -7,16 +7,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.GroupsQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
+
+import java.util.List;
 
 public class GroupDataSource extends PositionalDataSource<GroupData>
 {
     Context context;
     ContentResolver contentResolver;
 
-    public GroupDataSource(Context context, ContactRepository contactRepository)
+    public GroupDataSource(Context context)
     {
         contentResolver = context.getContentResolver();
     }
@@ -58,12 +61,11 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
     public static class Factory extends DataSource.Factory<Integer, GroupData>
     {
         private Context context;
-        private ContactRepository contactRepository;
+        private List<ContactDetailsData> contactDetailsDataList;
 
-        public Factory(Context context, ContactRepository contactRepository)
+        public Factory(Context context)
         {
             this.context = context;
-            this.contactRepository = contactRepository;
         }
 
         public void setFilter(String filterState)
@@ -71,10 +73,15 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
 
         }
 
+        public void setContactDetailsDataList(List<ContactDetailsData> contactDetailsDataList)
+        {
+            this.contactDetailsDataList = contactDetailsDataList;
+        }
+
         @Override
         public DataSource<Integer, GroupData> create()
         {
-            return new GroupDataSource(context, contactRepository);
+            return new GroupDataSource(context);
         }
     }
 
