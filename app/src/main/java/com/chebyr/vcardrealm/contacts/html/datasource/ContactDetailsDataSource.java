@@ -13,6 +13,7 @@ import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDetailsDataSource extends PositionalDataSource<ContactDetailsData>
@@ -20,69 +21,84 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
     private ContentResolver contentResolver;
     private Cursor contactDetailsCursor = null;
 
-    List<ContactData> contactDataList;
+    private List<ContactData> contactDataList;
+    private String filterState;
 
-    public ContactDetailsDataSource(Context context, List<ContactData> contactDataList)
+    public ContactDetailsDataSource(Context context, String filterState, List<ContactData> contactDataList)
     {
         this.contactDataList = contactDataList;
+        this.filterState = filterState;
         contentResolver = context.getContentResolver();
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<ContactDetailsData> callback)
     {
-
+        List<ContactDetailsData> contactDetailsDataList = getContactInfo();
+        callback.onResult(contactDetailsDataList, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ContactDetailsData> callback)
     {
-
+        List<ContactDetailsData> contactDetailsDataList = getContactInfo();
+        callback.onResult(contactDetailsDataList);
     }
 
-    public ContactDetailsData getContactInfo(long contactID)
+    public List<ContactDetailsData> getContactInfo()
     {
-        ContactDetailsData contactDetails = new ContactDetailsData();
+        List<ContactDetailsData> contactDetailsDataList = new ArrayList<>();
 
-        Cursor contactDataCursor = getContactData(contactID);
+        if(contactDataList == null)
+            return contactDetailsDataList;
+
+        String[] contactIDArray = new String[contactDataList.size()];
+
+        for(int count = 0; count < contactDataList.size(); count++)
+            contactIDArray[count] = String.valueOf(contactDataList.get(count).contactID);
+
+
+        Cursor contactDataCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, contactIDArray, null);
+
         String mimeType;
         String separator = ", ";
 
         for(contactDataCursor.moveToFirst(); !contactDataCursor.isAfterLast(); contactDataCursor.moveToNext())
         {
+            ContactDetailsData contactDetailsData = new ContactDetailsData();
             mimeType = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
 
             switch (mimeType)
             {
                 case ContactDetailsQuery.ORGANIZATION_MIME:
                 {
-                    contactDetails.organization = getCompany(contactDataCursor);
-                    contactDetails.jobTitle = getJobTitle(contactDataCursor);
+                    contactDetailsData.organization = getCompany(contactDataCursor);
+                    contactDetailsData.jobTitle = getJobTitle(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.NICK_NAME_MIME:
                 {
-                    contactDetails.nickName = getNickName(contactDataCursor);
+                    contactDetailsData.nickName = getNickName(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.WEBSITE_MIME:
                 {
-                    contactDetails.website = getWebsite(contactDataCursor);
+                    contactDetailsData.website = getWebsite(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.ADDRESS_MIME:
                 {
-                    contactDetails.address = getAddress(contactDataCursor);
+                    contactDetailsData.address = getAddress(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.PHONE_MIME:
                 {
                     String phone = getPhoneNumber(contactDataCursor);
 
-                    if ((contactDetails.phoneNumbers.length() > 0) && (phone.length() > 0))
-                        contactDetails.phoneNumbers += separator + phone;
+                    if ((contactDetailsData.phoneNumbers.length() > 0) && (phone.length() > 0))
+                        contactDetailsData.phoneNumbers += separator + phone;
                     else
-                        contactDetails.phoneNumbers = phone;
+                        contactDetailsData.phoneNumbers = phone;
 
                     break;
                 }
@@ -90,47 +106,40 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
                 {
                     String instantMessenger = getIM(contactDataCursor);
 
-                    if ((contactDetails.IMs.length() > 0) && (instantMessenger.length() > 0))
-                        contactDetails.IMs += separator + instantMessenger;
+                    if ((contactDetailsData.IMs.length() > 0) && (instantMessenger.length() > 0))
+                        contactDetailsData.IMs += separator + instantMessenger;
                     else
-                        contactDetails.IMs = instantMessenger;
+                        contactDetailsData.IMs = instantMessenger;
 
                     break;
                 }
                 case ContactDetailsQuery.NOTE_MIME:
                 {
-                    contactDetails.notes = getNotes(contactDataCursor);
+                    contactDetailsData.notes = getNotes(contactDataCursor);
                     break;
                 }
                 case ContactDetailsQuery.EMAIL_MIME:
                 {
                     String email = getEmailAddresses(contactDataCursor);
 
-                    if ((contactDetails.eMails.length() > 0) && (email.length() > 0))
-                        contactDetails.eMails += separator + email;
+                    if ((contactDetailsData.eMails.length() > 0) && (email.length() > 0))
+                        contactDetailsData.eMails += separator + email;
                     else
-                        contactDetails.eMails = email;
+                        contactDetailsData.eMails = email;
 
                     break;
                 }
                 case ContactDetailsQuery.GROUP_MIME:
                 {
-                    contactDetails.groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
+                    contactDetailsData.groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
                     break;
                 }
             }
+            contactDetailsDataList.add(contactDetailsData);
         }
         contactDataCursor.close();
 
-        return contactDetails;
-    }
-
-    public Cursor getContactData(long contactID)
-    {
-        String[] whereParameters = new String[]{String.valueOf(contactID)};
-
-        Cursor contactDataCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, whereParameters, null);
-        return contactDataCursor;
+        return contactDetailsDataList;
     }
 
     public String getPhoneNumber(Cursor contactDataCursor)
@@ -219,6 +228,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
     {
         private Context context;
         private List<ContactData> contactDataList;
+        private String filterState;
 
         public Factory(Context context)
         {
@@ -227,7 +237,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
 
         public void setFilter(String filterState)
         {
-
+            this.filterState = filterState;
         }
 
         public void setContactDataList(List<ContactData> contactDataList)
@@ -238,7 +248,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
         @Override
         public DataSource<Integer, ContactDetailsData> create()
         {
-            return new ContactDetailsDataSource(context, contactDataList);
+            return new ContactDetailsDataSource(context, filterState, contactDataList);
         }
     }
 

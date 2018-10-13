@@ -62,6 +62,7 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
     {
         private Context context;
         private List<ContactDetailsData> contactDetailsDataList;
+        private String filterState;
 
         public Factory(Context context)
         {

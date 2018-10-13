@@ -111,7 +111,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         // load data from cursor into a list
         cursor.moveToFirst();
 
-        List<ContactData> contacts = new ArrayList<>();
+        List<ContactData> contactDataList = new ArrayList<>();
 
         while (!cursor.isLast()) {
             //Long id = cursor.getLong(cursor.getColumnIndex(PROJECTION[0]));
@@ -119,13 +119,13 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
             //String name = cursor.getString(cursor.getColumnIndex(PROJECTION[2]));
 
             ContactData contactData = getContactData(cursor);
-            contacts.add(contactData);//new ContactData(id, lookupKey, name));
+            contactDataList.add(contactData);//new ContactData(id, lookupKey, name));
             cursor.moveToNext();
         }
         cursor.close();
 
         // return the list of results
-        return contacts;
+        return contactDataList;
     }
 
     public void startContactLoader(String searchTerm)
@@ -305,6 +305,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
     {
         private Context context;
         private ContactRepository contactRepository;
+        private String filterState;
 
         public Factory(Context context, ContactRepository contactRepository)
         {
@@ -314,7 +315,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
 
         public void setFilter(String filterState)
         {
-
+            this.filterState = filterState;
         }
 
         @Override

@@ -38,11 +38,11 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         contactList = new ContactList(application);
         contactRepository = new ContactRepository(application, this);
 
-        Log.d(TAG, "Set filter for ContactDetails loader");
+        //Automatically load contact details upon change in contact data
         contactDetailsLiveData = Transformations.switchMap(contactLiveData,
                 (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadContactDetailsList(contactDataPagedList));
 
-        Log.d(TAG, "Set filter for Groups loader");
+        //Automatically load group details upon change in contact details
         groupLiveData = Transformations.switchMap(contactDetailsLiveData,
                 (PagedList<ContactDetailsData> contactDetailsDataPagedList) -> contactRepository.loadGroupList(contactDetailsDataPagedList));
 
