@@ -321,7 +321,7 @@ public class ContactDataSource extends PositionalDataSource<ContactData>
         @Override
         public DataSource<Integer, ContactData> create()
         {
-            Log.d(TAG, "Create Contact Data source");
+            Log.d(TAG, "Create ContactDataSource");
             return new ContactDataSource(context, contactRepository);
         }
     }

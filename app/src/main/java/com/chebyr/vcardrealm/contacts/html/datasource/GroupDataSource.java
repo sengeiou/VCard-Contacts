@@ -6,54 +6,90 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.GroupsQuery;
-import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupDataSource extends PositionalDataSource<GroupData>
 {
-    Context context;
-    ContentResolver contentResolver;
+    private static String TAG = GroupDataSource.class.getSimpleName();
 
-    public GroupDataSource(Context context)
+    private Context context;
+    private ContentResolver contentResolver;
+    private List<ContactDetailsData> contactDetailsDataList;
+    private String filterState;
+
+    public GroupDataSource(Context context, String filterState, List<ContactDetailsData> contactDetailsDataList)
     {
+        this.contactDetailsDataList = contactDetailsDataList;
+        this.filterState = filterState;
         contentResolver = context.getContentResolver();
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<GroupData> callback) {
-
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<GroupData> callback)
+    {
+        List<GroupData> groupDataList = getGroupList();
+        callback.onResult(groupDataList, params.requestedStartPosition);
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<GroupData> callback) {
-
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<GroupData> callback)
+    {
+        List<GroupData> groupDataList = getGroupList();
+        callback.onResult(groupDataList);
     }
 
-    public GroupData getGroups(String groupRowID)
+    private List<GroupData> getGroupList()
+    {
+        List<GroupData> groupDataList = new ArrayList<>();
+
+        if(contactDetailsDataList == null)
+            return groupDataList;
+
+        for(int count = 0; count < contactDetailsDataList.size(); count++)
+        {
+            ContactDetailsData contactDetailsData = contactDetailsDataList.get(count);
+            String groupRowID = contactDetailsData.groupRowID;
+            String[] whereParams = new String[]{String.valueOf(groupRowID)};
+
+            // Get Titles from Groups table using groupIDs from groupRowID
+            Cursor groupCursor = contentResolver.query(GroupsQuery.URI, GroupsQuery.PROJECTION, GroupsQuery.SELECTION, whereParams, GroupsQuery.SORT_ORDER);
+            if(groupCursor != null)
+            {
+                GroupData groupData = getGroupData(groupCursor);
+                groupData.contactID = contactDetailsData.contactID;
+                groupDataList.add(groupData);
+                groupCursor.close();
+            }
+        }
+
+        return groupDataList;
+    }
+
+    private GroupData getGroupData(Cursor groupCursor)
     {
         GroupData groupData = new GroupData();
-
-        // Get Titles from Groups table using groupIDs from groupRowID
-        if(groupRowID != null)
+        long lastGroupID = 0;
+        for(groupCursor.moveToFirst(); !groupCursor.isAfterLast(); groupCursor.moveToNext())
         {
-            String[] whereParameters = new String[] {groupRowID};
+            long groupID = groupCursor.getLong(GroupsQuery.QUERY_ID);
+            String groupTitle = groupCursor.getString(groupCursor.getColumnIndex(GroupsQuery.TITLE));
 
-            Cursor groupCursor = contentResolver.query(GroupsQuery.URI, GroupsQuery.PROJECTION, GroupsQuery.SELECTION, whereParameters, null);
-
-            if(groupCursor == null)
-                return groupData;
-
-            for(groupCursor.moveToFirst(); !groupCursor.isAfterLast(); groupCursor.moveToNext())
+            if(groupID == lastGroupID)
+                groupData.addGroup(groupTitle);
+            else
             {
-                String group = groupCursor.getString(groupCursor.getColumnIndex(GroupsQuery.TITLE));
-                groupData.addGroup(group);
+                groupData = new GroupData();
+                groupData.addGroup(groupTitle);
             }
-            groupCursor.close();
+
+            Log.d(TAG, "GroupRowID: " + groupID + " Group Title: " + groupTitle);
         }
         return groupData;
     }
@@ -71,7 +107,7 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
 
         public void setFilter(String filterState)
         {
-
+            this.filterState = filterState;
         }
 
         public void setContactDetailsDataList(List<ContactDetailsData> contactDetailsDataList)
@@ -82,7 +118,8 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
         @Override
         public DataSource<Integer, GroupData> create()
         {
-            return new GroupDataSource(context);
+            Log.d(TAG, "Create GroupDataSource");
+            return new GroupDataSource(context, filterState, contactDetailsDataList);
         }
     }
 

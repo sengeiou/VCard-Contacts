@@ -47,45 +47,58 @@ public class ContactRepository
         groupsDataSourceFactory = new GroupDataSource.Factory(context);
         templateDataSourceFactory = new TemplateDataSource.Factory(context);
 
-        Log.d(TAG, contactDetailsDataSourceFactory.toString());
-        Log.d(TAG, contactDetailsDataSourceFactory.toString());
-        Log.d(TAG, groupsDataSourceFactory.toString());
-        Log.d(TAG, templateDataSourceFactory.toString());
+//        Log.d(TAG, "contactsDataSourceFactory: " + contactsDataSourceFactory.toString());
+//        Log.d(TAG, "contactDetailsDataSourceFactory: " + contactDetailsDataSourceFactory.toString());
+//        Log.d(TAG, "groupsDataSourceFactory: " + groupsDataSourceFactory.toString());
+//        Log.d(TAG, "templateDataSourceFactory: " + templateDataSourceFactory.toString());
     }
 
     public LiveData<PagedList<ContactData>> loadContactList(String filterState)
     {
+        Log.d(TAG, "loadContactList " + "filterState: " + filterState);
         contactsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(contactsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<ContactDetailsData>> loadContactDetailsList(String filterState)
     {
+        Log.d(TAG, "loadContactDetailsList " + "filterState: " + filterState);
         contactDetailsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<ContactDetailsData>> loadContactDetailsList(List<ContactData> contactDataList)
     {
+        Log.d(TAG, "loadContactDetailsList " + "contactDataList: " + contactDataList);
         contactDetailsDataSourceFactory.setContactDataList(contactDataList);
         return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<GroupData>> loadGroupList(String filterState)
     {
+        Log.d(TAG, "loadGroupList " + "filterState: " + filterState);
         groupsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<GroupData>> loadGroupList(List<ContactDetailsData> contactDetailsDataList)
     {
+        Log.d(TAG, "loadGroupList " + "contactDetailsDataList: " + contactDetailsDataList);
         groupsDataSourceFactory.setContactDetailsDataList(contactDetailsDataList);
         return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<TemplateData>> loadTemplateList(String filterState)
     {
+        Log.d(TAG, "loadTemplateList " + "filterState: " + filterState);
         templateDataSourceFactory.setFilter(filterState);
+        return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
+    }
+
+    public LiveData<PagedList<TemplateData>> loadTemplateList(List<ContactData> contactDataList)
+    {
+        Log.d(TAG, "loadTemplateList " + "contactDataList: " + contactDataList);
+        templateDataSourceFactory.setContactDataList(contactDataList);
         return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
     }
 }

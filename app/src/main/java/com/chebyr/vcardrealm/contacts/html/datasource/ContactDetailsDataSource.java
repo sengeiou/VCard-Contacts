@@ -6,21 +6,22 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
-import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDetailsDataSource extends PositionalDataSource<ContactDetailsData>
 {
-    private ContentResolver contentResolver;
-    private Cursor contactDetailsCursor = null;
+    private static String TAG = ContactDetailsDataSource.class.getSimpleName();
 
+    private static String separator = ", ";
+
+    private ContentResolver contentResolver;
     private List<ContactData> contactDataList;
     private String filterState;
 
@@ -34,113 +35,128 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
     @Override
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<ContactDetailsData> callback)
     {
-        List<ContactDetailsData> contactDetailsDataList = getContactInfo();
+        List<ContactDetailsData> contactDetailsDataList = getContactDetailsDataList();
         callback.onResult(contactDetailsDataList, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ContactDetailsData> callback)
     {
-        List<ContactDetailsData> contactDetailsDataList = getContactInfo();
+        List<ContactDetailsData> contactDetailsDataList = getContactDetailsDataList();
         callback.onResult(contactDetailsDataList);
     }
 
-    public List<ContactDetailsData> getContactInfo()
+    private List<ContactDetailsData> getContactDetailsDataList()
     {
         List<ContactDetailsData> contactDetailsDataList = new ArrayList<>();
 
         if(contactDataList == null)
             return contactDetailsDataList;
 
-        String[] contactIDArray = new String[contactDataList.size()];
+        Log.d(TAG, "contactDataList.size(): " + contactDataList.size());
 
         for(int count = 0; count < contactDataList.size(); count++)
-            contactIDArray[count] = String.valueOf(contactDataList.get(count).contactID);
-
-
-        Cursor contactDataCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, contactIDArray, null);
-
-        String mimeType;
-        String separator = ", ";
-
-        for(contactDataCursor.moveToFirst(); !contactDataCursor.isAfterLast(); contactDataCursor.moveToNext())
         {
-            ContactDetailsData contactDetailsData = new ContactDetailsData();
-            mimeType = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
+            long contactDataID = contactDataList.get(count).contactID;
+            String[] whereParams = new String[]{String.valueOf(contactDataID)};
 
-            switch (mimeType)
+            Cursor contactDetailsCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, whereParams, null);
+            if(contactDetailsCursor != null)
             {
-                case ContactDetailsQuery.ORGANIZATION_MIME:
+                for (contactDetailsCursor.moveToFirst(); !contactDetailsCursor.isAfterLast(); contactDetailsCursor.moveToNext())
                 {
-                    contactDetailsData.organization = getCompany(contactDataCursor);
-                    contactDetailsData.jobTitle = getJobTitle(contactDataCursor);
-                    break;
+                    ContactDetailsData contactDetailsData = getContactDetailsData(contactDetailsCursor);
+                    contactDetailsData.contactID = contactDataID;
+                    contactDetailsDataList.add(contactDetailsData);
+                    Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
                 }
-                case ContactDetailsQuery.NICK_NAME_MIME:
-                {
-                    contactDetailsData.nickName = getNickName(contactDataCursor);
-                    break;
-                }
-                case ContactDetailsQuery.WEBSITE_MIME:
-                {
-                    contactDetailsData.website = getWebsite(contactDataCursor);
-                    break;
-                }
-                case ContactDetailsQuery.ADDRESS_MIME:
-                {
-                    contactDetailsData.address = getAddress(contactDataCursor);
-                    break;
-                }
-                case ContactDetailsQuery.PHONE_MIME:
-                {
-                    String phone = getPhoneNumber(contactDataCursor);
-
-                    if ((contactDetailsData.phoneNumbers.length() > 0) && (phone.length() > 0))
-                        contactDetailsData.phoneNumbers += separator + phone;
-                    else
-                        contactDetailsData.phoneNumbers = phone;
-
-                    break;
-                }
-                case ContactDetailsQuery.IM_MIME:
-                {
-                    String instantMessenger = getIM(contactDataCursor);
-
-                    if ((contactDetailsData.IMs.length() > 0) && (instantMessenger.length() > 0))
-                        contactDetailsData.IMs += separator + instantMessenger;
-                    else
-                        contactDetailsData.IMs = instantMessenger;
-
-                    break;
-                }
-                case ContactDetailsQuery.NOTE_MIME:
-                {
-                    contactDetailsData.notes = getNotes(contactDataCursor);
-                    break;
-                }
-                case ContactDetailsQuery.EMAIL_MIME:
-                {
-                    String email = getEmailAddresses(contactDataCursor);
-
-                    if ((contactDetailsData.eMails.length() > 0) && (email.length() > 0))
-                        contactDetailsData.eMails += separator + email;
-                    else
-                        contactDetailsData.eMails = email;
-
-                    break;
-                }
-                case ContactDetailsQuery.GROUP_MIME:
-                {
-                    contactDetailsData.groupRowID = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
-                    break;
-                }
+                contactDetailsCursor.close();
             }
-            contactDetailsDataList.add(contactDetailsData);
         }
-        contactDataCursor.close();
+
 
         return contactDetailsDataList;
     }
+
+    private ContactDetailsData getContactDetailsData(Cursor contactDetailsCursor)
+    {
+        ContactDetailsData contactDetailsData = new ContactDetailsData();
+        String mimeType = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
+
+        switch (mimeType)
+        {
+            case ContactDetailsQuery.ORGANIZATION_MIME:
+            {
+                contactDetailsData.organization = getCompany(contactDetailsCursor);
+                contactDetailsData.jobTitle = getJobTitle(contactDetailsCursor);
+                break;
+            }
+            case ContactDetailsQuery.NICK_NAME_MIME:
+            {
+                contactDetailsData.nickName = getNickName(contactDetailsCursor);
+                break;
+            }
+            case ContactDetailsQuery.WEBSITE_MIME:
+            {
+                contactDetailsData.website = getWebsite(contactDetailsCursor);
+                break;
+            }
+            case ContactDetailsQuery.ADDRESS_MIME:
+            {
+                contactDetailsData.address = getAddress(contactDetailsCursor);
+                break;
+            }
+            case ContactDetailsQuery.PHONE_MIME:
+            {
+                String phone = getPhoneNumber(contactDetailsCursor);
+
+                if(contactDetailsData.phoneNumbers == null)
+                    contactDetailsData.phoneNumbers = phone;
+                else if ((contactDetailsData.phoneNumbers.length() > 0) && (phone.length() > 0))
+                    contactDetailsData.phoneNumbers += separator + phone;
+                else
+                    contactDetailsData.phoneNumbers = phone;
+
+                break;
+            }
+            case ContactDetailsQuery.IM_MIME:
+            {
+                String instantMessenger = getIM(contactDetailsCursor);
+
+                if ((contactDetailsData.IMs.length() > 0) && (instantMessenger.length() > 0))
+                    contactDetailsData.IMs += separator + instantMessenger;
+                else
+                    contactDetailsData.IMs = instantMessenger;
+
+                break;
+            }
+            case ContactDetailsQuery.NOTE_MIME:
+            {
+                contactDetailsData.notes = getNotes(contactDetailsCursor);
+                break;
+            }
+            case ContactDetailsQuery.EMAIL_MIME:
+            {
+                String email = getEmailAddresses(contactDetailsCursor);
+
+                if(contactDetailsData.eMails == null)
+                    contactDetailsData.eMails = email;
+                else if((contactDetailsData.eMails.length() > 0) && (email.length() > 0))
+                    contactDetailsData.eMails += separator + email;
+                else
+                    contactDetailsData.eMails = email;
+
+                break;
+            }
+            case ContactDetailsQuery.GROUP_MIME:
+            {
+                contactDetailsData.groupRowID = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
+                break;
+            }
+        }
+        return contactDetailsData;
+    }
+
 
     public String getPhoneNumber(Cursor contactDataCursor)
     {
@@ -248,6 +264,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
         @Override
         public DataSource<Integer, ContactDetailsData> create()
         {
+            Log.d(TAG, "Create ContactDetailsDataSource");
             return new ContactDetailsDataSource(context, filterState, contactDataList);
         }
     }

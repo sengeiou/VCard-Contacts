@@ -5,6 +5,7 @@ import android.arch.paging.PositionalDataSource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
@@ -35,29 +36,34 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     @Override
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<TemplateData> callback)
     {
-        callback.onResult(loadAssets(params.requestedLoadSize, params.requestedStartPosition), params.requestedStartPosition);
+        List<TemplateData> templateDataList = loadAssets(params.requestedLoadSize, params.requestedStartPosition);
+        callback.onResult(templateDataList, params.requestedStartPosition);
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<TemplateData> callback)
     {
-        callback.onResult(loadAssets(params.loadSize, params.startPosition));
+        List<TemplateData> templateDataList = loadAssets(params.loadSize, params.startPosition);
+        callback.onResult(templateDataList);
     }
 
-    public List<TemplateData> loadAssets(int noOfAssets, int startPosition)
+    private List<TemplateData> loadAssets(int noOfAssets, int startPosition)
     {
         String templatePath = assetsPath + "business_card.html";
         String logoPhotoPath = assetsPath + "logo.png";
         String backgroundPhotoPath = assetsPath + "background.png";
 
         List<TemplateData> templateDataList = new ArrayList<>();
-        for(int assetCount = startPosition; assetCount < startPosition + noOfAssets; assetCount++)
+        for(int assetCount = 0; assetCount < contactDataList.size(); assetCount++)
         {
             TemplateData templateData = new TemplateData();
 
+            templateData.contactID = contactDataList.get(assetCount).contactID;
             templateData.htmlStream = fileUtil.openVCardAsset(templatePath);
             templateData.logoPhotoStream = fileUtil.openVCardAsset(logoPhotoPath);
             templateData.backgroundPhotoStream = fileUtil.openVCardAsset(backgroundPhotoPath);
+
+//            Log.d(TAG, " templateData.contactID: " + templateData.contactID);
 
             templateDataList.add(templateData);
         }
@@ -67,7 +73,6 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     public static class Factory extends DataSource.Factory<Integer, TemplateData>
     {
         private Context context;
-
 
         List<ContactData> contactDataList;
 
@@ -89,6 +94,7 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
         @Override
         public DataSource<Integer, TemplateData> create()
         {
+            Log.d(TAG, "Create TemplateDataSource");
             return new TemplateDataSource(context, contactDataList);
         }
     }

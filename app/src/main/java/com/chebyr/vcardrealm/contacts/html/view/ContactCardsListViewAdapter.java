@@ -1,6 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.arch.paging.PagedListAdapter;
+import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +13,9 @@ import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 
 import java.util.List;
 
-public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, RecyclerView.ViewHolder> {
+public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCardsListViewAdapter.ContactCardsViewHolder>
+        //PagedListAdapter<Contact, RecyclerView.ViewHolder>
+{
 
     private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
 
@@ -20,9 +23,9 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
 
     private OnItemClickCallBack callBack;
 
-    protected ContactCardsListViewAdapter()
+    public ContactCardsListViewAdapter()
     {
-        super(DIFF_CALLBACK);
+        super();
     }
 
     private static DiffUtil.ItemCallback<Contact> DIFF_CALLBACK =
@@ -52,7 +55,7 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
+    public ContactCardsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = layoutInflater.inflate(R.layout.contact_card, viewGroup, false);
@@ -61,9 +64,8 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Recyc
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull ContactCardsViewHolder viewHolder, int position)
     {
-        ContactCardsViewHolder viewHolder = (ContactCardsViewHolder) holder;
         Contact contact = contactPagedList.get(position);
         viewHolder.setContact(contact);
         viewHolder.setWebViewClickListener();

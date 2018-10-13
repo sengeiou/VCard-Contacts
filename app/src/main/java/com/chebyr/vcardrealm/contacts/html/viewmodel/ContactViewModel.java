@@ -38,6 +38,10 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         contactList = new ContactList(application);
         contactRepository = new ContactRepository(application, this);
 
+        //Automatically load contact data upon change in filter
+        contactLiveData = Transformations.switchMap(modelFilter,
+                (String txFilterState) -> contactRepository.loadContactList(txFilterState));
+
         //Automatically load contact details upon change in contact data
         contactDetailsLiveData = Transformations.switchMap(contactLiveData,
                 (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadContactDetailsList(contactDataPagedList));
@@ -46,13 +50,26 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         groupLiveData = Transformations.switchMap(contactDetailsLiveData,
                 (PagedList<ContactDetailsData> contactDetailsDataPagedList) -> contactRepository.loadGroupList(contactDetailsDataPagedList));
 
+        //Automatically load contact details upon change in contact data
+        templateLiveData = Transformations.switchMap(contactLiveData,
+                (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadTemplateList(contactDataPagedList));
+
+        templateLiveData.observeForever(this::onTemplateListChanged);
+    }
+
+    private void onTemplateListChanged(PagedList<TemplateData> templateDataPagedList)
+    {
+        Log.d(TAG, "onTemplateListChanged");
+        contactList.mergeContactData(contactLiveData, contactDetailsLiveData, groupLiveData, templateLiveData);
     }
 
     public void setFilter(String filterState)
     {
+        Log.d(TAG, "Set filter: " + filterState);
+
         modelFilter.postValue(filterState);
 
-        Log.d(TAG, "Set filter for ContactList loader");
+        /*
         contactLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactList(txFilterState));
 
@@ -60,15 +77,14 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         contactDetailsLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactDetailsList(txFilterState));
 
-        Log.d(TAG, "Set filter for Groups loader");
+//        Log.d(TAG, "Set filter for Groups loader");
         groupLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadGroupList(txFilterState));
 
-        Log.d(TAG, "Set filter for Templates loader");
+//        Log.d(TAG, "Set filter for Templates loader");
         templateLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadTemplateList(txFilterState));
-
-        contactList.mergeContactData(contactLiveData, contactDetailsLiveData, groupLiveData, templateLiveData);
+*/
     }
     
     public ContactList getContactList()

@@ -418,42 +418,54 @@ public class TemplateParser
         */
     }
 
-    public void updateContactDetails(Contact contact)
+    private void updateContactDetails(Contact contact)
     {
-        if(contact.data.photoStream != null)
-        {
-            // TODO: photoView.setImageBitmap(contact.photo);
-            //photoView.setVisibility(VISIBLE);
-            photoView.attr("visibility", "hidden");
-        }
-        else if(contact.data.photoURI != null)
-        {
-            photoView.attr("src", contact.data.photoURI.getPath());
-            //photoView.setVisibility(VISIBLE);
-            photoView.attr("display", "block");
-        }
-        else
-        {
-            //photoView.setVisibility(INVISIBLE);
-            photoView.attr("visibility", "hidden");
+        if(contact.data != null) {
+            if (contact.data.photoStream != null)
+            {
+                // TODO: photoView.setImageBitmap(contact.photo);
+                //photoView.setVisibility(VISIBLE);
+                photoView.attr("visibility", "hidden");
+            }
+            else if (contact.data.photoURI != null)
+            {
+                photoView.attr("src", contact.data.photoURI.getPath());
+                //photoView.setVisibility(VISIBLE);
+                photoView.attr("display", "block");
+            }
+            else
+                {
+                //photoView.setVisibility(INVISIBLE);
+                photoView.attr("visibility", "hidden");
+            }
+            setContactField(incomingNumberView, contact.data.incomingNumber);
+            setContactField(displayNameView, contact.data.displayName);
         }
 
-        setContactField(incomingNumberView, contact.data.incomingNumber);
-        setContactField(displayNameView, contact.data.displayName);
-        setContactField(nickNameView, contact.details.nickName);
-        setContactField(jobTitleView, contact.details.jobTitle);
-        setContactField(organizationView, contact.details.organization);
-        setContactField(addressView, contact.details.address);
-        setContactField(groupView, contact.groups.groupTitle);
-        setContactField(phoneNumbersView, contact.details.phoneNumbers);
-        setContactField(eMailsView, contact.details.eMails);
-        setContactField(IMsView, contact.details.IMs);
-        setContactField(webSiteView, contact.details.website);
-        setContactField(notesView, contact.details.notes);
+        if(contact.details != null)
+        {
+            setContactField(nickNameView, contact.details.nickName);
+            setContactField(jobTitleView, contact.details.jobTitle);
+            setContactField(organizationView, contact.details.organization);
+            setContactField(addressView, contact.details.address);
+            setContactField(phoneNumbersView, contact.details.phoneNumbers);
+            setContactField(eMailsView, contact.details.eMails);
+            setContactField(IMsView, contact.details.IMs);
+            setContactField(webSiteView, contact.details.website);
+            setContactField(notesView, contact.details.notes);
+        }
+
+        if(contact.groups != null)
+        {
+            setContactField(groupView, contact.groups.groupTitle);
+        }
     }
 
-    public void setContactField(Element element, String value)
+    private void setContactField(Element element, String value)
     {
+        if(element == null)
+            return;
+
         if(value != null)
         {
             element.text(value);

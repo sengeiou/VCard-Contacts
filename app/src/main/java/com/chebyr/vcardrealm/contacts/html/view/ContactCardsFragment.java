@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactList;
 import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactViewModel;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,19 +47,21 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
         mContactCardsListView = rootView.findViewById(R.id.contact_cards_view);
         mContactCardsListView.initialize(activity);
 
-        ContactViewModel model = ViewModelProviders.of(this).get(ContactViewModel.class);
-        Log.d(TAG, "ViewModel created: " +model.toString());
+        ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+        Log.d(TAG, "ViewModel created: " + contactViewModel.toString());
 
-        model.setFilter("");
-        ContactList contactsList = model.getContactList();
+        ContactList contactsList = contactViewModel.getContactList();
+        contactsList.observe(this, this::onContactsListChanged);
 
-        contactsList.observe(this, contactPagedList ->
-        {
-            Log.d(TAG, "update UI. No of contacts: " + contactPagedList.size());
-            mContactCardsListView.setContactPagedList(contactPagedList);
-        });
+        contactViewModel.setFilter("");
 
         return rootView;
+    }
+
+    private void onContactsListChanged(List<Contact> contactPagedList)
+    {
+        Log.d(TAG, "update UI. No of contacts: " + contactPagedList.size());
+        mContactCardsListView.setContactPagedList(contactPagedList);
     }
 
     @Override
