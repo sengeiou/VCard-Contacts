@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
-import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
 import java.util.ArrayList;
@@ -49,7 +48,8 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 
     private List<TemplateData> loadAssets(int noOfAssets, int startPosition)
     {
-        String templatePath = assetsPath + "business_card.html";
+        String htmlPath = assetsPath + "business_card.html";
+        String cssPath = assetsPath + "business_card.css";
         String logoPhotoPath = assetsPath + "logo.png";
         String backgroundPhotoPath = assetsPath + "background.png";
 
@@ -59,9 +59,10 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
             TemplateData templateData = new TemplateData();
 
             templateData.contactID = contactDataList.get(assetCount).contactID;
-            templateData.htmlStream = fileUtil.openVCardAsset(templatePath);
-            templateData.logoPhotoStream = fileUtil.openVCardAsset(logoPhotoPath);
-            templateData.backgroundPhotoStream = fileUtil.openVCardAsset(backgroundPhotoPath);
+            templateData.html = new String(fileUtil.readTextAsset(htmlPath));
+            templateData.css = new String(fileUtil.readTextAsset(cssPath));
+            templateData.logoPhoto = fileUtil.readBitmapAsset(logoPhotoPath);
+            templateData.backgroundPhoto = fileUtil.readBitmapAsset(backgroundPhotoPath);
 
 //            Log.d(TAG, " templateData.contactID: " + templateData.contactID);
 

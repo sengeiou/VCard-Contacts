@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class ContactCardsListView extends RecyclerView implements ContactCardsListViewAdapter.OnItemClickCallBack
 {
+    private static String TAG = ContactCardsListView.class.getSimpleName();
     private ContactCardsListViewAdapter mContactCardsListViewAdapter;
 
     public ContactCardsListView(Context context)
@@ -27,15 +29,16 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
 
     public void initialize(Activity activity)
     {
+        Log.d(TAG, "initialize");
         mContactCardsListViewAdapter = new ContactCardsListViewAdapter();
         mContactCardsListViewAdapter.setCallback(this);
+        setAdapter(mContactCardsListViewAdapter);
 
         setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(activity);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         setLayoutManager(llm);
         setItemAnimator(new DefaultItemAnimator());
-        setAdapter(mContactCardsListViewAdapter);
 
         addOnScrollListener(new RecyclerView.OnScrollListener()
         {
@@ -48,9 +51,9 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
         });
     }
 
-    public void setContactPagedList(List<Contact> contactPagedList)
+    public void setContactList(List<Contact> contactList)
     {
-        mContactCardsListViewAdapter.setContactPagedList(contactPagedList);
+        mContactCardsListViewAdapter.setContactList(contactList);
     }
 
     @Override

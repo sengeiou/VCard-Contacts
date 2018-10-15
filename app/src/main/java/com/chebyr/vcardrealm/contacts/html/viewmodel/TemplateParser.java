@@ -7,8 +7,6 @@ import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
-import java.io.InputStream;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,23 +55,24 @@ public class TemplateParser
 
     public String generateVCardHtml(Contact contact)
     {
-        Log.d(TAG, "Generate VCard HTML: " + contact);
+//        Log.d(TAG, "Generate VCard HTML: " + contact);
         if((contact.template == null) || (contact.data == null))
             return null;
 
-        Log.d(TAG, "contact.template.htmlStream: " + contact.template.htmlStream);
+//        Log.d(TAG, "contact.template.html: " + contact.template.html);
 
-        parseInputStream(contact.template.htmlStream);
+        parseTemplate(contact.template.html);
         updateContactDetails(contact);
         return getVCardHTML();
     }
 
-    public boolean parseInputStream(InputStream inputStream)
+    private boolean parseTemplate(String html)
     {
         try
         {
-            document = Jsoup.parse(inputStream, "UTF-8", "");
-            Log.d(TAG, "Parsing html VCard: " + document);
+            //document = Jsoup.parse(inputStream, "UTF-8", "");
+            document = Jsoup.parse(html);
+//            Log.d(TAG, "Parsing html VCard: " + document);
 
             photoView = document.getElementById(photoID);
             incomingNumberView = document.getElementById(incomingNumberID);
@@ -97,6 +96,8 @@ public class TemplateParser
         catch(Exception exception)
         {
             Log.d(TAG, exception.toString());
+            Log.d(TAG, exception.getMessage());
+            Log.d(TAG, exception.getLocalizedMessage());
             return false;
         }
     }
@@ -421,7 +422,7 @@ public class TemplateParser
     private void updateContactDetails(Contact contact)
     {
         if(contact.data != null) {
-            if (contact.data.photoStream != null)
+            if (contact.data.photo != null)
             {
                 // TODO: photoView.setImageBitmap(contact.photo);
                 //photoView.setVisibility(VISIBLE);

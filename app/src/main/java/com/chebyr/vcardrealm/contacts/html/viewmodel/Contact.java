@@ -1,6 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.viewmodel;
 
 import android.net.Uri;
+import android.util.Base64;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
@@ -16,7 +17,7 @@ public class Contact
     public GroupData groups;
     public TemplateData template;
 
-    public String templateHtml;
+    public String vcardHtml;
 
     public Contact()
     {
@@ -53,10 +54,5 @@ public class Contact
             return data.contactID == newContact.data.contactID;
         }
         return false;
-    }
-
-    public String getHtml()
-    {
-        return null;
     }
 }

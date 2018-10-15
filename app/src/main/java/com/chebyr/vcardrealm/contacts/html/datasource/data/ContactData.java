@@ -1,5 +1,6 @@
 package com.chebyr.vcardrealm.contacts.html.datasource.data;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.io.InputStream;
@@ -13,7 +14,7 @@ public class ContactData
     public String photoUriString;
     public String incomingNumber;
 
-    public InputStream photoStream;
+    public Bitmap photo;
     public Uri photoURI;
 
     public ContactData()

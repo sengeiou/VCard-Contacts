@@ -1,11 +1,11 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
-import android.app.Activity;
+
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.SearchRecentSuggestionsProvider;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,27 +41,28 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        Activity activity = getActivity();
+        FragmentActivity activity = getActivity();
 
         View rootView = inflater.inflate(R.layout.contact_list_fragment, container, false);
         mContactCardsListView = rootView.findViewById(R.id.contact_cards_view);
         mContactCardsListView.initialize(activity);
 
-        ContactViewModel contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+        ContactViewModel contactViewModel = ViewModelProviders.of(activity).get(ContactViewModel.class);
         Log.d(TAG, "ViewModel created: " + contactViewModel.toString());
+
+        contactViewModel.setFilter("");
 
         ContactList contactsList = contactViewModel.getContactList();
         contactsList.observe(this, this::onContactsListChanged);
 
-        contactViewModel.setFilter("");
 
         return rootView;
     }
 
-    private void onContactsListChanged(List<Contact> contactPagedList)
+    private void onContactsListChanged(List<Contact> contactList)
     {
-        Log.d(TAG, "update UI. No of contacts: " + contactPagedList.size());
-        mContactCardsListView.setContactPagedList(contactPagedList);
+        Log.d(TAG, "onContactsListChanged. No of contacts: " + contactList.size());
+        mContactCardsListView.setContactList(contactList);
     }
 
     @Override

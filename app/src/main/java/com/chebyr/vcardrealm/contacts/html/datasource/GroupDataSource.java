@@ -78,7 +78,7 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
         long lastGroupID = 0;
         for(groupCursor.moveToFirst(); !groupCursor.isAfterLast(); groupCursor.moveToNext())
         {
-            long groupID = groupCursor.getLong(GroupsQuery.QUERY_ID);
+            long groupID = groupCursor.getLong(groupCursor.getColumnIndex(GroupsQuery.GROUP_ID));
             String groupTitle = groupCursor.getString(groupCursor.getColumnIndex(GroupsQuery.TITLE));
 
             if(groupID == lastGroupID)
@@ -89,7 +89,7 @@ public class GroupDataSource extends PositionalDataSource<GroupData>
                 groupData.addGroup(groupTitle);
             }
 
-            Log.d(TAG, "GroupRowID: " + groupID + " Group Title: " + groupTitle);
+//            Log.d(TAG, "GroupRowID: " + groupID + " Group Title: " + groupTitle);
         }
         return groupData;
     }

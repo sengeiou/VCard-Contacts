@@ -9,7 +9,9 @@ public class GroupData
 
     public void addGroup(String groupTitle)
     {
-        if ((this.groupTitle.length() > 0) && (this.groupTitle.length() > 0))
+        if(this.groupTitle == null)
+            this.groupTitle = groupTitle;
+        else if((this.groupTitle.length() > 0) && (this.groupTitle.length() > 0))
             this.groupTitle += separator + groupTitle;
         else
             this.groupTitle = groupTitle;

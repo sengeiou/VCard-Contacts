@@ -1,9 +1,9 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
-import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,7 @@ public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCar
 
     private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
 
-    private List<Contact> contactPagedList;
+    private List<Contact> contactList;
 
     private OnItemClickCallBack callBack;
 
@@ -49,14 +49,16 @@ public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCar
         this.callBack        = callBack;
     }
 
-    public void setContactPagedList(List<Contact> contactPagedList)
+    public void setContactList(List<Contact> contactPagedList)
     {
-        this.contactPagedList = contactPagedList;
+        this.contactList = contactPagedList;
+        notifyDataSetChanged();
     }
 
     @Override
     public ContactCardsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
+        Log.d(TAG, "onCreateViewHolder");
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = layoutInflater.inflate(R.layout.contact_card, viewGroup, false);
         ContactCardsViewHolder contactCardsViewHolder = new ContactCardsViewHolder(itemView);
@@ -66,16 +68,16 @@ public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCar
     @Override
     public void onBindViewHolder(@NonNull ContactCardsViewHolder viewHolder, int position)
     {
-        Contact contact = contactPagedList.get(position);
+        Contact contact = contactList.get(position);
         viewHolder.setContact(contact);
-        viewHolder.setWebViewClickListener();
     }
 
     @Override
     public int getItemCount()
     {
-        if (contactPagedList!= null)
-            return contactPagedList.size();
+        if (contactList != null)
+            return contactList.size();
+
         return 0;
     }
 
@@ -100,23 +102,14 @@ public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCar
         public ContactCardsViewHolder(View itemView)
         {
             super(itemView);
-
             contactCardView = itemView.findViewById(R.id.contact_card);
+            contactCardView.initialize();
         }
 
         public void setContact(Contact contact)
         {
-            contactCardView.setContactPhoto(contact.data.photoStream);
-            contactCardView.setBackgroundPhoto(contact.template.backgroundPhotoStream);
-            contactCardView.setLogoPhoto(contact.template.logoPhotoStream);
-
-            String html = contact.getHtml();
-            contactCardView.loadUrl(html);
+            contactCardView.setContact(contact);
         }
 
-        public void setWebViewClickListener()
-        {
-
-        }
     }
 }

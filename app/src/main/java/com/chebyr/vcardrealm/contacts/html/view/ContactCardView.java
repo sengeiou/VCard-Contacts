@@ -1,36 +1,39 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.android.contacts.common.list.ContactListItemView;
 import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
 
 import java.io.InputStream;
 
 public class ContactCardView extends ContactListItemView implements WebView.OnClickListener
 {
+    private static String TAG = ContactCardView.class.getSimpleName();
+
     private WebView webView;
-    private WebViewPhotoProvider webViewPhotoProvider;
+    private WebViewResourceProvider webViewResourceProvider;
 
     public ContactCardView(Context context)
     {
         super(context);
-        initialize();
     }
 
     public ContactCardView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        initialize();
     }
 
     public void initialize()
     {
-        getRootView().findViewById(R.id.web_view);
+        webView = getRootView().findViewById(R.id.web_view);
         setOnClickListener(this);
 
         WebSettings webSettings = webView.getSettings();
@@ -41,27 +44,17 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //webSettings.setOffscreenPreRaster(true);
 
-        webView.setWebViewClient(webViewPhotoProvider);
+        webViewResourceProvider = new WebViewResourceProvider();
+        webView.setWebViewClient(webViewResourceProvider);
     }
 
-    public void setContactPhoto(InputStream contactPhotoStream)
+    public void setContact(Contact contact)
     {
-        webViewPhotoProvider.setContactPhoto(contactPhotoStream);
-    }
+        if(contact == null)
+            return;
 
-    public void setBackgroundPhoto(InputStream backgroundPhotoStream)
-    {
-        webViewPhotoProvider.setBackgroundPhoto(backgroundPhotoStream);
-    }
-
-    public void setLogoPhoto(InputStream logoPhotoStream)
-    {
-        webViewPhotoProvider.setLogoPhoto(logoPhotoStream);
-    }
-
-    public void loadUrl(String html)
-    {
-        webView.loadUrl(html);
+        webViewResourceProvider.setContact(contact);
+        webView.loadData(contact.vcardHtml, "text/html", "base64");
     }
 
     @Override

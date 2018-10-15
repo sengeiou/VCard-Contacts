@@ -1,12 +1,13 @@
 package com.chebyr.vcardrealm.contacts.html.datasource.data;
 
-import java.io.InputStream;
+import android.graphics.Bitmap;
 
 public class TemplateData
 {
     public long contactID;
 
-    public InputStream htmlStream;
-    public InputStream logoPhotoStream;
-    public InputStream backgroundPhotoStream;
+    public String html;
+    public String css;
+    public Bitmap logoPhoto;
+    public Bitmap backgroundPhoto;
 }

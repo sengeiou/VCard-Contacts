@@ -3,6 +3,7 @@ package com.chebyr.vcardrealm.contacts.html.utils;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -10,6 +11,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,17 +71,93 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
         return file;
     }
 
-    public InputStream openVCardAsset(String assetName)
+    public byte[] readTextAsset(String assetName)
     {
         try
         {
             InputStream inputStream = mAssetManager.open(assetName);
-            return inputStream;
+            byte[] buffer = new byte[inputStream.available()];
+            inputStream.read(buffer);
+            inputStream.close();
+
+            return buffer;
         }
         catch (Exception exception)
         {
             Log.d(TAG, exception.toString());
             return null;
+        }
+    }
+
+    public Bitmap readBitmapAsset(String assetName)
+    {
+        try
+        {
+            InputStream inputStream = mAssetManager.open(assetName);
+            return BitmapFactory.decodeStream(inputStream);
+        }
+        catch (Exception exception)
+        {
+            Log.d(TAG, exception.toString());
+            return null;
+        }
+    }
+
+    public void readFile(String fileName)
+    {
+        InputStream mInputStream = null;
+        try
+        {
+            mInputStream = new FileInputStream(fileName);
+            //... do stuff to your streams
+        }
+        catch(FileNotFoundException fnex)
+        {
+            //Handle the error... but the streams are still open!
+        }
+        finally
+        {
+            //close input
+            if (mInputStream != null)
+            {
+                try
+                {
+                    mInputStream.close();
+                }
+                catch(IOException ioex)
+                {
+                    //Very bad things just happened... handle it
+                }
+            }
+        }
+    }
+
+    public void writeFile(String fileName)
+    {
+        OutputStream mOutputStream = null;
+        try
+        {
+            mOutputStream = new FileOutputStream(fileName);
+            //... do stuff to your streams
+        }
+        catch(FileNotFoundException fnex)
+        {
+            //Handle the error... but the streams are still open!
+        }
+        finally
+        {
+            //Close output
+            if (mOutputStream != null)
+            {
+                try
+                {
+                    mOutputStream.close();
+                }
+                catch(IOException ioex)
+                {
+                    //Very bad things just happened... handle it
+                }
+            }
         }
     }
 

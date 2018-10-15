@@ -53,7 +53,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
         if(contactDataList == null)
             return contactDetailsDataList;
 
-        Log.d(TAG, "contactDataList.size(): " + contactDataList.size());
+//        Log.d(TAG, "contactDataList.size(): " + contactDataList.size());
 
         for(int count = 0; count < contactDataList.size(); count++)
         {
@@ -68,7 +68,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
                     ContactDetailsData contactDetailsData = getContactDetailsData(contactDetailsCursor);
                     contactDetailsData.contactID = contactDataID;
                     contactDetailsDataList.add(contactDetailsData);
-                    Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
+//                    Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
                 }
                 contactDetailsCursor.close();
             }

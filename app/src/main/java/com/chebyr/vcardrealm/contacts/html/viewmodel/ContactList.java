@@ -46,96 +46,103 @@ public class ContactList extends MediatorLiveData<List<Contact>>
 
     private void addContactDataList(PagedList<ContactData> contactDataList)
     {
+        ContactArrayList contactArrayList = (ContactArrayList) getValue();
+
         for(ContactData contactData: contactDataList)
         {
-            Log.d(TAG, "addContactDataList: " + contactData.displayName);
+//            Log.d(TAG, "addContactDataList: " + contactData.displayName);
 
-            ContactArrayList contactList = (ContactArrayList) getValue();
-
-            Contact contact = contactList.get((int)contactData.contactID);
+            Contact contact = contactArrayList.get((int)contactData.contactID);
 
             if(contact == null)
             {
                 contact = new Contact();
                 contact.data = contactData;
-                contactList.add(contact);
+                contactArrayList.add(contact);
             }
             else
             {
                 contact.data = contactData;
             }
 
-            contact.templateHtml = templateParser.generateVCardHtml(contact);
+            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
+        setValue(contactArrayList);
     }
 
     private void addContactDetailsList(PagedList<ContactDetailsData> contactDetailsDataList)
     {
+        ContactArrayList contactArrayList = (ContactArrayList)getValue();
+
         for(ContactDetailsData contactDetailsData: contactDetailsDataList)
         {
-            Log.d(TAG, "addContactDetailsList: " + contactDetailsData.contactID);
+//            Log.d(TAG, "addContactDetailsList: " + contactDetailsData.contactID);
 
-            ContactArrayList contactPagedList = (ContactArrayList)getValue();
-            Contact contact = contactPagedList.get((int)contactDetailsData.contactID);
+            Contact contact = contactArrayList.get((int)contactDetailsData.contactID);
             if(contact == null)
             {
                 contact = new Contact();
                 contact.details = contactDetailsData;
-                contactPagedList.add(contact);
+                contactArrayList.add(contact);
             }
             else
             {
                 contact.details = contactDetailsData;
             }
 
-            contact.templateHtml = templateParser.generateVCardHtml(contact);
+            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
+        setValue(contactArrayList);
     }
 
     private void addGroupsList(PagedList<GroupData> groupDataList)
     {
+        ContactArrayList contactArrayList = (ContactArrayList)getValue();
+
         for(GroupData groupData: groupDataList)
         {
-            Log.d(TAG, "addGroupsList: " + groupData.contactID);
+//            Log.d(TAG, "addGroupsList: " + groupData.contactID);
 
-            ContactArrayList contactPagedList = (ContactArrayList)getValue();
-            Contact contact = contactPagedList.get((int)groupData.contactID);
+            Contact contact = contactArrayList.get((int)groupData.contactID);
             if(contact == null)
             {
                 contact = new Contact();
                 contact.groups = groupData;
-                contactPagedList.add(contact);
+                contactArrayList.add(contact);
             }
             else
             {
                 contact.groups = groupData;
             }
 
-            contact.templateHtml = templateParser.generateVCardHtml(contact);
+            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
+        setValue(contactArrayList);
     }
 
     private void addTemplatesList(PagedList<TemplateData> templateDataList)
     {
+        ContactArrayList contactArrayList = (ContactArrayList)getValue();
+
         for(TemplateData templateData: templateDataList)
         {
-            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
+//            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
 
-            ContactArrayList contactPagedList = (ContactArrayList)getValue();
-            Contact contact = contactPagedList.get((int)templateData.contactID);
+            Contact contact = contactArrayList.get((int)templateData.contactID);
             if(contact == null)
             {
                 contact = new Contact();
                 contact.template = templateData;
-                contactPagedList.add(contact);
+                contactArrayList.add(contact);
             }
             else
             {
                 contact.template = templateData;
             }
 
-            contact.templateHtml = templateParser.generateVCardHtml(contact);
+            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
+        setValue(contactArrayList);
     }
 
     public Uri getContactUri(int position)
