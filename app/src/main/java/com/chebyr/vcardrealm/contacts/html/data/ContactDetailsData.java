@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.datasource.data;
+package com.chebyr.vcardrealm.contacts.html.data;
 
 public class ContactDetailsData
 {
@@ -14,5 +14,5 @@ public class ContactDetailsData
     public String notes;
     public String eMails;
     public String groupRowID;
-
+    public GroupData groupData;
 }

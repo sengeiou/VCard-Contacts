@@ -1,84 +1,57 @@
 package com.chebyr.vcardrealm.contacts.html.datasource;
 
-import android.arch.paging.DataSource;
-import android.arch.paging.PositionalDataSource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
+import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContactDetailsDataSource extends PositionalDataSource<ContactDetailsData>
+public class ContactDetailsDataSource
 {
     private static String TAG = ContactDetailsDataSource.class.getSimpleName();
 
     private static String separator = ", ";
 
     private ContentResolver contentResolver;
-    private List<ContactData> contactDataList;
     private String filterState;
+    private GroupDataSource groupDataSource;
 
-    public ContactDetailsDataSource(Context context, String filterState, List<ContactData> contactDataList)
+    public ContactDetailsDataSource(Context context, String filterState)
     {
-        this.contactDataList = contactDataList;
         this.filterState = filterState;
         contentResolver = context.getContentResolver();
+        groupDataSource = new GroupDataSource(context, filterState);
     }
 
-    @Override
-    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<ContactDetailsData> callback)
+    public void setFilterState(String filterState)
     {
-        List<ContactDetailsData> contactDetailsDataList = getContactDetailsDataList();
-        callback.onResult(contactDetailsDataList, params.requestedStartPosition);
+        this.filterState = filterState;
     }
 
-    @Override
-    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<ContactDetailsData> callback)
+    public ContactDetailsData getContactDetailsData(long contactDataID)
     {
-        List<ContactDetailsData> contactDetailsDataList = getContactDetailsDataList();
-        callback.onResult(contactDetailsDataList);
-    }
-
-    private List<ContactDetailsData> getContactDetailsDataList()
-    {
-        List<ContactDetailsData> contactDetailsDataList = new ArrayList<>();
-
-        if(contactDataList == null)
-            return contactDetailsDataList;
-
 //        Log.d(TAG, "contactDataList.size(): " + contactDataList.size());
 
-        for(int count = 0; count < contactDataList.size(); count++)
+        ContactDetailsData contactDetailsData = null;
+
+        String[] whereParams = new String[]{String.valueOf(contactDataID)};
+
+        Cursor contactDetailsCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, whereParams, null);
+        if(contactDetailsCursor != null)
         {
-            long contactDataID = contactDataList.get(count).contactID;
-            String[] whereParams = new String[]{String.valueOf(contactDataID)};
-
-            Cursor contactDetailsCursor = contentResolver.query(ContactDetailsQuery.URI, ContactDetailsQuery.PROJECTION, ContactDetailsQuery.SELECTION, whereParams, null);
-            if(contactDetailsCursor != null)
+            for (contactDetailsCursor.moveToFirst(); !contactDetailsCursor.isAfterLast(); contactDetailsCursor.moveToNext())
             {
-                for (contactDetailsCursor.moveToFirst(); !contactDetailsCursor.isAfterLast(); contactDetailsCursor.moveToNext())
-                {
-                    ContactDetailsData contactDetailsData = getContactDetailsData(contactDetailsCursor);
-                    contactDetailsData.contactID = contactDataID;
-                    contactDetailsDataList.add(contactDetailsData);
+                contactDetailsData = getContactDetailsCursorData(contactDetailsCursor);
+                contactDetailsData.contactID = contactDataID;
 //                    Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
-                }
-                contactDetailsCursor.close();
             }
+            contactDetailsCursor.close();
         }
-
-
-        return contactDetailsDataList;
+        return contactDetailsData;
     }
 
-    private ContactDetailsData getContactDetailsData(Cursor contactDetailsCursor)
+    private ContactDetailsData getContactDetailsCursorData(Cursor contactDetailsCursor)
     {
         ContactDetailsData contactDetailsData = new ContactDetailsData();
         String mimeType = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
@@ -151,6 +124,7 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
             case ContactDetailsQuery.GROUP_MIME:
             {
                 contactDetailsData.groupRowID = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
+                contactDetailsData.groupData = groupDataSource.getGroupData(contactDetailsData.groupRowID);
                 break;
             }
         }
@@ -239,34 +213,4 @@ public class ContactDetailsDataSource extends PositionalDataSource<ContactDetail
 
         return "";
     }
-
-    public static class Factory extends DataSource.Factory<Integer, ContactDetailsData>
-    {
-        private Context context;
-        private List<ContactData> contactDataList;
-        private String filterState;
-
-        public Factory(Context context)
-        {
-            this.context = context;
-        }
-
-        public void setFilter(String filterState)
-        {
-            this.filterState = filterState;
-        }
-
-        public void setContactDataList(List<ContactData> contactDataList)
-        {
-            this.contactDataList = contactDataList;
-        }
-
-        @Override
-        public DataSource<Integer, ContactDetailsData> create()
-        {
-            Log.d(TAG, "Create ContactDetailsDataSource");
-            return new ContactDetailsDataSource(context, filterState, contactDataList);
-        }
-    }
-
 }

@@ -1,6 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.app.Activity;
+import android.arch.paging.PagedList;
 import android.content.Context;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
         });
     }
 
-    public void setContactList(List<Contact> contactList)
+    public void setContactList(PagedList<Contact> contactList)
     {
         mContactCardsListViewAdapter.setContactList(contactList);
     }

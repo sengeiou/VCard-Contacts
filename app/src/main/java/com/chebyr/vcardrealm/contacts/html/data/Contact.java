@@ -1,23 +1,17 @@
-package com.chebyr.vcardrealm.contacts.html.viewmodel;
-
-import android.net.Uri;
-import android.util.Base64;
-
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
-
-import java.io.InputStream;
+package com.chebyr.vcardrealm.contacts.html.data;
 
 public class Contact
 {
+    public long contactID;
+
     public ContactData data;
     public ContactDetailsData details;
     public GroupData groups;
     public TemplateData template;
 
     public String vcardHtml;
+
+    public String incomingNumber;
 
     public Contact()
     {
@@ -26,7 +20,7 @@ public class Contact
 
     public long getId()
     {
-        return data.contactID;
+        return contactID;
     }
 
     public void addContactData(ContactData contactData)
@@ -51,7 +45,7 @@ public class Contact
         if(object.getClass() == Contact.class)
         {
             Contact newContact = (Contact)object;
-            return data.contactID == newContact.data.contactID;
+            return contactID == newContact.contactID;
         }
         return false;
     }

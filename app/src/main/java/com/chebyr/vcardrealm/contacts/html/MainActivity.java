@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (BuildConfig.DEBUG)
-            StrictModeDebugUtils.enableStrictMode();
+//        if (BuildConfig.DEBUG)
+//            StrictModeDebugUtils.enableStrictMode();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -7,15 +7,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.ContactData;
+import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
+import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactList extends MediatorLiveData<List<Contact>>
+public class ContactList extends MediatorLiveData<PagedList<Contact>>
 {
     private static String TAG = ContactList.class.getSimpleName();
 
@@ -23,7 +23,6 @@ public class ContactList extends MediatorLiveData<List<Contact>>
 
     public ContactList(Context context)
     {
-        setValue(new ContactArrayList());
         templateParser = new TemplateParser(context);
     }
     
@@ -31,98 +30,31 @@ public class ContactList extends MediatorLiveData<List<Contact>>
     //Stream<Contact> contactStream;
     //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
 
-    public void mergeContactData(LiveData<PagedList<ContactData>> contactLiveData,
-                                 LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData,
-                                 LiveData<PagedList<GroupData>> groupLiveData,
+    public void mergeContactData(LiveData<PagedList<Contact>> contactLiveData,
                                  LiveData<PagedList<TemplateData>> templateLiveData)
     {
         Log.d(TAG, "Merge contact data");
 
-        addSource(contactLiveData, this::addContactDataList);//contactDataList -> addContactDataList(contactDataList));
-        addSource(contactDetailsLiveData, this::addContactDetailsList);//contactDetailsDataList -> addContactDetailsList(contactDetailsDataList));
-        addSource(groupLiveData, this::addGroupsList);//groupDataList -> addGroupsList(groupDataList));
-        addSource(templateLiveData, this::addTemplatesList);//templateDataList -> addTemplatesList(templateDataList));
+        addSource(contactLiveData, this::addContactDataList);
+        addSource(templateLiveData, this::addTemplatesList);
     }
 
-    private void addContactDataList(PagedList<ContactData> contactDataList)
+    private void addContactDataList(PagedList<Contact> contactPagedList)
     {
-        ContactArrayList contactArrayList = (ContactArrayList) getValue();
-
-        for(ContactData contactData: contactDataList)
+        for(Contact contact: contactPagedList)
         {
 //            Log.d(TAG, "addContactDataList: " + contactData.displayName);
-
-            Contact contact = contactArrayList.get((int)contactData.contactID);
-
-            if(contact == null)
+            if(contact != null)
             {
-                contact = new Contact();
-                contact.data = contactData;
-                contactArrayList.add(contact);
+                contact.vcardHtml = templateParser.generateVCardHtml(contact);
             }
-            else
-            {
-                contact.data = contactData;
-            }
-
-            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
-        setValue(contactArrayList);
-    }
-
-    private void addContactDetailsList(PagedList<ContactDetailsData> contactDetailsDataList)
-    {
-        ContactArrayList contactArrayList = (ContactArrayList)getValue();
-
-        for(ContactDetailsData contactDetailsData: contactDetailsDataList)
-        {
-//            Log.d(TAG, "addContactDetailsList: " + contactDetailsData.contactID);
-
-            Contact contact = contactArrayList.get((int)contactDetailsData.contactID);
-            if(contact == null)
-            {
-                contact = new Contact();
-                contact.details = contactDetailsData;
-                contactArrayList.add(contact);
-            }
-            else
-            {
-                contact.details = contactDetailsData;
-            }
-
-            contact.vcardHtml = templateParser.generateVCardHtml(contact);
-        }
-        setValue(contactArrayList);
-    }
-
-    private void addGroupsList(PagedList<GroupData> groupDataList)
-    {
-        ContactArrayList contactArrayList = (ContactArrayList)getValue();
-
-        for(GroupData groupData: groupDataList)
-        {
-//            Log.d(TAG, "addGroupsList: " + groupData.contactID);
-
-            Contact contact = contactArrayList.get((int)groupData.contactID);
-            if(contact == null)
-            {
-                contact = new Contact();
-                contact.groups = groupData;
-                contactArrayList.add(contact);
-            }
-            else
-            {
-                contact.groups = groupData;
-            }
-
-            contact.vcardHtml = templateParser.generateVCardHtml(contact);
-        }
-        setValue(contactArrayList);
+        setValue(contactPagedList);
     }
 
     private void addTemplatesList(PagedList<TemplateData> templateDataList)
     {
-        ContactArrayList contactArrayList = (ContactArrayList)getValue();
+        PagedList<Contact> contactArrayList = getValue();
 
         for(TemplateData templateData: templateDataList)
         {
@@ -168,20 +100,5 @@ public class ContactList extends MediatorLiveData<List<Contact>>
     public Contact lookupNumber(String incomingNumber)
     {
         return null;
-    }
-
-    private class ContactArrayList extends ArrayList<Contact>
-    {
-        @Override
-        public Contact get(int index)
-        {
-            for(Contact contact: this)
-            {
-                if(contact.data != null)
-                    if(contact.data.contactID == index)
-                        return contact;
-            }
-            return null;
-        }
     }
 }

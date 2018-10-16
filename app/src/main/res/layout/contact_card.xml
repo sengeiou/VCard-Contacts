@@ -12,11 +12,12 @@
         android:layout_height="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintDimensionRatio="1.586:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/call_arrow_red"
         android:id="@+id/contact_card">
 
         <WebView

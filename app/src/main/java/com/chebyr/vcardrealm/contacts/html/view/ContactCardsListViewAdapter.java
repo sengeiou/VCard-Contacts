@@ -1,5 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
+import android.arch.paging.PagedList;
+import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -9,23 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
-import java.util.List;
-
-public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCardsListViewAdapter.ContactCardsViewHolder>
-        //PagedListAdapter<Contact, RecyclerView.ViewHolder>
+public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, ContactCardsListViewAdapter.ContactCardsViewHolder>
 {
-
     private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
 
-    private List<Contact> contactList;
+    private PagedList<Contact> contactList;
 
     private OnItemClickCallBack callBack;
 
     public ContactCardsListViewAdapter()
     {
-        super();
+        super(DIFF_CALLBACK);
     }
 
     private static DiffUtil.ItemCallback<Contact> DIFF_CALLBACK =
@@ -49,7 +47,7 @@ public class ContactCardsListViewAdapter extends RecyclerView.Adapter<ContactCar
         this.callBack        = callBack;
     }
 
-    public void setContactList(List<Contact> contactPagedList)
+    public void setContactList(PagedList<Contact> contactPagedList)
     {
         this.contactList = contactPagedList;
         notifyDataSetChanged();

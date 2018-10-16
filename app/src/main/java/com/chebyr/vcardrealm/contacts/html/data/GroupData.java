@@ -1,8 +1,7 @@
-package com.chebyr.vcardrealm.contacts.html.datasource.data;
+package com.chebyr.vcardrealm.contacts.html.data;
 
 public class GroupData
 {
-    public long contactID;
     public String groupTitle;
 
     static String separator = ", ";

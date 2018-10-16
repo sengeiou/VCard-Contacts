@@ -8,15 +8,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactDataSource;
-import com.chebyr.vcardrealm.contacts.html.datasource.ContactDetailsDataSource;
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
-import com.chebyr.vcardrealm.contacts.html.datasource.GroupDataSource;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.TemplateDataSource;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.data.ContactData;
+import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
 import java.util.List;
 
@@ -27,8 +24,6 @@ public class ContactRepository
     private static int pageSize = 10;
 
     private ContactDataSource.Factory contactsDataSourceFactory;
-    private ContactDetailsDataSource.Factory contactDetailsDataSourceFactory;
-    private GroupDataSource.Factory groupsDataSourceFactory;
     private TemplateDataSource.Factory templateDataSourceFactory;
 
     public ContactsObserver.Callback callback;
@@ -43,8 +38,6 @@ public class ContactRepository
                 .build();
 
         contactsDataSourceFactory = new ContactDataSource.Factory(context, this);
-        contactDetailsDataSourceFactory = new ContactDetailsDataSource.Factory(context);
-        groupsDataSourceFactory = new GroupDataSource.Factory(context);
         templateDataSourceFactory = new TemplateDataSource.Factory(context);
 
 //        Log.d(TAG, "contactsDataSourceFactory: " + contactsDataSourceFactory.toString());
@@ -53,39 +46,11 @@ public class ContactRepository
 //        Log.d(TAG, "templateDataSourceFactory: " + templateDataSourceFactory.toString());
     }
 
-    public LiveData<PagedList<ContactData>> loadContactList(String filterState)
+    public LiveData<PagedList<Contact>> loadContactList(String filterState)
     {
         Log.d(TAG, "loadContactList " + "filterState: " + filterState);
         contactsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(contactsDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<ContactDetailsData>> loadContactDetailsList(String filterState)
-    {
-        Log.d(TAG, "loadContactDetailsList " + "filterState: " + filterState);
-        contactDetailsDataSourceFactory.setFilter(filterState);
-        return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<ContactDetailsData>> loadContactDetailsList(List<ContactData> contactDataList)
-    {
-        Log.d(TAG, "loadContactDetailsList " + "contactDataList: " + contactDataList);
-        contactDetailsDataSourceFactory.setContactDataList(contactDataList);
-        return new LivePagedListBuilder<>(contactDetailsDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<GroupData>> loadGroupList(String filterState)
-    {
-        Log.d(TAG, "loadGroupList " + "filterState: " + filterState);
-        groupsDataSourceFactory.setFilter(filterState);
-        return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<GroupData>> loadGroupList(List<ContactDetailsData> contactDetailsDataList)
-    {
-        Log.d(TAG, "loadGroupList " + "contactDetailsDataList: " + contactDetailsDataList);
-        groupsDataSourceFactory.setContactDetailsDataList(contactDetailsDataList);
-        return new LivePagedListBuilder<>(groupsDataSourceFactory, config).build();
     }
 
     public LiveData<PagedList<TemplateData>> loadTemplateList(String filterState)
@@ -95,7 +60,7 @@ public class ContactRepository
         return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
     }
 
-    public LiveData<PagedList<TemplateData>> loadTemplateList(List<ContactData> contactDataList)
+    public LiveData<PagedList<TemplateData>> loadTemplateList(List<Contact> contactDataList)
     {
         Log.d(TAG, "loadTemplateList " + "contactDataList: " + contactDataList);
         templateDataSourceFactory.setContactDataList(contactDataList);

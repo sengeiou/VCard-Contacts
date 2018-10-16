@@ -9,10 +9,8 @@ import android.arch.paging.PagedList;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
 public class ContactViewModel extends AndroidViewModel implements ContactsObserver.Callback
@@ -22,10 +20,8 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     private ContactRepository contactRepository;
     
     private MutableLiveData<String> modelFilter = new MutableLiveData<>();
-    private LiveData<PagedList<ContactData>> contactLiveData = new MutableLiveData<>();
-    private LiveData<PagedList<ContactDetailsData>> contactDetailsLiveData = new MutableLiveData<>();
-    private LiveData<PagedList<GroupData>> groupLiveData = new MutableLiveData<>();
-    private LiveData<PagedList<TemplateData>> templateLiveData = new MutableLiveData<>();
+    private LiveData<PagedList<Contact>> contactLiveData;
+    private LiveData<PagedList<TemplateData>> templateLiveData;
 
     private ContactList contactList;
 
@@ -42,17 +38,9 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         contactLiveData = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactList(txFilterState));
 
-        //Automatically load contact details upon change in contact data
-        contactDetailsLiveData = Transformations.switchMap(contactLiveData,
-                (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadContactDetailsList(contactDataPagedList));
-
-        //Automatically load group details upon change in contact details
-        groupLiveData = Transformations.switchMap(contactDetailsLiveData,
-                (PagedList<ContactDetailsData> contactDetailsDataPagedList) -> contactRepository.loadGroupList(contactDetailsDataPagedList));
-
-        //Automatically load contact details upon change in contact data
+        //Automatically load templates upon change in contact data
         templateLiveData = Transformations.switchMap(contactLiveData,
-                (PagedList<ContactData> contactDataPagedList) -> contactRepository.loadTemplateList(contactDataPagedList));
+                (PagedList<Contact> contactDataPagedList) -> contactRepository.loadTemplateList(contactDataPagedList));
 
         templateLiveData.observeForever(this::onTemplateListChanged);
     }
@@ -60,7 +48,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     private void onTemplateListChanged(PagedList<TemplateData> templateDataPagedList)
     {
         Log.d(TAG, "onTemplateListChanged");
-        contactList.mergeContactData(contactLiveData, contactDetailsLiveData, groupLiveData, templateLiveData);
+        contactList.mergeContactData(contactLiveData, templateLiveData);
     }
 
     public void setFilter(String filterState)

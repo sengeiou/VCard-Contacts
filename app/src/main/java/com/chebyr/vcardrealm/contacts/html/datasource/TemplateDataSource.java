@@ -7,8 +7,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.datasource.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.datasource.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.ContactData;
+import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
 import java.util.ArrayList;
@@ -22,10 +23,10 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
 
     private ContentResolver contentResolver;
     private FileUtil fileUtil;
-    List<ContactData> contactDataList;
+    List<Contact> contactDataList;
 
 
-    public TemplateDataSource(Context context, List<ContactData> contactDataList)
+    public TemplateDataSource(Context context, List<Contact> contactDataList)
     {
         contentResolver = context.getContentResolver();
         fileUtil = new FileUtil(context);
@@ -75,14 +76,14 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     {
         private Context context;
 
-        List<ContactData> contactDataList;
+        List<Contact> contactDataList;
 
         public Factory(Context context)
         {
             this.context = context;
         }
 
-        public void setContactDataList(List<ContactData> contactDataList)
+        public void setContactDataList(List<Contact> contactDataList)
         {
             this.contactDataList = contactDataList;
         }

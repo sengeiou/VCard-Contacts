@@ -1,7 +1,6 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -10,9 +9,7 @@ import android.webkit.WebView;
 
 import com.android.contacts.common.list.ContactListItemView;
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
-
-import java.io.InputStream;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
 public class ContactCardView extends ContactListItemView implements WebView.OnClickListener
 {
@@ -51,8 +48,12 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
     public void setContact(Contact contact)
     {
         if(contact == null)
+        {
+            Log.d(TAG, "contact: null");
             return;
+        }
 
+        Log.d(TAG, contact.vcardHtml);
         webViewResourceProvider.setContact(contact);
         webView.loadData(contact.vcardHtml, "text/html", "base64");
     }

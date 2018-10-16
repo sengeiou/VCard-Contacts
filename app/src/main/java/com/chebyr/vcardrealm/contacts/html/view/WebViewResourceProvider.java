@@ -8,7 +8,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.chebyr.vcardrealm.contacts.html.viewmodel.Contact;
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

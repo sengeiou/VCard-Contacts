@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.datasource.data;
+package com.chebyr.vcardrealm.contacts.html.data;
 
 import android.graphics.Bitmap;
 

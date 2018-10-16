@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
+import com.chebyr.vcardrealm.contacts.html.data.Contact;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -439,7 +441,7 @@ public class TemplateParser
                 //photoView.setVisibility(INVISIBLE);
                 photoView.attr("visibility", "hidden");
             }
-            setContactField(incomingNumberView, contact.data.incomingNumber);
+            setContactField(incomingNumberView, contact.incomingNumber);
             setContactField(displayNameView, contact.data.displayName);
         }
 
