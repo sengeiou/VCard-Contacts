@@ -1,20 +1,23 @@
 package com.chebyr.vcardrealm.contacts.html.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.paging.ItemKeyedDataSource;
 import android.arch.paging.LivePagedListBuilder;
 
 import android.arch.paging.PagedList;
+import android.arch.paging.PositionalDataSource;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactDataSource;
 import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
 
 import com.chebyr.vcardrealm.contacts.html.datasource.TemplateDataSource;
-import com.chebyr.vcardrealm.contacts.html.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ContactRepository
@@ -63,7 +66,7 @@ public class ContactRepository
     public LiveData<PagedList<TemplateData>> loadTemplateList(List<Contact> contactDataList)
     {
         Log.d(TAG, "loadTemplateList " + "contactDataList: " + contactDataList);
-        templateDataSourceFactory.setContactDataList(contactDataList);
+        templateDataSourceFactory.setContactList(contactDataList);
         return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
     }
 }

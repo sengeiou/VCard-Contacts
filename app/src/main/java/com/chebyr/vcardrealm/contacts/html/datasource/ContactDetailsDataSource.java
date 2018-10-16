@@ -31,7 +31,7 @@ public class ContactDetailsDataSource
 
     public ContactDetailsData getContactDetailsData(long contactDataID)
     {
-//        Log.d(TAG, "contactDataList.size(): " + contactDataList.size());
+//        Log.d(TAG, "contactList.size(): " + contactList.size());
 
         ContactDetailsData contactDetailsData = null;
 

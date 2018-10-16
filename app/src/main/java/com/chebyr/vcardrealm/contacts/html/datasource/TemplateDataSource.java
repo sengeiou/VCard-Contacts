@@ -1,21 +1,20 @@
 package com.chebyr.vcardrealm.contacts.html.datasource;
 
 import android.arch.paging.DataSource;
-import android.arch.paging.PositionalDataSource;
+import android.arch.paging.ItemKeyedDataSource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemplateDataSource extends PositionalDataSource<TemplateData>
+public class TemplateDataSource extends ItemKeyedDataSource<Integer, TemplateData>
 {
     private static String TAG = TemplateDataSource.class.getSimpleName();
 
@@ -34,20 +33,34 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<TemplateData> callback)
+    public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull LoadInitialCallback<TemplateData> callback)
     {
-        List<TemplateData> templateDataList = loadAssets(params.requestedLoadSize, params.requestedStartPosition);
-        callback.onResult(templateDataList, params.requestedStartPosition);
-    }
-
-    @Override
-    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<TemplateData> callback)
-    {
-        List<TemplateData> templateDataList = loadAssets(params.loadSize, params.startPosition);
+        List<TemplateData> templateDataList = loadAssets(params.requestedLoadSize, params.requestedInitialKey);
         callback.onResult(templateDataList);
     }
 
-    private List<TemplateData> loadAssets(int noOfAssets, int startPosition)
+    @Override
+    public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<TemplateData> callback)
+    {
+        List<TemplateData> templateDataList = loadAssets(params.requestedLoadSize, params.key);
+        callback.onResult(templateDataList);
+    }
+
+    @Override
+    public void loadAfter(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<TemplateData> callback)
+    {
+        List<TemplateData> templateDataList = loadAssets(params.requestedLoadSize, params.key);
+        callback.onResult(templateDataList);
+    }
+
+    @NonNull
+    @Override
+    public Integer getKey(@NonNull TemplateData item)
+    {
+        return null;
+    }
+
+    private List<TemplateData> loadAssets(int noOfAssets, int key)
     {
         String htmlPath = assetsPath + "business_card.html";
         String cssPath = assetsPath + "business_card.css";
@@ -76,16 +89,16 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
     {
         private Context context;
 
-        List<Contact> contactDataList;
+        List<Contact> contactList;
 
         public Factory(Context context)
         {
             this.context = context;
         }
 
-        public void setContactDataList(List<Contact> contactDataList)
+        public void setContactList(List<Contact> contactList)
         {
-            this.contactDataList = contactDataList;
+            this.contactList = contactList;
         }
 
         public void setFilter(String filterState)
@@ -97,7 +110,7 @@ public class TemplateDataSource extends PositionalDataSource<TemplateData>
         public DataSource<Integer, TemplateData> create()
         {
             Log.d(TAG, "Create TemplateDataSource");
-            return new TemplateDataSource(context, contactDataList);
+            return new TemplateDataSource(context, contactList);
         }
     }
 }

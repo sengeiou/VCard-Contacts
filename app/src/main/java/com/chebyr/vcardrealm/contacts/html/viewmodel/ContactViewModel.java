@@ -13,6 +13,8 @@ import com.chebyr.vcardrealm.contacts.html.data.Contact;
 import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 
+import java.util.HashMap;
+
 public class ContactViewModel extends AndroidViewModel implements ContactsObserver.Callback
 {
     private static String TAG = ContactViewModel.class.getSimpleName();
@@ -21,7 +23,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     
     private MutableLiveData<String> modelFilter = new MutableLiveData<>();
     private LiveData<PagedList<Contact>> contactLiveData;
-    private LiveData<PagedList<TemplateData>> templateLiveData;
+    private LiveData<HashMap<Integer,TemplateData>> templateLiveData;
 
     private ContactList contactList;
 
@@ -45,7 +47,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         templateLiveData.observeForever(this::onTemplateListChanged);
     }
 
-    private void onTemplateListChanged(PagedList<TemplateData> templateDataPagedList)
+    private void onTemplateListChanged(HashMap<Integer,TemplateData> templateDataPagedList)
     {
         Log.d(TAG, "onTemplateListChanged");
         contactList.mergeContactData(contactLiveData, templateLiveData);

@@ -13,6 +13,7 @@ import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ContactList extends MediatorLiveData<PagedList<Contact>>
@@ -31,7 +32,7 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
     //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
 
     public void mergeContactData(LiveData<PagedList<Contact>> contactLiveData,
-                                 LiveData<PagedList<TemplateData>> templateLiveData)
+                                 LiveData<HashMap<Integer,TemplateData>> templateLiveData)
     {
         Log.d(TAG, "Merge contact data");
 
@@ -52,29 +53,23 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
         setValue(contactPagedList);
     }
 
-    private void addTemplatesList(PagedList<TemplateData> templateDataList)
+    private void addTemplatesList(HashMap<Integer,TemplateData> templateDataList)
     {
-        PagedList<Contact> contactArrayList = getValue();
+        PagedList<Contact> contactPagedList = getValue();
 
-        for(TemplateData templateData: templateDataList)
+        for(int count = 0; count < contactPagedList.size(); count++)
         {
+            Contact contact = contactPagedList.get(count);
 //            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
 
-            Contact contact = contactArrayList.get((int)templateData.contactID);
-            if(contact == null)
+            TemplateData templateData = templateDataList.get(contact.contactID);
+            if(templateData != null)
             {
-                contact = new Contact();
-                contact.template = templateData;
-                contactArrayList.add(contact);
+                contact.vcardHtml = templateParser.generateVCardHtml(contact);
+                contactPagedList.set(count, contact);
             }
-            else
-            {
-                contact.template = templateData;
-            }
-
-            contact.vcardHtml = templateParser.generateVCardHtml(contact);
         }
-        setValue(contactArrayList);
+        setValue(contactPagedList);
     }
 
     public Uri getContactUri(int position)
