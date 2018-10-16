@@ -32,7 +32,7 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
     //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
 
     public void mergeContactData(LiveData<PagedList<Contact>> contactLiveData,
-                                 LiveData<HashMap<Integer,TemplateData>> templateLiveData)
+                                 LiveData<PagedList<TemplateData>> templateLiveData)
     {
         Log.d(TAG, "Merge contact data");
 
@@ -53,7 +53,7 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
         setValue(contactPagedList);
     }
 
-    private void addTemplatesList(HashMap<Integer,TemplateData> templateDataList)
+    private void addTemplatesList(PagedList<TemplateData> templateDataList)
     {
         PagedList<Contact> contactPagedList = getValue();
 
@@ -62,7 +62,7 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
             Contact contact = contactPagedList.get(count);
 //            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
 
-            TemplateData templateData = templateDataList.get(contact.contactID);
+            TemplateData templateData = templateDataList.get((int)contact.contactID);
             if(templateData != null)
             {
                 contact.vcardHtml = templateParser.generateVCardHtml(contact);

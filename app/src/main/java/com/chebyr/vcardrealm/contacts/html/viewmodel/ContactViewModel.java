@@ -23,7 +23,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     
     private MutableLiveData<String> modelFilter = new MutableLiveData<>();
     private LiveData<PagedList<Contact>> contactLiveData;
-    private LiveData<HashMap<Integer,TemplateData>> templateLiveData;
+    private LiveData<PagedList<TemplateData>> templateLiveData;
 
     private ContactList contactList;
 
@@ -47,7 +47,7 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
         templateLiveData.observeForever(this::onTemplateListChanged);
     }
 
-    private void onTemplateListChanged(HashMap<Integer,TemplateData> templateDataPagedList)
+    private void onTemplateListChanged(PagedList<TemplateData> templateDataPagedList)
     {
         Log.d(TAG, "onTemplateListChanged");
         contactList.mergeContactData(contactLiveData, templateLiveData);
