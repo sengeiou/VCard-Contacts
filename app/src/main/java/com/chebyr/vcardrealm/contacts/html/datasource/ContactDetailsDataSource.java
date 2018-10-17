@@ -3,6 +3,7 @@ package com.chebyr.vcardrealm.contacts.html.datasource;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
@@ -31,9 +32,8 @@ public class ContactDetailsDataSource
 
     public ContactDetailsData getContactDetailsData(long contactDataID)
     {
-//        Log.d(TAG, "contactList.size(): " + contactList.size());
-
-        ContactDetailsData contactDetailsData = null;
+        ContactDetailsData contactDetailsData = new ContactDetailsData();
+        contactDetailsData.contactID = contactDataID;
 
         String[] whereParams = new String[]{String.valueOf(contactDataID)};
 
@@ -42,95 +42,86 @@ public class ContactDetailsDataSource
         {
             for (contactDetailsCursor.moveToFirst(); !contactDetailsCursor.isAfterLast(); contactDetailsCursor.moveToNext())
             {
-                contactDetailsData = getContactDetailsCursorData(contactDetailsCursor);
-                contactDetailsData.contactID = contactDataID;
-//                    Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
+                String mimeType = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
+
+                switch (mimeType)
+                {
+                    case ContactDetailsQuery.ORGANIZATION_MIME:
+                    {
+                        contactDetailsData.organization = getCompany(contactDetailsCursor);
+                        contactDetailsData.jobTitle = getJobTitle(contactDetailsCursor);
+                        break;
+                    }
+                    case ContactDetailsQuery.NICK_NAME_MIME:
+                    {
+                        contactDetailsData.nickName = getNickName(contactDetailsCursor);
+                        break;
+                    }
+                    case ContactDetailsQuery.WEBSITE_MIME:
+                    {
+                        contactDetailsData.website = getWebsite(contactDetailsCursor);
+                        break;
+                    }
+                    case ContactDetailsQuery.ADDRESS_MIME:
+                    {
+                        contactDetailsData.address = getAddress(contactDetailsCursor);
+                        break;
+                    }
+                    case ContactDetailsQuery.PHONE_MIME:
+                    {
+                        String phone = getPhoneNumber(contactDetailsCursor);
+
+                        if(contactDetailsData.phoneNumbers == null)
+                            contactDetailsData.phoneNumbers = phone;
+                        else if ((contactDetailsData.phoneNumbers.length() > 0) && (phone.length() > 0))
+                            contactDetailsData.phoneNumbers += separator + phone;
+                        else
+                            contactDetailsData.phoneNumbers = phone;
+
+                        break;
+                    }
+                    case ContactDetailsQuery.IM_MIME:
+                    {
+                        String instantMessenger = getIM(contactDetailsCursor);
+
+                        if ((contactDetailsData.IMs.length() > 0) && (instantMessenger.length() > 0))
+                            contactDetailsData.IMs += separator + instantMessenger;
+                        else
+                            contactDetailsData.IMs = instantMessenger;
+
+                        break;
+                    }
+                    case ContactDetailsQuery.NOTE_MIME:
+                    {
+                        contactDetailsData.notes = getNotes(contactDetailsCursor);
+                        break;
+                    }
+                    case ContactDetailsQuery.EMAIL_MIME:
+                    {
+                        String email = getEmailAddresses(contactDetailsCursor);
+
+                        if(contactDetailsData.eMails == null)
+                            contactDetailsData.eMails = email;
+                        else if((contactDetailsData.eMails.length() > 0) && (email.length() > 0))
+                            contactDetailsData.eMails += separator + email;
+                        else
+                            contactDetailsData.eMails = email;
+
+                        break;
+                    }
+                    case ContactDetailsQuery.GROUP_MIME:
+                    {
+                        contactDetailsData.groupRowID = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
+                        contactDetailsData.groupData = groupDataSource.getGroupData(contactDetailsData.groupRowID);
+                        break;
+                    }
+                }
+                Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
             }
             contactDetailsCursor.close();
         }
         return contactDetailsData;
     }
-
-    private ContactDetailsData getContactDetailsCursorData(Cursor contactDetailsCursor)
-    {
-        ContactDetailsData contactDetailsData = new ContactDetailsData();
-        String mimeType = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.MIMETYPE));
-
-        switch (mimeType)
-        {
-            case ContactDetailsQuery.ORGANIZATION_MIME:
-            {
-                contactDetailsData.organization = getCompany(contactDetailsCursor);
-                contactDetailsData.jobTitle = getJobTitle(contactDetailsCursor);
-                break;
-            }
-            case ContactDetailsQuery.NICK_NAME_MIME:
-            {
-                contactDetailsData.nickName = getNickName(contactDetailsCursor);
-                break;
-            }
-            case ContactDetailsQuery.WEBSITE_MIME:
-            {
-                contactDetailsData.website = getWebsite(contactDetailsCursor);
-                break;
-            }
-            case ContactDetailsQuery.ADDRESS_MIME:
-            {
-                contactDetailsData.address = getAddress(contactDetailsCursor);
-                break;
-            }
-            case ContactDetailsQuery.PHONE_MIME:
-            {
-                String phone = getPhoneNumber(contactDetailsCursor);
-
-                if(contactDetailsData.phoneNumbers == null)
-                    contactDetailsData.phoneNumbers = phone;
-                else if ((contactDetailsData.phoneNumbers.length() > 0) && (phone.length() > 0))
-                    contactDetailsData.phoneNumbers += separator + phone;
-                else
-                    contactDetailsData.phoneNumbers = phone;
-
-                break;
-            }
-            case ContactDetailsQuery.IM_MIME:
-            {
-                String instantMessenger = getIM(contactDetailsCursor);
-
-                if ((contactDetailsData.IMs.length() > 0) && (instantMessenger.length() > 0))
-                    contactDetailsData.IMs += separator + instantMessenger;
-                else
-                    contactDetailsData.IMs = instantMessenger;
-
-                break;
-            }
-            case ContactDetailsQuery.NOTE_MIME:
-            {
-                contactDetailsData.notes = getNotes(contactDetailsCursor);
-                break;
-            }
-            case ContactDetailsQuery.EMAIL_MIME:
-            {
-                String email = getEmailAddresses(contactDetailsCursor);
-
-                if(contactDetailsData.eMails == null)
-                    contactDetailsData.eMails = email;
-                else if((contactDetailsData.eMails.length() > 0) && (email.length() > 0))
-                    contactDetailsData.eMails += separator + email;
-                else
-                    contactDetailsData.eMails = email;
-
-                break;
-            }
-            case ContactDetailsQuery.GROUP_MIME:
-            {
-                contactDetailsData.groupRowID = contactDetailsCursor.getString(contactDetailsCursor.getColumnIndex(ContactDetailsQuery.GROUP_ROW_ID));
-                contactDetailsData.groupData = groupDataSource.getGroupData(contactDetailsData.groupRowID);
-                break;
-            }
-        }
-        return contactDetailsData;
-    }
-
 
     public String getPhoneNumber(Cursor contactDataCursor)
     {

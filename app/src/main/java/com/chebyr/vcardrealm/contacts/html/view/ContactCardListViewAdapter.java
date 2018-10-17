@@ -13,15 +13,15 @@ import android.view.ViewGroup;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
-public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, ContactCardsListViewAdapter.ContactCardsViewHolder>
+public class ContactCardListViewAdapter extends PagedListAdapter<Contact, ContactCardListViewAdapter.ContactCardsViewHolder>
 {
-    private static String TAG = ContactCardsListViewAdapter.class.getSimpleName();
+    private static String TAG = ContactCardListViewAdapter.class.getSimpleName();
 
     private PagedList<Contact> contactList;
 
     private OnItemClickCallBack callBack;
 
-    public ContactCardsListViewAdapter()
+    public ContactCardListViewAdapter()
     {
         super(DIFF_CALLBACK);
     }
@@ -100,7 +100,7 @@ public class ContactCardsListViewAdapter extends PagedListAdapter<Contact, Conta
         public ContactCardsViewHolder(View itemView)
         {
             super(itemView);
-            contactCardView = itemView.findViewById(R.id.contact_card);
+            contactCardView = itemView.findViewById(R.id.contact_card_view);
             contactCardView.initialize();
         }
 

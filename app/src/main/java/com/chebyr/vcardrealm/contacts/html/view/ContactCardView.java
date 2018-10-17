@@ -11,11 +11,10 @@ import com.android.contacts.common.list.ContactListItemView;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
-public class ContactCardView extends ContactListItemView implements WebView.OnClickListener
+public class ContactCardView extends WebView implements WebView.OnClickListener
 {
     private static String TAG = ContactCardView.class.getSimpleName();
 
-    private WebView webView;
     private WebViewResourceProvider webViewResourceProvider;
 
     public ContactCardView(Context context)
@@ -30,10 +29,10 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
 
     public void initialize()
     {
-        webView = getRootView().findViewById(R.id.web_view);
+        //webView = getRootView().findViewById(R.id.web_view);
         setOnClickListener(this);
 
-        WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = getSettings();
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         //webSettings.setBlockNetworkImage(true);
@@ -42,7 +41,7 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
         //webSettings.setOffscreenPreRaster(true);
 
         webViewResourceProvider = new WebViewResourceProvider();
-        webView.setWebViewClient(webViewResourceProvider);
+        setWebViewClient(webViewResourceProvider);
     }
 
     public void setContact(Contact contact)
@@ -55,7 +54,7 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
 
         Log.d(TAG, contact.vcardHtml);
         webViewResourceProvider.setContact(contact);
-        webView.loadData(contact.vcardHtml, "text/html", "base64");
+        loadData(contact.vcardHtml, "text/html", null);
     }
 
     @Override
@@ -63,7 +62,7 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
     {
         if(view == this)
         {
-            WebView.HitTestResult hitTestResult = webView.getHitTestResult();
+            WebView.HitTestResult hitTestResult = getHitTestResult();
             switch (hitTestResult.getType())
             {
                 case WebView.HitTestResult.EMAIL_TYPE:
@@ -71,8 +70,6 @@ public class ContactCardView extends ContactListItemView implements WebView.OnCl
                 case WebView.HitTestResult.PHONE_TYPE:
                 case WebView.HitTestResult.SRC_ANCHOR_TYPE:
             }
-
-            hitTestResult.getExtra();
         }
     }
 

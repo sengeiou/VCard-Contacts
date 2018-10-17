@@ -15,20 +15,17 @@ import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactList;
 import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactViewModel;
-
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ContactCardsFragment extends Fragment implements ContactCardsListView.OnItemClickCallBack
+public class ContactCardsFragment extends Fragment implements ContactCardListView.OnItemClickCallBack
 {
     private static String TAG = ContactCardsFragment.class.getSimpleName();
 
-    private ContactCardsListView mContactCardsListView;
-    private ContactCardsListView.OnItemClickCallBack callBack;
+    private ContactCardListView contactCardListView;
+    private ContactCardListView.OnItemClickCallBack callBack;
 
     public ContactCardsFragment()
     {
@@ -46,8 +43,8 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
         FragmentActivity activity = getActivity();
 
         View rootView = inflater.inflate(R.layout.contact_list_fragment, container, false);
-        mContactCardsListView = rootView.findViewById(R.id.contact_cards_view);
-        mContactCardsListView.initialize(activity);
+        contactCardListView = rootView.findViewById(R.id.contact_card_list_view);
+        contactCardListView.initialize(activity);
 
         ContactViewModel contactViewModel = ViewModelProviders.of(activity).get(ContactViewModel.class);
         Log.d(TAG, "ViewModel created: " + contactViewModel.toString());
@@ -63,7 +60,7 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
     private void onContactsListChanged(PagedList<Contact> contactList)
     {
         Log.d(TAG, "onContactsListChanged. No of contacts: " + contactList.size());
-        mContactCardsListView.setContactList(contactList);
+        contactCardListView.setContactList(contactList);
     }
 
     @Override

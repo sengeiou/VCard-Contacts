@@ -11,19 +11,17 @@ import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
 
-import java.util.List;
-
-public class ContactCardsListView extends RecyclerView implements ContactCardsListViewAdapter.OnItemClickCallBack
+public class ContactCardListView extends RecyclerView implements ContactCardListViewAdapter.OnItemClickCallBack
 {
-    private static String TAG = ContactCardsListView.class.getSimpleName();
-    private ContactCardsListViewAdapter mContactCardsListViewAdapter;
+    private static String TAG = ContactCardListView.class.getSimpleName();
+    private ContactCardListViewAdapter mContactCardListViewAdapter;
 
-    public ContactCardsListView(Context context)
+    public ContactCardListView(Context context)
     {
         super(context);
     }
 
-    public ContactCardsListView(Context context, AttributeSet attributeSet)
+    public ContactCardListView(Context context, AttributeSet attributeSet)
     {
         super(context, attributeSet);
     }
@@ -31,9 +29,9 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
     public void initialize(Activity activity)
     {
         Log.d(TAG, "initialize");
-        mContactCardsListViewAdapter = new ContactCardsListViewAdapter();
-        mContactCardsListViewAdapter.setCallback(this);
-        setAdapter(mContactCardsListViewAdapter);
+        mContactCardListViewAdapter = new ContactCardListViewAdapter();
+        mContactCardListViewAdapter.setCallback(this);
+        setAdapter(mContactCardListViewAdapter);
 
         setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(activity);
@@ -47,14 +45,14 @@ public class ContactCardsListView extends RecyclerView implements ContactCardsLi
             public void onScrollStateChanged(RecyclerView recyclerView, int newState)
             {
                 super.onScrollStateChanged(recyclerView, newState);
-                mContactCardsListViewAdapter.onScrollStateChanged(newState);
+                mContactCardListViewAdapter.onScrollStateChanged(newState);
             }
         });
     }
 
     public void setContactList(PagedList<Contact> contactList)
     {
-        mContactCardsListViewAdapter.setContactList(contactList);
+        mContactCardListViewAdapter.setContactList(contactList);
     }
 
     @Override
