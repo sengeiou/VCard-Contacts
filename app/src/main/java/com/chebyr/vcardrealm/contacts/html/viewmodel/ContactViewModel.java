@@ -20,74 +20,36 @@ public class ContactViewModel extends AndroidViewModel implements ContactsObserv
     private static String TAG = ContactViewModel.class.getSimpleName();
 
     private ContactRepository contactRepository;
-    
     private MutableLiveData<String> modelFilter = new MutableLiveData<>();
-    private LiveData<PagedList<Contact>> contactLiveData;
-    private LiveData<PagedList<TemplateData>> templateLiveData;
-
-    private ContactList contactList;
-
+    private LiveData<PagedList<Contact>> contactList;
 
     private ContactsObserver.Callback callback;
 
     public ContactViewModel(Application application)
     {
         super(application);
-        contactList = new ContactList(application);
+        contactList = new ContactList();
         contactRepository = new ContactRepository(application, this);
 
         //Automatically load contact data upon change in filter
-        contactLiveData = Transformations.switchMap(modelFilter,
+        contactList = Transformations.switchMap(modelFilter,
                 (String txFilterState) -> contactRepository.loadContactList(txFilterState));
-
-        //Automatically load templates upon change in contact data
-        templateLiveData = Transformations.switchMap(contactLiveData,
-                (PagedList<Contact> contactDataPagedList) -> contactRepository.loadTemplateList(contactDataPagedList));
-
-        templateLiveData.observeForever(this::onTemplateListChanged);
     }
 
-    private void onTemplateListChanged(PagedList<TemplateData> templateDataPagedList)
+    @Override
+    public void onDataSetChanged()
     {
-        Log.d(TAG, "onTemplateListChanged");
-        contactList.mergeContactData(contactLiveData, templateLiveData);
+
     }
 
     public void setFilter(String filterState)
     {
         Log.d(TAG, "Set filter: " + filterState);
-
         modelFilter.postValue(filterState);
-
-        /*
-        contactLiveData = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactRepository.loadContactList(txFilterState));
-
-        Log.d(TAG, "Set filter for ContactDetails loader");
-        contactDetailsLiveData = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactRepository.loadContactDetailsList(txFilterState));
-
-//        Log.d(TAG, "Set filter for Groups loader");
-        groupLiveData = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactRepository.loadGroupList(txFilterState));
-
-//        Log.d(TAG, "Set filter for Templates loader");
-        templateLiveData = Transformations.switchMap(modelFilter,
-                (String txFilterState) -> contactRepository.loadTemplateList(txFilterState));
-*/
     }
     
-    public ContactList getContactList()
+    public LiveData<PagedList<Contact>> getContactList()
     {
         return contactList;
-    }
-
-    @Override
-    public void onDataSetChanged() {
-    }
-
-    public Contact lookupNumber(String incomingNumber)
-    {
-        return contactList.lookupNumber(incomingNumber);
     }
 }

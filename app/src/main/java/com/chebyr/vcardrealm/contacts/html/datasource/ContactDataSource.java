@@ -34,6 +34,8 @@ public class ContactDataSource extends PositionalDataSource<Contact>
     private int mRowIdColumn;
     private ContactsObserver.Callback callback;
     private ContactDetailsDataSource contactDetailsDataSource;
+    private TemplateDataSource templateDataSource;
+    private TemplateParser templateParser;
     private String filterState;
 
     private boolean mDataValid;
@@ -45,6 +47,8 @@ public class ContactDataSource extends PositionalDataSource<Contact>
 
         callback = contactRepository.callback;
         contactDetailsDataSource = new ContactDetailsDataSource(context, filterState);
+        templateDataSource = new TemplateDataSource(context);
+        templateParser = new TemplateParser(context);
         // If there's a previously selected search item from a saved state then don't bother
         // initializing the loader as it will be restarted later when the query is populated into
         // the action bar search view (see onQueryTextChange() in onCreateOptionsMenu()).
@@ -74,17 +78,9 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         callback.onResult(contacts);
     }
 
-    private ContactData getContactData(long contactID, Cursor cursor)
+    public void setFilterState(String filterState)
     {
-        ContactData contactData = new ContactData();
-        contactData.lookupKey = cursor.getString(ContactQuery.LOOKUP_KEY);
-        contactData.contactUri = ContactsContract.Contacts.getLookupUri(contactID, contactData.lookupKey);
-        contactData.displayName = cursor.getString(ContactQuery.DISPLAY_NAME);
-        contactData.photoUriString = cursor.getString(ContactQuery.PHOTO_THUMBNAIL);
-        if(contactData.photoUriString == null)
-            contactData.photoUriString = "";
-
-        return contactData;
+        this.filterState = filterState;
     }
 
     private List<Contact> getContacts(int limit, int offset)
@@ -108,12 +104,27 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             contact.contactID = cursor.getLong(ContactQuery.ID);
             contact.data = getContactData(contact.contactID, cursor);
             contact.details = contactDetailsDataSource.getContactDetailsData(contact.contactID);
+            contact.template = templateDataSource.loadTemplate(contact.contactID);
+            contact.vcardHtml = templateParser.generateVCardHtml(contact);
             contactDataList.add(contact);
         }
         cursor.close();
 
         // return the list of results
         return contactDataList;
+    }
+
+    private ContactData getContactData(long contactID, Cursor cursor)
+    {
+        ContactData contactData = new ContactData();
+        contactData.lookupKey = cursor.getString(ContactQuery.LOOKUP_KEY);
+        contactData.contactUri = ContactsContract.Contacts.getLookupUri(contactID, contactData.lookupKey);
+        contactData.displayName = cursor.getString(ContactQuery.DISPLAY_NAME);
+        contactData.photoUriString = cursor.getString(ContactQuery.PHOTO_THUMBNAIL);
+        if(contactData.photoUriString == null)
+            contactData.photoUriString = "";
+
+        return contactData;
     }
 
     public void startContactLoader(String searchTerm)

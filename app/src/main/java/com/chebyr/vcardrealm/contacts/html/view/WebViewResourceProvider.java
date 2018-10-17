@@ -3,6 +3,7 @@ package com.chebyr.vcardrealm.contacts.html.view;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -16,6 +17,8 @@ import java.io.InputStream;
 
 class WebViewResourceProvider extends WebViewClient
 {
+    private static String TAG = WebViewResourceProvider.class.getSimpleName();
+
     private Contact contact;
 
     public void setContact(Contact contact)
@@ -45,7 +48,13 @@ class WebViewResourceProvider extends WebViewClient
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request)
     {
+        Log.d(TAG, request.getUrl().toString());
+        Log.d(TAG, request.getMethod());
+        Log.d(TAG, request.getRequestHeaders().toString());
+
+        /*
         String pathSegment = request.getUrl().getLastPathSegment();
+
         if(pathSegment.contains("photo.png"))
         {
             return new WebResourceResponse("", "", getBitmapStream(contact.data.photo));
@@ -61,7 +70,8 @@ class WebViewResourceProvider extends WebViewClient
         else if(pathSegment.contains(".css"))
         {
             return new WebResourceResponse("", "", getTextStream(contact.template.css));
-        }
+        }*/
+
         return null;
     }
 

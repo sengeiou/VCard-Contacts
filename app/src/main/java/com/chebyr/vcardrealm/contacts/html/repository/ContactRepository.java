@@ -27,7 +27,6 @@ public class ContactRepository
     private static int pageSize = 10;
 
     private ContactDataSource.Factory contactsDataSourceFactory;
-    private TemplateDataSource.Factory templateDataSourceFactory;
 
     public ContactsObserver.Callback callback;
 
@@ -41,12 +40,7 @@ public class ContactRepository
                 .build();
 
         contactsDataSourceFactory = new ContactDataSource.Factory(context, this);
-        templateDataSourceFactory = new TemplateDataSource.Factory(context);
-
 //        Log.d(TAG, "contactsDataSourceFactory: " + contactsDataSourceFactory.toString());
-//        Log.d(TAG, "contactDetailsDataSourceFactory: " + contactDetailsDataSourceFactory.toString());
-//        Log.d(TAG, "groupsDataSourceFactory: " + groupsDataSourceFactory.toString());
-//        Log.d(TAG, "templateDataSourceFactory: " + templateDataSourceFactory.toString());
     }
 
     public LiveData<PagedList<Contact>> loadContactList(String filterState)
@@ -54,19 +48,5 @@ public class ContactRepository
         Log.d(TAG, "loadContactList " + "filterState: " + filterState);
         contactsDataSourceFactory.setFilter(filterState);
         return new LivePagedListBuilder<>(contactsDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<TemplateData>> loadTemplateList(String filterState)
-    {
-        Log.d(TAG, "loadTemplateList " + "filterState: " + filterState);
-        templateDataSourceFactory.setFilter(filterState);
-        return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
-    }
-
-    public LiveData<PagedList<TemplateData>> loadTemplateList(List<Contact> contactDataList)
-    {
-        Log.d(TAG, "loadTemplateList " + "contactDataList: " + contactDataList);
-        templateDataSourceFactory.setContactList(contactDataList);
-        return new LivePagedListBuilder<>(templateDataSourceFactory, config).build();
     }
 }

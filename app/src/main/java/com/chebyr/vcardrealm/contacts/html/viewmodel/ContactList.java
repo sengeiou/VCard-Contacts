@@ -8,37 +8,19 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.data.ContactData;
-import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
 import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.html.datasource.TemplateParser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.ListIterator;
 
 public class ContactList extends MediatorLiveData<PagedList<Contact>>
 {
     private static String TAG = ContactList.class.getSimpleName();
 
-    private TemplateParser templateParser;
-
-    public ContactList(Context context)
-    {
-        templateParser = new TemplateParser(context);
-    }
-    
     // Use to filter
     //Stream<Contact> contactStream;
     //Stream<Contact> filteredContactStream = contactStream.filter(contact -> contact.data.contactID == contactData.contactID);
-
-    public void mergeContactData(LiveData<PagedList<Contact>> contactLiveData,
-                                 LiveData<PagedList<TemplateData>> templateLiveData)
-    {
-        Log.d(TAG, "Merge contact data");
-
-        addSource(contactLiveData, this::addContactDataList);
-        addSource(templateLiveData, this::addTemplatesList);
-    }
 
     private void addContactDataList(PagedList<Contact> contactPagedList)
     {
@@ -47,26 +29,6 @@ public class ContactList extends MediatorLiveData<PagedList<Contact>>
 //            Log.d(TAG, "addContactDataList: " + contactData.displayName);
             if(contact != null)
             {
-                contact.vcardHtml = templateParser.generateVCardHtml(contact);
-            }
-        }
-        setValue(contactPagedList);
-    }
-
-    private void addTemplatesList(PagedList<TemplateData> templateDataList)
-    {
-        PagedList<Contact> contactPagedList = getValue();
-
-        for(int count = 0; count < contactPagedList.size(); count++)
-        {
-            Contact contact = contactPagedList.get(count);
-//            Log.d(TAG, "addTemplatesList: " + templateData.contactID);
-
-            TemplateData templateData = templateDataList.get((int)contact.contactID);
-            if(templateData != null)
-            {
-                contact.vcardHtml = templateParser.generateVCardHtml(contact);
-                contactPagedList.set(count, contact);
             }
         }
         setValue(contactPagedList);

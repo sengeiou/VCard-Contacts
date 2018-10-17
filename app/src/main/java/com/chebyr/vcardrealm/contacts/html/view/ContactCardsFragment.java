@@ -1,6 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
@@ -53,7 +54,7 @@ public class ContactCardsFragment extends Fragment implements ContactCardsListVi
 
         contactViewModel.setFilter("");
 
-        ContactList contactsList = contactViewModel.getContactList();
+        LiveData<PagedList<Contact>> contactsList = contactViewModel.getContactList();
         contactsList.observe(this, this::onContactsListChanged);
 
         return rootView;
