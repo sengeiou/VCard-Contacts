@@ -83,23 +83,27 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         this.filterState = filterState;
     }
 
-    private List<Contact> getContacts(int limit, int offset)
+    private List<Contact> getContacts(int loadSize, int startPosition)
     {
         // Get the cursor
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
                 ContactQuery.PROJECTION,
                 null,
                 null,
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY +
-                        " ASC LIMIT " + limit + " OFFSET " + offset);
+                ContactQuery.SORT_ORDER
+                //ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " ASC LIMIT " + limit + " OFFSET " + offset
+        );
 
         List<Contact> contactDataList = new ArrayList<>();
 
         // load data from cursor into a list
+        cursor.moveToPosition(startPosition);
 
-
-        for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext())
+        for(int count = 0; count < loadSize; count++)
         {
+            if(cursor.isAfterLast())
+                break;
+
             Contact contact = new Contact();
             contact.contactID = cursor.getLong(ContactQuery.ID);
             contact.data = getContactData(contact.contactID, cursor);
@@ -107,6 +111,8 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             contact.template = templateDataSource.loadTemplate(contact.contactID);
             contact.vcardHtml = templateParser.generateVCardHtml(contact);
             contactDataList.add(contact);
+
+            cursor.moveToNext();
         }
         cursor.close();
 

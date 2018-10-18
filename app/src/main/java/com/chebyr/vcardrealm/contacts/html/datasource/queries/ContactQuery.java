@@ -35,7 +35,7 @@ public interface ContactQuery
     String[] SELECTION_ARGS = null;
 
     // The desired sort order for the returned Cursor. The primary sort key allows for localization.
-    String SORT_ORDER = ContactsContract.Contacts.SORT_KEY_PRIMARY;
+    String SORT_ORDER = DISPLAY_NAME_STR;//ContactsContract.Contacts.SORT_KEY_PRIMARY;
 
     // The query column numbers which map to each value in the projection
     int ID = 0;
