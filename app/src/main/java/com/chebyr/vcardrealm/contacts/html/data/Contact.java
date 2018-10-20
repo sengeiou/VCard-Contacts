@@ -1,5 +1,7 @@
 package com.chebyr.vcardrealm.contacts.html.data;
 
+import android.graphics.Bitmap;
+
 public class Contact
 {
     public long contactID;

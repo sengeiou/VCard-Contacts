@@ -15,16 +15,19 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 {
     private static String TAG = ContactCardView.class.getSimpleName();
 
+    private Context context;
     private WebViewResourceProvider webViewResourceProvider;
 
     public ContactCardView(Context context)
     {
         super(context);
+        this.context = context;
     }
 
     public ContactCardView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
+        this.context = context;
     }
 
     public void initialize()
@@ -40,7 +43,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //webSettings.setOffscreenPreRaster(true);
 
-        webViewResourceProvider = new WebViewResourceProvider();
+        webViewResourceProvider = new WebViewResourceProvider(context);
         setWebViewClient(webViewResourceProvider);
     }
 

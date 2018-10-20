@@ -8,7 +8,18 @@ public class ContactData
     public String lookupKey;
     public Uri contactUri;
     public String displayName;
-    public String photoUriString;
-    public Bitmap photo;
-    public Uri photoURI;
+    public Uri photoThumbnailUri;
+    public Uri photoUri;
+
+    public void setPhotoUri(String uriString)
+    {
+        if(uriString != null)
+            this.photoUri = Uri.parse(uriString);
+    }
+
+    public void setPhotoThumbnailUri(String uriString)
+    {
+        if(uriString != null)
+            this.photoThumbnailUri = Uri.parse(uriString);
+    }
 }

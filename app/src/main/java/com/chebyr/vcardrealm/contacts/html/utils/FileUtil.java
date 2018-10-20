@@ -1,5 +1,6 @@
 package com.chebyr.vcardrealm.contacts.html.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,13 +26,15 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
 {
     private static final String TAG = FileUtil.class.getSimpleName();
 
-    Context mContext;
-    AssetManager mAssetManager;
+    Context context;
+    AssetManager assetManager;
+    ContentResolver contentResolver;
 
     public FileUtil(Context context)
     {
-        mContext = context;
-        mAssetManager = mContext.getAssets();
+        this.context = context;
+        assetManager = context.getAssets();
+        contentResolver = context.getContentResolver();
     }
 
     public String initVCardsDirectory()
@@ -44,7 +49,7 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
 
         String fullDirectoryName = directory.getAbsolutePath();
         Log.d(TAG, "Scan Directory:" + fullDirectoryName);
-        MediaScannerConnection.scanFile(mContext, new String[]{directory.getAbsolutePath()}, null, this);
+        MediaScannerConnection.scanFile(context, new String[]{directory.getAbsolutePath()}, null, this);
 
         return fullDirectoryName;
     }
@@ -71,11 +76,22 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
         return file;
     }
 
+    public InputStream getBitmapStream(Bitmap photo)
+    {
+        Log.d(TAG, "getBitmapStream: " + photo);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 100 , byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        InputStream contactPhotoStream = new ByteArrayInputStream(bytes);
+        return contactPhotoStream;
+    }
+
+
     public byte[] readTextAsset(String assetName)
     {
         try
         {
-            InputStream inputStream = mAssetManager.open(assetName);
+            InputStream inputStream = assetManager.open(assetName);
             byte[] buffer = new byte[inputStream.available()];
             inputStream.read(buffer);
             inputStream.close();
@@ -93,8 +109,22 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
     {
         try
         {
-            InputStream inputStream = mAssetManager.open(assetName);
+            InputStream inputStream = assetManager.open(assetName);
             return BitmapFactory.decodeStream(inputStream);
+        }
+        catch (Exception exception)
+        {
+            Log.d(TAG, exception.toString());
+            return null;
+        }
+    }
+
+    public InputStream getBitmapContentStream(Uri uri)
+    {
+        try
+        {
+            InputStream inputStream = contentResolver.openInputStream(uri);
+            return inputStream;
         }
         catch (Exception exception)
         {
@@ -201,7 +231,7 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
             outputStreamWriter.write(text);
             outputStreamWriter.close();
-            MediaScannerConnection.scanFile(mContext, new String[]{fullFileName}, null, null);
+            MediaScannerConnection.scanFile(context, new String[]{fullFileName}, null, null);
             return fullFileName;
         }
         catch (Exception e)
@@ -218,7 +248,7 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
             File file = new File(fullFileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-            MediaScannerConnection.scanFile(mContext, new String[]{fullFileName}, null, this);
+            MediaScannerConnection.scanFile(context, new String[]{fullFileName}, null, this);
             return fullFileName;
         }
         catch (Exception exception)
@@ -275,20 +305,20 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
 
         try
         {
-            files = mAssetManager.list("");
+            files = assetManager.list("");
 
             for(String fileName : files)
             {
                 if(fileName.endsWith(".xml"))
                 {
-                    inputStream = mAssetManager.open(fileName);
+                    inputStream = assetManager.open(fileName);
                     File outFile = new File(directoryName, fileName);
                     outputStream = new FileOutputStream(outFile);
                     copyFile(inputStream, outputStream);
 
                     String fullFileName = outFile.getAbsolutePath();
                     //Log.d(TAG, "Scan File:" + fullFileName);
-                    MediaScannerConnection.scanFile(mContext, new String[]{fullFileName}, null, this);
+                    MediaScannerConnection.scanFile(context, new String[]{fullFileName}, null, this);
                 }
             }
         }

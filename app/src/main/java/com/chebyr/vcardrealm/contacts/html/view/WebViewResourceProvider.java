@@ -1,6 +1,8 @@
 package com.chebyr.vcardrealm.contacts.html.view;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +23,12 @@ class WebViewResourceProvider extends WebViewClient
     private static String TAG = WebViewResourceProvider.class.getSimpleName();
 
     private Contact contact;
+    private FileUtil fileUtil;
+
+    public WebViewResourceProvider(Context context)
+    {
+        fileUtil = new FileUtil(context);
+    }
 
     public void setContact(Contact contact)
     {
@@ -32,46 +41,71 @@ class WebViewResourceProvider extends WebViewClient
         return inputStream;
     }
 
-    // TODO: Don't do
-    public InputStream getBitmapStream(Bitmap photo)
-    {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        photo.compress(Bitmap.CompressFormat.PNG, 100 , byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        InputStream contactPhotoStream = new ByteArrayInputStream(bytes);
-        return contactPhotoStream;
-    }
-
-//      Note: This method is called on a thread other than the UI thread so clients should exercise caution when accessing private data
+    //      Note: This method is called on a thread other than the UI thread so clients should exercise caution when accessing private data
 //      or the view system.
     @Nullable
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request)
     {
-        Log.d(TAG, request.getUrl().toString());
-        Log.d(TAG, request.getMethod());
-        Log.d(TAG, request.getRequestHeaders().toString());
+        Uri uri = request.getUrl();
+        if(uri != null)
+        {
+            String url = uri.toString();
+            if(url != null)
+            {
+                if(url.contains("photo.jpg"))
+                {
+                    return loadPhoto(url);
+                }
+            }
+        }
+
+        //Log.d(TAG, request.getMethod());
+        //Log.d(TAG, request.getRequestHeaders().toString());
 
         /*
         String pathSegment = request.getUrl().getLastPathSegment();
 
         if(pathSegment.contains("photo.png"))
         {
-            return new WebResourceResponse("", "", getBitmapStream(contact.data.photo));
+
         }
         else if(pathSegment.contains("background.png"))
         {
-            return new WebResourceResponse("", "", getBitmapStream(contact.template.backgroundPhoto));
+            return new WebResourceResponse("", "", getBitmapStream(contact.template.backgroundPhotoPath));
         }
         else if(pathSegment.contains("logo.png"))
         {
-            return new WebResourceResponse("", "", getBitmapStream(contact.template.logoPhoto));
+            return new WebResourceResponse("", "", getBitmapStream(contact.template.logoPhotoPath));
         }
         else if(pathSegment.contains(".css"))
         {
             return new WebResourceResponse("", "", getTextStream(contact.template.css));
         }*/
 
+        return null;
+    }
+
+    private WebResourceResponse loadPhoto(String url)
+    {
+        Log.d(TAG, "URL: " + url);
+
+        if(contact.data.photoUri != null)
+        {
+            InputStream bitmapStream = fileUtil.getBitmapContentStream(contact.data.photoUri);
+            Log.d(TAG, "bitmapStream: " + bitmapStream);
+            WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
+            Log.d(TAG, "webResourceResponse: " + webResourceResponse);
+            return webResourceResponse;
+        }
+        else if(contact.data.photoThumbnailUri != null)
+        {
+            InputStream bitmapStream = fileUtil.getBitmapContentStream(contact.data.photoThumbnailUri);
+            Log.d(TAG, "bitmapStream: " + bitmapStream);
+            WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
+            Log.d(TAG, "webResourceResponse: " + webResourceResponse);
+            return webResourceResponse;
+        }
         return null;
     }
 

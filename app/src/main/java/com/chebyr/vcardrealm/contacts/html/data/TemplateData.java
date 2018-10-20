@@ -6,6 +6,6 @@ public class TemplateData
 {
     public String html;
     public String css;
-    public Bitmap logoPhoto;
-    public Bitmap backgroundPhoto;
+    public String logoPhotoPath;
+    public String backgroundPhotoPath;
 }

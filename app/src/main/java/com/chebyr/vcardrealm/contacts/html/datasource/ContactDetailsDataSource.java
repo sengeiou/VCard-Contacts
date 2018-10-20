@@ -116,7 +116,7 @@ public class ContactDetailsDataSource
                         break;
                     }
                 }
-                Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
+  //              Log.d(TAG, "eMails: " + contactDetailsData.eMails + " phoneNumbers: " + contactDetailsData.phoneNumbers);
             }
             contactDetailsCursor.close();
         }

@@ -48,7 +48,7 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
     @Override
     public ContactCardsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
-        Log.d(TAG, "onCreateViewHolder");
+//        Log.d(TAG, "onCreateViewHolder");
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = layoutInflater.inflate(R.layout.contact_card, viewGroup, false);
         ContactCardsViewHolder contactCardsViewHolder = new ContactCardsViewHolder(itemView);

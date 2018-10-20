@@ -424,18 +424,18 @@ public class TemplateParser
 
     private void updateContactDetails(Contact contact)
     {
-        if(contact.data != null) {
-            if (contact.data.photo != null)
+        if(contact.data != null)
+        {
+            if(contact.data.photoUri != null)
             {
-                // TODO: photoView.setImageBitmap(contact.photo);
                 //photoView.setVisibility(VISIBLE);
-                photoView.attr("visibility", "hidden");
+                //photoView.attr("visibility", "hidden");
             }
-            else if (contact.data.photoURI != null)
+            else if(contact.data.photoThumbnailUri != null)
             {
-                photoView.attr("src", contact.data.photoURI.getPath());
+                //photoView.attr("src", contact.data.photoUri.getPath());
                 //photoView.setVisibility(VISIBLE);
-                photoView.attr("display", "block");
+                //photoView.attr("display", "block");
             }
             else
                 {

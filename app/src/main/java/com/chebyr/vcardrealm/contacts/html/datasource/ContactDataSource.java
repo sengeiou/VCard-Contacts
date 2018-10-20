@@ -9,20 +9,20 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.html.data.ContactData;
 import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactQuery;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.html.repository.ContactsSectionIndexer;
 import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDataSource extends PositionalDataSource<Contact>
 {
-    private static String TAG = ContactDataSource.class.getSimpleName();
+//    private static String TAG = ContactDataSource.class.getSimpleName();
 
     private ContentResolver contentResolver;
     private Context context;
@@ -37,6 +37,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
     private TemplateDataSource templateDataSource;
     private TemplateParser templateParser;
     private String filterState;
+    private FileUtil fileUtil;
 
     private boolean mDataValid;
 
@@ -58,23 +59,24 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             startContactLoader("");
         }
         contactsSectionIndexer = new ContactsSectionIndexer(context, ContactQuery.SORT_KEY);
+        fileUtil = new FileUtil(context);
     }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback callback)
     {
-        Log.d(TAG, "loadInitial. Read contacts. requestedLoadSize: " + params.requestedLoadSize + "requestedStartPosition :" + params.requestedStartPosition);
+  //      Log.d(TAG, "loadInitial. Read contacts. requestedLoadSize: " + params.requestedLoadSize + "requestedStartPosition :" + params.requestedStartPosition);
         List<Contact> contacts = getContacts(params.requestedLoadSize, params.requestedStartPosition);
-        Log.d(TAG, "No of contacts read: " + contacts.size());
+  //      Log.d(TAG, "No of contacts read: " + contacts.size());
         callback.onResult(contacts, 0);
     }
 
     @Override
     public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback callback)
     {
-        Log.d(TAG, "loadRange. Read contacts. loadSize: " + params.loadSize+ "startPosition :" + params.startPosition);
+    //    Log.d(TAG, "loadRange. Read contacts. loadSize: " + params.loadSize+ "startPosition :" + params.startPosition);
         List<Contact> contacts = getContacts(params.loadSize, params.startPosition);
-        Log.d(TAG, "No of contacts read: " + contacts.size());
+    //    Log.d(TAG, "No of contacts read: " + contacts.size());
         callback.onResult(contacts);
     }
 
@@ -110,6 +112,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             contact.details = contactDetailsDataSource.getContactDetailsData(contact.contactID);
             contact.template = templateDataSource.loadTemplate(contact.contactID);
             contact.vcardHtml = templateParser.generateVCardHtml(contact);
+
             contactDataList.add(contact);
 
             cursor.moveToNext();
@@ -126,9 +129,8 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         contactData.lookupKey = cursor.getString(ContactQuery.LOOKUP_KEY);
         contactData.contactUri = ContactsContract.Contacts.getLookupUri(contactID, contactData.lookupKey);
         contactData.displayName = cursor.getString(ContactQuery.DISPLAY_NAME);
-        contactData.photoUriString = cursor.getString(ContactQuery.PHOTO_THUMBNAIL);
-        if(contactData.photoUriString == null)
-            contactData.photoUriString = "";
+        contactData.setPhotoUri(cursor.getString(ContactQuery.PHOTO));
+        contactData.setPhotoThumbnailUri(cursor.getString(ContactQuery.PHOTO_THUMBNAIL));
 
         return contactData;
     }
@@ -162,7 +164,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
 
     public Contact lookupNumber(String incomingNumber)
     {
-        Log.d(TAG, "Lookup incomingNumber: " + incomingNumber);
+    //    Log.d(TAG, "Lookup incomingNumber: " + incomingNumber);
 
         Contact contact = new Contact();
 
@@ -172,7 +174,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         if(contact.contactID == 0)
             return null;
 
-        Log.d(TAG, "Contact found. Retrieving additional information");
+    //    Log.d(TAG, "Contact found. Retrieving additional information");
 
         String contractIDStr = String.valueOf(contact.contactID);
 /*
@@ -224,7 +226,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             int photoThumbnailUriIndex = contactLookupCursor.getColumnIndex(ContactsContract.Profile.PHOTO_THUMBNAIL_URI);
             if (photoThumbnailUriIndex >= 0)
             {
-                contact.data.photoUriString = contactLookupCursor.getString(photoThumbnailUriIndex);
+                contact.data.setPhotoThumbnailUri(contactLookupCursor.getString(photoThumbnailUriIndex));
             }
         }
         contactLookupCursor.close();
@@ -245,7 +247,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         }
         catch (Exception e)
         {
-            Log.d(TAG, e.toString());
+        //    Log.d(TAG, e.toString());
             return null;
         }
     }
@@ -326,7 +328,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
         @Override
         public DataSource<Integer, Contact> create()
         {
-            Log.d(TAG, "Create ContactDataSource");
+        //    Log.d(TAG, "Create ContactDataSource");
             return new ContactDataSource(context, contactRepository);
         }
     }
