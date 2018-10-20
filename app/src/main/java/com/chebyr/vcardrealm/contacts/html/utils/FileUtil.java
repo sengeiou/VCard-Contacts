@@ -105,12 +105,12 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
         }
     }
 
-    public Bitmap readBitmapAsset(String assetName)
+    public InputStream getBitmapAssetStream(String assetName)
     {
         try
         {
             InputStream inputStream = assetManager.open(assetName);
-            return BitmapFactory.decodeStream(inputStream);
+            return inputStream;
         }
         catch (Exception exception)
         {

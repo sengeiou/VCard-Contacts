@@ -21,6 +21,7 @@ import java.io.InputStream;
 class WebViewResourceProvider extends WebViewClient
 {
     private static String TAG = WebViewResourceProvider.class.getSimpleName();
+    private static String PHOTO = "photo.jpg";
 
     private Contact contact;
     private FileUtil fileUtil;
@@ -53,7 +54,7 @@ class WebViewResourceProvider extends WebViewClient
             String url = uri.toString();
             if(url != null)
             {
-                if(url.contains("photo.jpg"))
+                if(url.contains(PHOTO))
                 {
                     return loadPhoto(url);
                 }
@@ -106,7 +107,14 @@ class WebViewResourceProvider extends WebViewClient
             Log.d(TAG, "webResourceResponse: " + webResourceResponse);
             return webResourceResponse;
         }
-        return null;
+        else
+        {
+            InputStream bitmapStream = fileUtil.getBitmapAssetStream(PHOTO);
+            Log.d(TAG, "bitmapStream: " + bitmapStream);
+            WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
+            Log.d(TAG, "webResourceResponse: " + webResourceResponse);
+            return webResourceResponse;
+        }
     }
 
     // Inject CSS method: read style.css from assets folder
