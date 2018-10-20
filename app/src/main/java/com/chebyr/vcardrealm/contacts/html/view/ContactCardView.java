@@ -52,7 +52,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
             return;
         }
 
-        Log.d(TAG, contact.vcardHtml);
+        //Log.d(TAG, contact.vcardHtml);
         webViewResourceProvider.setContact(contact);
         //loadData(contact.vcardHtml, "text/html", null);
         loadDataWithBaseURL("file:///android_asset/",contact.vcardHtml, "text/html", null, null);

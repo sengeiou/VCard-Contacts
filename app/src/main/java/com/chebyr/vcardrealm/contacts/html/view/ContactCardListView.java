@@ -52,7 +52,7 @@ public class ContactCardListView extends RecyclerView implements ContactCardList
 
     public void setContactList(PagedList<Contact> contactList)
     {
-        mContactCardListViewAdapter.setContactList(contactList);
+        mContactCardListViewAdapter.submitList(contactList);
     }
 
     @Override

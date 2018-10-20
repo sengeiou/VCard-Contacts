@@ -1,198 +1,78 @@
-    html,
-    body,
-    div,
-    span,
-    applet,
-    object,
-    iframe,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
-    blockquote,
-    pre,
-    a,
-    abbr,
-    acronym,
-    address,
-    big,
-    cite,
-    code,
-    del,
-    dfn,
-    em,
-    img,
-    ins,
-    kbd,
-    q,
-    s,
-    samp,
-    small,
-    strike,
-    strong,
-    sub,
-    sup,
-    tt,
-    var,
-    b,
-    u,
-    i,
-    center,
-    dl,
-    dt,
-    dd,
-    ol,
-    ul,
-    li,
-    fieldset,
-    form,
-    label,
-    legend,
-    table,
-    caption,
-    tbody,
-    tfoot,
-    thead,
-    tr,
-    th,
-    td,
-    article,
-    aside,
-    canvas,
-    details,
-    embed,
-    figure,
-    figcaption,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    output,
-    ruby,
-    section,
-    summary,
-    time,
-    mark,
-    audio,
-    video {
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font-size: 100%;
-      font: inherit;
-      vertical-align: baseline;
-    }
-    /* HTML5 display-role reset for older browsers */
-    article,
-    aside,
-    details,
-    figcaption,
-    figure,
-    footer,
-    header,
-    hgroup,
-    menu,
-    nav,
-    section {
-      display: block;
-    }
-    body {
-      line-height: 1;
-    }
-    ol,
-    ul {
-      list-style: none;
-    }
-    blockquote,
-    q {
-      quotes: none;
-    }
-    blockquote: before, blockquote: after, q: before, q: after {
-      content: '';
-      content: none;
-    }
-    table {
-      border-collapse: collapse;
-      border-spacing: 0;
-    }
-    body
+    .body
     {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f5f7f9;
-        color: #7b8c9a;
-        text-align: center;
-        font-size: 16px;
-        margin: 1em;
+        position: relative;
     }
     .moo-business-card
     {
-        border: thin dashed black;
-        width: 100%; /*856px;*/
-        /*padding-top: 63%;*/
-        height: 100%; /*540px;*/
-        position: relative;
+        font-family: 'Roboto', sans-serif;
         font-size: 16px;
+        margin: 1%;
+        color: white;
+        background-color: RoyalBlue;
+        border: thin dashed black;
+        width: 95%; /*856px;*/
+        padding: 2%;
+        height: 80%; /*540px;*/
+        position: absolute;
     }
     .contact-info-header
     {
+        text-align: left;
         display: block;
         position: absolute;
-        top: 0%;
-        left: 0%;
-        right: 0%;
-        height: 10%;
+        top: 2%;
+        left:2%;
+        right: 2%;
+        height: 15%;
     }
     .contact-info-footer
     {
+        text-align: center;
         display: block;
         position: absolute;
-        bottom: 0%;
-        left: 0%;
-        right: 0%;
-        height: 10%;
+        left: 2%;
+        bottom: 2%;
+        right: 2%;
+        height: 12%;
+        margin: 0;
     }
     .contact-info-left
     {
         display: block;
         position: absolute;
-        top:10%;
-        height:80%
-        width:30%;
-        left: 0%;
+        top:17%;
+        bottom: 83%;
+        height: 70%;
+        left: 2%;
     }
     .contact-info-right
     {
+        text-align: left;
         display: block;
         position: absolute;
-        top:10%;
-        height:80%
-        width:70%;
-        right: 0%;
+        top:17%;
+        height:70%;
+        bottom: 83%;
+        width:60%;
+        right: 2%;
     }
     h1
     {
         font-family: 'Julius Sans One', sans-serif;
-        color: #424044;
         margin: 0.1em;
-        font-size: 4rem;
+        font-size: 3rem;
     }
     h2
     {
-        font-size: 2rem;
+        font-size: 2.5rem;
         margin: 0.1em;
     }
     h3
     {
-        font-size: 1.5rem;
+        font-size: 2rem;
         margin: 0.1em;
     }
     img
     {
-        height: 100%;
-        width: 100%;
-        margin: 1%;
+        margin: 2%;
     }

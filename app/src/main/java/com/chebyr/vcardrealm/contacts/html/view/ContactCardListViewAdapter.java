@@ -17,8 +17,6 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
 {
     private static String TAG = ContactCardListViewAdapter.class.getSimpleName();
 
-    private PagedList<Contact> contactList;
-
     private OnItemClickCallBack callBack;
 
     public ContactCardListViewAdapter()
@@ -47,12 +45,6 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         this.callBack        = callBack;
     }
 
-    public void setContactList(PagedList<Contact> contactPagedList)
-    {
-        this.contactList = contactPagedList;
-        notifyDataSetChanged();
-    }
-
     @Override
     public ContactCardsViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
@@ -66,17 +58,10 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
     @Override
     public void onBindViewHolder(@NonNull ContactCardsViewHolder viewHolder, int position)
     {
-        Contact contact = contactList.get(position);
-        viewHolder.setContact(contact);
-    }
 
-    @Override
-    public int getItemCount()
-    {
-        if (contactList != null)
-            return contactList.size();
-
-        return 0;
+        Contact contact = getItem(position);
+        if(contact != null)
+            viewHolder.setContact(contact);
     }
 
     public void onScrollStateChanged(int newState)
