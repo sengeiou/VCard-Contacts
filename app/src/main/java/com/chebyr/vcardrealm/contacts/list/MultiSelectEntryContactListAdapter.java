@@ -24,7 +24,7 @@ import android.widget.CheckBox;
 
 //import com.android.contacts.common.list.ContactListItemView;
 import com.android.contacts.common.list.DefaultContactListAdapter;
-import com.chebyr.vcardrealm.contacts.html.view.ContactCardView;
+import com.chebyr.vcardrealm.contacts.view.ContactCardView;
 
 import java.util.TreeSet;
 

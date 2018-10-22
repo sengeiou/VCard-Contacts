@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.view;
+package com.chebyr.vcardrealm.contacts.view;
 
 
 import android.arch.lifecycle.LiveData;
@@ -14,8 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.ContactViewModel;
+import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 
 /**
  * A placeholder fragment containing a simple view.

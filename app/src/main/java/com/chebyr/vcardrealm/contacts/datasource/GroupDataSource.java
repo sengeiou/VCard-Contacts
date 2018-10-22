@@ -1,11 +1,11 @@
-package com.chebyr.vcardrealm.contacts.html.datasource;
+package com.chebyr.vcardrealm.contacts.datasource;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.chebyr.vcardrealm.contacts.html.data.GroupData;
-import com.chebyr.vcardrealm.contacts.html.datasource.queries.GroupsQuery;
+import com.chebyr.vcardrealm.contacts.data.GroupData;
+import com.chebyr.vcardrealm.contacts.datasource.queries.GroupsQuery;
 
 public class GroupDataSource
 {

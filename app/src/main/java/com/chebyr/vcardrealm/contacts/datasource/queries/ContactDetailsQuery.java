@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.datasource.queries;
+package com.chebyr.vcardrealm.contacts.datasource.queries;
 
 import android.net.Uri;
 import android.provider.ContactsContract;

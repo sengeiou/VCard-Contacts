@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.view;
+package com.chebyr.vcardrealm.contacts.view;
 
 import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.data.Contact;
 
 public class ContactCardListViewAdapter extends PagedListAdapter<Contact, ContactCardListViewAdapter.ContactCardsViewHolder>
 {

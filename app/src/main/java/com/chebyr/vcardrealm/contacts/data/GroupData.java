@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.data;
+package com.chebyr.vcardrealm.contacts.data;
 
 public class GroupData
 {

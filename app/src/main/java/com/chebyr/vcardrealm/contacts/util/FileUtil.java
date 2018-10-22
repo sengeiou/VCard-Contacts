@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.utils;
+package com.chebyr.vcardrealm.contacts.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;

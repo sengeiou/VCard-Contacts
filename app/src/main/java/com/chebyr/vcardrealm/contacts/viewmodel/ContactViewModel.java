@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.viewmodel;
+package com.chebyr.vcardrealm.contacts.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -8,10 +8,10 @@ import android.arch.lifecycle.Transformations;
 import android.arch.paging.PagedList;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.datasource.ContactsObserver;
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
-import com.chebyr.vcardrealm.contacts.html.repository.ContactRepository;
+import com.chebyr.vcardrealm.contacts.datasource.ContactsObserver;
+import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.repository.ContactRepository;
 
 import java.util.HashMap;
 

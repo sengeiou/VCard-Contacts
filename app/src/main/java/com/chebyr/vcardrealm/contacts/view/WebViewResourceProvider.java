@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.view;
+package com.chebyr.vcardrealm.contacts.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,8 +11,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.utils.FileUtil;
+import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.utils.FileUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

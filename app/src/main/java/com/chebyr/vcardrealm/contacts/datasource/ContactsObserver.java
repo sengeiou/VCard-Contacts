@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.datasource;
+package com.chebyr.vcardrealm.contacts.datasource;
 
 import android.database.DataSetObserver;
 

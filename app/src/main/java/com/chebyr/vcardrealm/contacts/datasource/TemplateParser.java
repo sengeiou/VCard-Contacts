@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.datasource;
+package com.chebyr.vcardrealm.contacts.datasource;
 
 /* TemplateParser manages in memory HTML DOM representation of the format of the VCard Template */
 
@@ -7,8 +7,8 @@ import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
 
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.viewmodel.VCardFieldFormat;
+import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.viewmodel.VCardFieldFormat;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,12 +1,12 @@
-package com.chebyr.vcardrealm.contacts.html.datasource;
+package com.chebyr.vcardrealm.contacts.datasource;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.data.ContactDetailsData;
-import com.chebyr.vcardrealm.contacts.html.datasource.queries.ContactDetailsQuery;
+import com.chebyr.vcardrealm.contacts.data.ContactDetailsData;
+import com.chebyr.vcardrealm.contacts.datasource.queries.ContactDetailsQuery;
 
 public class ContactDetailsDataSource
 {

@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.view;
+package com.chebyr.vcardrealm.contacts.view;
 
 import android.app.Activity;
 import android.arch.paging.PagedList;
@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
+import com.chebyr.vcardrealm.contacts.data.Contact;
 
 public class ContactCardListView extends RecyclerView implements ContactCardListViewAdapter.OnItemClickCallBack
 {

@@ -47,7 +47,7 @@ import com.chebyr.vcardrealm.contacts.BuildConfig;
 import com.chebyr.vcardrealm.contacts.MainActivity;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
-import com.chebyr.vcardrealm.contacts.html.utils.StrictModeDebugUtils;
+import com.chebyr.vcardrealm.contacts.utils.StrictModeDebugUtils;
 import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.ContactMultiDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.JoinContactsDialogFragment;

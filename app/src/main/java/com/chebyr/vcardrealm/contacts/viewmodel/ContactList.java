@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.html.viewmodel;
+package com.chebyr.vcardrealm.contacts.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -7,9 +7,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.chebyr.vcardrealm.contacts.html.data.Contact;
-import com.chebyr.vcardrealm.contacts.html.data.TemplateData;
-import com.chebyr.vcardrealm.contacts.html.datasource.TemplateParser;
+import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.data.TemplateData;
+import com.chebyr.vcardrealm.contacts.datasource.TemplateParser;
 
 import java.util.HashMap;
 import java.util.ListIterator;
