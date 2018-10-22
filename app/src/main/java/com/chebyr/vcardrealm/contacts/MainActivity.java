@@ -1,8 +1,5 @@
 package com.chebyr.vcardrealm.contacts;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Context;
@@ -15,6 +12,9 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -43,15 +43,10 @@ import com.android.contacts.common.util.Constants;
 import com.android.contacts.common.util.ImplicitIntentsUtil;
 import com.android.contacts.common.util.ViewUtil;
 import com.android.contacts.common.widget.FloatingActionButtonController;
-import com.chebyr.vcardrealm.contacts.BuildConfig;
-import com.chebyr.vcardrealm.contacts.MainActivity;
-import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
-import com.chebyr.vcardrealm.contacts.utils.StrictModeDebugUtils;
 import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.ContactMultiDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.JoinContactsDialogFragment;
-import com.chebyr.vcardrealm.contacts.list.ContactsIntentResolver;
 import com.chebyr.vcardrealm.contacts.list.ContactsRequest;
 import com.chebyr.vcardrealm.contacts.list.ContactsUnavailableFragment;
 import com.chebyr.vcardrealm.contacts.list.MultiSelectContactsListFragment;
@@ -239,32 +234,25 @@ public class MainActivity extends AppCompatActivity implements
         //setContentView(R.layout.people_activity);
         setContentView(R.layout.activity_main);
 
-        final FragmentManager fragmentManager = getFragmentManager();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Hide all tabs (the current tab will later be reshown once a tab is selected)
-        final FragmentTransaction transaction = fragmentManager.beginTransaction();
+        //final FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         // Configure toolbar and toolbar tabs. If in landscape mode, we  configure tabs differntly.
-        final android.widget.Toolbar toolbar = getView(R.id.toolbar);
-        setActionBar(toolbar);
+        final Toolbar toolbar = getView(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mAllFragment = (MultiSelectContactsListFragment) fragmentManager.findFragmentById(R.id.contacts_container);
-        mAllFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
-        mAllFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
+        //mAllFragment = (MultiSelectContactsListFragment) fragmentManager.findFragmentById(R.id.contacts_container);
+        //mAllFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
+        //mAllFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
 
         mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(), toolbar);
         mActionBarAdapter.initialize(savedState, mRequest);
 
         // Add shadow under toolbar
-        ViewUtil.addRectangularOutlineProvider(findViewById(R.id.toolbar_parent), getResources());
+        //ViewUtil.addRectangularOutlineProvider(findViewById(R.id.toolbar_parent), getResources());
 
-        // Configure floating action button
-        mFloatingActionButtonContainer = findViewById(R.id.floating_action_button_container);
-        final ImageButton floatingActionButton
-                = (ImageButton) findViewById(R.id.floating_action_button);
-        floatingActionButton.setOnClickListener(this);
-        mFloatingActionButtonController = new FloatingActionButtonController(this,
-                mFloatingActionButtonContainer, floatingActionButton);
         initializeFabVisibility();
 
         invalidateOptionsMenuIfNeeded();
@@ -676,7 +664,16 @@ public class MainActivity extends AppCompatActivity implements
         invalidateOptionsMenuIfNeeded();
     }
 
-    private void initializeFabVisibility() {
+    private void initializeFabVisibility()
+    {
+        // Configure floating action button
+        mFloatingActionButtonContainer = findViewById(R.id.floating_action_button_container);
+        final ImageButton floatingActionButton
+                = (ImageButton) findViewById(R.id.floating_action_button);
+        floatingActionButton.setOnClickListener(this);
+        mFloatingActionButtonController = new FloatingActionButtonController(this,
+                mFloatingActionButtonContainer, floatingActionButton);
+
         final boolean hideFab = mActionBarAdapter.isSearchMode()
                 || mActionBarAdapter.isSelectionMode();
         mFloatingActionButtonContainer.setVisibility(hideFab ? View.GONE : View.VISIBLE);
@@ -830,7 +827,7 @@ public class MainActivity extends AppCompatActivity implements
                 mContactsUnavailableFragment = new ContactsUnavailableFragment();
                 mContactsUnavailableFragment.setOnContactsUnavailableActionListener(
                         new ContactsUnavailableFragmentListener());
-                getFragmentManager().beginTransaction()
+                getSupportFragmentManager().beginTransaction()
                         .replace(R.id.contacts_unavailable_container, mContactsUnavailableFragment)
                         .commitAllowingStateLoss();
             }

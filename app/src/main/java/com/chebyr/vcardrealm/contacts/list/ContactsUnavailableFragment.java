@@ -15,9 +15,10 @@
  */
 package com.chebyr.vcardrealm.contacts.list;
 
-import android.app.Fragment;
+
 import android.os.Bundle;
 import android.provider.ContactsContract.ProviderStatus;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

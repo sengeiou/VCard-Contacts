@@ -23,8 +23,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
+import com.chebyr.vcardrealm.contacts.MainActivity;
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.activities.PeopleActivity;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public final class ContactsPreferenceActivity extends PreferenceActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
-                Intent intent = new Intent(this, PeopleActivity.class);
+                Intent intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();

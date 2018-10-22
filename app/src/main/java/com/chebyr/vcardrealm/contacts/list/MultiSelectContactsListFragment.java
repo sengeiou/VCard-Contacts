@@ -20,9 +20,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.android.contacts.common.list.ContactListAdapter;
+//import com.android.contacts.common.list.ContactListAdapter;
 import com.android.contacts.common.list.ContactListItemView;
-import com.android.contacts.common.list.DefaultContactListAdapter;
+//import com.android.contacts.common.list.DefaultContactListAdapter;
 
 import com.chebyr.vcardrealm.contacts.list.MultiSelectEntryContactListAdapter.SelectedContactsListener;
 

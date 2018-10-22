@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorControlHighlight"
-    tools:context="com.chebyr.vcardrealm.contacts.html.view.ContactCardsFragment"
+    tools:context="com.chebyr.vcardrealm.contacts.view.ContactCardsFragment"
     tools:showIn="@layout/activity_main">
 
-    <com.chebyr.vcardrealm.contacts.html.view.ContactCardListView
+    <com.chebyr.vcardrealm.contacts.view.ContactCardListView
         android:id="@+id/contact_card_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -35,7 +37,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.SearchView.OnCloseListener;
 import android.widget.TextView;
-import android.widget.Toolbar;
+
 
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.view.ActionBarAdapter.Listener.Action;
@@ -103,7 +105,7 @@ public class ActionBarAdapter implements OnCloseListener {
      *  Frame that contains the toolbar and draws the toolbar's background color. This is useful
      *  for placing things behind the toolbar.
      */
-    private final FrameLayout mToolBarFrame;
+    private final AppBarLayout mToolBarFrame;
 
     private boolean mShowHomeIcon;
 
@@ -130,7 +132,7 @@ public class ActionBarAdapter implements OnCloseListener {
         //mPortraitTabs = portraitTabs;
         //mLandscapeTabs = landscapeTabs;
         mToolbar = toolbar;
-        mToolBarFrame = (FrameLayout) mToolbar.getParent();
+        mToolBarFrame = (AppBarLayout) mToolbar.getParent();
         mMaxToolbarContentInsetStart = mToolbar.getContentInsetStart();
         mShowHomeIcon = mActivity.getResources().getBoolean(R.bool.show_home_icon);
 

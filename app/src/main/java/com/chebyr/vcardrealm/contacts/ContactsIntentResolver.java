@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.chebyr.vcardrealm.contacts.list;
+package com.chebyr.vcardrealm.contacts;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -31,6 +31,9 @@ import android.provider.ContactsContract.Intents;
 import android.provider.ContactsContract.Intents.Insert;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.chebyr.vcardrealm.contacts.list.ContactsRequest;
+import com.chebyr.vcardrealm.contacts.list.UiIntentActions;
 
 /**
  * Parses a Contacts intent, extracting all relevant parts and packaging them

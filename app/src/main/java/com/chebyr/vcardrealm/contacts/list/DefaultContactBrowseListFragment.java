@@ -16,10 +16,10 @@
 package com.chebyr.vcardrealm.contacts.list;
 
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.ContactsContract.Contacts;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,17 +32,15 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.contacts.common.list.ContactListAdapter;
+
 import com.android.contacts.common.list.ContactListFilter;
 import com.android.contacts.common.list.ContactListFilterController;
 import com.android.contacts.common.list.ContactListItemView;
-import com.android.contacts.common.list.DefaultContactListAdapter;
-import com.android.contacts.common.list.ProfileAndContactsLoader;
-import com.android.contacts.common.util.AccountFilterUtil;
 import com.android.contacts.common.util.ImplicitIntentsUtil;
 
 import com.chebyr.vcardrealm.contacts.editor.ContactEditorFragment;
 import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.util.AccountFilterUtil;
 
 /**
  * Fragment containing a contact list used for browsing (as compared to
