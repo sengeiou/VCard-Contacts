@@ -180,10 +180,7 @@ public class ContactDetailsDataSource
     public String getNickName(Cursor contactDataCursor)
     {
         String nickName = contactDataCursor.getString(contactDataCursor.getColumnIndex(ContactDetailsQuery.NICK_NAME));
-        if(nickName != null)
-            return nickName;
-
-        return "";
+        return nickName;
     }
 
 

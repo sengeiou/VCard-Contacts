@@ -141,9 +141,9 @@ import com.chebyr.vcardrealm.contacts.util.ImageViewDrawableSetter;
 import com.chebyr.vcardrealm.contacts.util.PhoneCapabilityTester;
 import com.chebyr.vcardrealm.contacts.util.SchedulingUtils;
 import com.chebyr.vcardrealm.contacts.util.StructuredPostalUtils;
-import com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller;
-import com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller.MultiShrinkScrollerListener;
-import com.chebyr.vcardrealm.contacts.widget.QuickContactImageView;
+import com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller;
+import com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller.MultiShrinkScrollerListener;
+import com.chebyr.vcardrealm.contacts.view.widget.QuickContactImageView;
 import com.chebyr.vcardrealm.contacts.util.ContactsBindHelpUtils;
 import com.google.common.collect.Lists;
 

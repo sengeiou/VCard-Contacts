@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License
  */
-package com.chebyr.vcardrealm.contacts;
+package com.chebyr.vcardrealm.contacts.datasource;
 
 import android.content.Context;
 import android.content.CursorLoader;

@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller
+<com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,4 +51,4 @@
          this title can not be inside @style/quickcontact_header. -->
     <include layout="@layout/quickcontact_title" />
 
-</com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller>
+</com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller>

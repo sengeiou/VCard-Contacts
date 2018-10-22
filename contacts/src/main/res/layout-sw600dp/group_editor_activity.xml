@@ -19,7 +19,7 @@
     xmlns:ex="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.chebyr.vcardrealm.contacts.widget.InterpolatingLayout
+    <com.chebyr.vcardrealm.contacts.view.widget.InterpolatingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <fragment class="com.chebyr.vcardrealm.contacts.group.GroupEditorFragment"
@@ -33,5 +33,5 @@
             ex:layout_narrowMarginLeft="0dip"
             ex:layout_narrowMarginRight="0dip"
          />
-    </com.chebyr.vcardrealm.contacts.widget.InterpolatingLayout>
+    </com.chebyr.vcardrealm.contacts.view.widget.InterpolatingLayout>
 </FrameLayout>

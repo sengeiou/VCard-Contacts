@@ -15,7 +15,7 @@
 -->
 <!-- This file is in the base layout/ directory so that it can be referenced from multiple config
      folder without duplicating this file. -->
-<com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller
+<com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,4 +61,4 @@
 
     </LinearLayout>
 
-</com.chebyr.vcardrealm.contacts.widget.MultiShrinkScroller>
+</com.chebyr.vcardrealm.contacts.view.widget.MultiShrinkScroller>

@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.chebyr.vcardrealm.contacts.activities;
+package com.chebyr.vcardrealm.contacts.view;
 
-import android.animation.ValueAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -31,7 +29,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -41,7 +38,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.chebyr.vcardrealm.contacts.R;
-import com.chebyr.vcardrealm.contacts.activities.ActionBarAdapter.Listener.Action;
+import com.chebyr.vcardrealm.contacts.view.ActionBarAdapter.Listener.Action;
 import com.chebyr.vcardrealm.contacts.list.ContactsRequest;
 
 /**

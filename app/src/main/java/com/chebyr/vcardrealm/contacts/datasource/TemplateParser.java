@@ -448,7 +448,9 @@ public class TemplateParser
 
         if(contact.details != null)
         {
-            setContactField(nickNameView, contact.details.nickName);
+            String nickName = (contact.details.nickName != null)? " (" + contact.details.nickName + ")": null;
+
+            setContactField(nickNameView, nickName);
             setContactField(jobTitleView, contact.details.jobTitle);
             setContactField(organizationView, contact.details.organization);
             setContactField(addressView, contact.details.address);
