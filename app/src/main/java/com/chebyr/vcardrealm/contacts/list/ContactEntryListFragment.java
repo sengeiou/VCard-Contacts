@@ -16,19 +16,14 @@
 
 package com.chebyr.vcardrealm.contacts.list;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.provider.ContactsContract.Directory;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,16 +45,18 @@ import com.android.contacts.common.ContactPhotoManager;
 import com.android.contacts.common.list.DirectoryPartition;
 import com.android.contacts.common.preference.ContactsPreferences;
 import com.android.contacts.common.util.ContactListViewUtils;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListView;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListViewAdapter;
 
 import java.util.Locale;
 
 /**
  * Common base class for various contact-related list fragments.
  */
-public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter>
+public abstract class ContactEntryListFragment<T extends ContactCardListViewAdapter>
         extends Fragment
         implements OnItemClickListener, OnScrollListener, OnFocusChangeListener, OnTouchListener,
-                OnItemLongClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+                OnItemLongClickListener {
     private static final String TAG = "ContactEntryListFragment";
 
     // TODO: Make this protected. This should not be used from the PeopleActivity but
@@ -111,7 +108,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
 
     private T mAdapter;
     private View mView;
-    private ListView mListView;
+    private ContactCardListView mListView;
 
     /**
      * Used for keeping track of the scroll state of the list.
@@ -145,8 +142,6 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
 
     private Context mContext;
 
-    private LoaderManager mLoaderManager;
-
     private Handler mDelayedDirectorySearchHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -176,18 +171,12 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         return false;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        setContext(activity);
-        setLoaderManager(super.getLoaderManager());
-    }
-
     /**
      * Sets a context for the fragment in the unit test environment.
      */
     public void setContext(Context context) {
         mContext = context;
+        mContactsPrefs = new ContactsPreferences(mContext);
         configurePhotoLoader();
     }
 
@@ -208,18 +197,6 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         }
     }
 
-    /**
-     * Overrides a loader manager for use in unit tests.
-     */
-    public void setLoaderManager(LoaderManager loaderManager) {
-        mLoaderManager = loaderManager;
-    }
-
-    @Override
-    public LoaderManager getLoaderManager() {
-        return mLoaderManager;
-    }
-
     public T getAdapter() {
         return mAdapter;
     }
@@ -229,7 +206,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         return mView;
     }
 
-    public ListView getListView() {
+    public ContactCardListView getListView() {
         return mListView;
     }
 
@@ -252,7 +229,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         outState.putBoolean(KEY_DARK_THEME, mDarkTheme);
 
         if (mListView != null) {
-            outState.putParcelable(KEY_LIST_STATE, mListView.onSaveInstanceState());
+            //outState.putParcelable(KEY_LIST_STATE, mListView.onSaveInstanceState());
         }
     }
 
@@ -261,7 +238,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         super.onCreate(savedState);
         restoreSavedState(savedState);
         mAdapter = createListAdapter();
-        mContactsPrefs = new ContactsPreferences(mContext);
+
     }
 
     public void restoreSavedState(Bundle savedState) {
@@ -319,47 +296,11 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
                         startLoadingDirectoryPartition(i);
                     }
                 }
-            } else {
-                getLoaderManager().initLoader(i, null, this);
             }
         }
 
         // Next time this method is called, we should start loading non-priority directories
         mLoadPriorityDirectoriesOnly = false;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id == DIRECTORY_LOADER_ID) {
-            DirectoryListLoader loader = new DirectoryListLoader(mContext);
-            loader.setDirectorySearchMode(mAdapter.getDirectorySearchMode());
-            loader.setLocalInvisibleDirectoryEnabled(
-                    ContactEntryListAdapter.LOCAL_INVISIBLE_DIRECTORY_ENABLED);
-            return loader;
-        } else {
-            CursorLoader loader = createCursorLoader(mContext);
-            long directoryId = args != null && args.containsKey(DIRECTORY_ID_ARG_KEY)
-                    ? args.getLong(DIRECTORY_ID_ARG_KEY)
-                    : Directory.DEFAULT;
-            mAdapter.configureLoader(loader, directoryId);
-            return loader;
-        }
-    }
-
-    public CursorLoader createCursorLoader(Context context) {
-        return new CursorLoader(context, null, null, null, null, null) {
-            @Override
-            protected Cursor onLoadInBackground() {
-                try {
-                    return super.onLoadInBackground();
-                } catch (RuntimeException e) {
-                    // We don't even know what the projection should be, so no point trying to
-                    // return an empty MatrixCursor with the correct projection here.
-                    Log.w(TAG, "RuntimeException while trying to query ContactsProvider.");
-                    return null;
-                }
-            }
-        };
     }
 
     private void startLoadingDirectoryPartition(int partitionIndex) {
@@ -375,7 +316,6 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         } else {
             Bundle args = new Bundle();
             args.putLong(DIRECTORY_ID_ARG_KEY, directoryId);
-            getLoaderManager().initLoader(partitionIndex, args, this);
         }
     }
 
@@ -397,7 +337,6 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
     protected void loadDirectoryPartition(int partitionIndex, DirectoryPartition partition) {
         Bundle args = new Bundle();
         args.putLong(DIRECTORY_ID_ARG_KEY, partition.getDirectoryId());
-        getLoaderManager().restartLoader(partitionIndex, args, this);
     }
 
     /**
@@ -405,54 +344,6 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
      */
     private void removePendingDirectorySearchRequests() {
         mDelayedDirectorySearchHandler.removeMessages(DIRECTORY_SEARCH_MESSAGE);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (!mEnabled) {
-            return;
-        }
-
-        int loaderId = loader.getId();
-        if (loaderId == DIRECTORY_LOADER_ID) {
-            mDirectoryListStatus = STATUS_LOADED;
-            mAdapter.changeDirectories(data);
-            startLoading();
-        } else {
-            onPartitionLoaded(loaderId, data);
-            if (isSearchMode()) {
-                int directorySearchMode = getDirectorySearchMode();
-                if (directorySearchMode != DirectoryListLoader.SEARCH_MODE_NONE) {
-                    if (mDirectoryListStatus == STATUS_NOT_LOADED) {
-                        mDirectoryListStatus = STATUS_LOADING;
-                        getLoaderManager().initLoader(DIRECTORY_LOADER_ID, null, this);
-                    } else {
-                        startLoading();
-                    }
-                }
-            } else {
-                mDirectoryListStatus = STATUS_NOT_LOADED;
-                getLoaderManager().destroyLoader(DIRECTORY_LOADER_ID);
-            }
-        }
-    }
-
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    protected void onPartitionLoaded(int partitionIndex, Cursor data) {
-        if (partitionIndex >= mAdapter.getPartitionCount()) {
-            // When we get unsolicited data, ignore it.  This could happen
-            // when we are switching from search mode to the default mode.
-            return;
-        }
-
-        mAdapter.changeCursor(partitionIndex, data);
-        setProfileHeader();
-
-        if (!isLoading()) {
-            completeRestoreInstanceState();
-        }
     }
 
     public boolean isLoading() {
@@ -539,8 +430,8 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         boolean hasScrollbar = isVisibleScrollbarEnabled() && isSectionHeaderDisplayEnabled();
 
         if (mListView != null) {
-            mListView.setFastScrollEnabled(hasScrollbar);
-            mListView.setFastScrollAlwaysVisible(hasScrollbar);
+            //mListView.setFastScrollEnabled(hasScrollbar);
+            //mListView.setFastScrollAlwaysVisible(hasScrollbar);
             mListView.setVerticalScrollbarPosition(mVerticalScrollbarPosition);
             mListView.setScrollBarStyle(ListView.SCROLLBARS_OUTSIDE_OVERLAY);
         }
@@ -611,7 +502,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
             }
 
             if (mListView != null) {
-                mListView.setFastScrollEnabled(!flag);
+                //mListView.setFastScrollEnabled(!flag);
             }
         }
     }
@@ -733,7 +624,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
     protected void onCreateView(LayoutInflater inflater, ViewGroup container) {
         mView = inflateView(inflater, container);
 
-        mListView = (ListView)mView.findViewById(android.R.id.list);
+        mListView = (ContactCardListView) mView.findViewById(android.R.id.list);
         if (mListView == null) {
             throw new RuntimeException(
                     "Your content must have a ListView whose id attribute is " +
@@ -742,18 +633,18 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
 
         View emptyView = mView.findViewById(android.R.id.empty);
         if (emptyView != null) {
-            mListView.setEmptyView(emptyView);
+            //mListView.setEmptyView(emptyView);
         }
 
-        mListView.setOnItemClickListener(this);
-        mListView.setOnItemLongClickListener(this);
+        //mListView.setOnItemClickListener(this);
+        //mListView.setOnItemLongClickListener(this);
         mListView.setOnFocusChangeListener(this);
         mListView.setOnTouchListener(this);
-        mListView.setFastScrollEnabled(!isSearchMode());
+        //mListView.setFastScrollEnabled(!isSearchMode());
 
         // Tell list view to not show dividers. We'll do it ourself so that we can *not* show
         // them when an A-Z headers is visible.
-        mListView.setDividerHeight(0);
+        //mListView.setDividerHeight(0);
 
         // We manually save/restore the listview state
         mListView.setSaveEnabled(false);
@@ -763,7 +654,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
 
         getAdapter().setFragmentRootView(getView());
 
-        ContactListViewUtils.applyCardPaddingToView(getResources(), mListView, mView);
+        //ContactListViewUtils.applyCardPaddingToView(getResources(), mListView, mView);
     }
 
     @Override
@@ -772,7 +663,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
         if (getActivity() != null && getView() != null && !hidden) {
             // If the padding was last applied when in a hidden state, it may have been applied
             // incorrectly. Therefore we need to reapply it.
-            ContactListViewUtils.applyCardPaddingToView(getResources(), mListView, getView());
+            //ContactListViewUtils.applyCardPaddingToView(getResources(), mListView, getView());
         }
     }
 
@@ -782,7 +673,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
                 mPhotoManager = ContactPhotoManager.getInstance(mContext);
             }
             if (mListView != null) {
-                mListView.setOnScrollListener(this);
+                //mListView.setOnScrollListener(this);
             }
             if (mAdapter != null) {
                 mAdapter.setPhotoLoader(mPhotoManager);
@@ -827,7 +718,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         hideSoftKeyboard();
 
-        int adjPosition = position - mListView.getHeaderViewsCount();
+        int adjPosition = position;// - mListView.getHeaderViewsCount();
         if (adjPosition >= 0) {
             onItemClick(adjPosition, id);
         }
@@ -835,7 +726,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        int adjPosition = position - mListView.getHeaderViewsCount();
+        int adjPosition = position;// - mListView.getHeaderViewsCount();
 
         if (adjPosition >= 0) {
             return onItemLongClick(adjPosition, id);
@@ -882,7 +773,7 @@ public abstract class ContactEntryListFragment<T extends ContactEntryListAdapter
      */
     protected void completeRestoreInstanceState() {
         if (mListState != null) {
-            mListView.onRestoreInstanceState(mListState);
+            //mListView.onRestoreInstanceState(mListState);
             mListState = null;
         }
     }

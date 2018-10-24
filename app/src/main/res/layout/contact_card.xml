@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="5dp">
 
-    <com.chebyr.vcardrealm.contacts.html.view.ContactCardView
+    <com.chebyr.vcardrealm.contacts.view.ContactCardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,6 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/contact_card_view">
 
-    </com.chebyr.vcardrealm.contacts.html.view.ContactCardView>
+    </com.chebyr.vcardrealm.contacts.view.ContactCardView>
 
 </android.support.constraint.ConstraintLayout>

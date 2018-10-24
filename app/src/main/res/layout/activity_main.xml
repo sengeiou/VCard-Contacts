@@ -23,8 +23,20 @@
 
     <include layout="@layout/content_main" />
 
+    <FrameLayout
+        android:id="@+id/contacts_unavailable_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_parent"
+        android:visibility="gone">
+        <FrameLayout
+            android:id="@+id/contacts_unavailable_container"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
+    </FrameLayout>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

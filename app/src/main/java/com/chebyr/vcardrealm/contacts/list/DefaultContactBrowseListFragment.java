@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.ContactsContract.Contacts;
-import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import com.android.contacts.common.list.ContactListFilter;
 import com.android.contacts.common.list.ContactListFilterController;
 import com.android.contacts.common.list.ContactListItemView;
@@ -41,12 +39,14 @@ import com.android.contacts.common.util.ImplicitIntentsUtil;
 import com.chebyr.vcardrealm.contacts.editor.ContactEditorFragment;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.util.AccountFilterUtil;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListView;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListViewAdapter;
 
 /**
  * Fragment containing a contact list used for browsing (as compared to
  * picking a contact with one of the PICK intents).
  */
-public class DefaultContactBrowseListFragment extends ContactBrowseListFragment {
+public abstract class DefaultContactBrowseListFragment extends ContactBrowseListFragment {
     private static final String TAG = DefaultContactBrowseListFragment.class.getSimpleName();
 
     private static final int REQUEST_CODE_ACCOUNT_FILTER = 1;
@@ -81,11 +81,6 @@ public class DefaultContactBrowseListFragment extends ContactBrowseListFragment 
     }
 
     @Override
-    public CursorLoader createCursorLoader(Context context) {
-        return new ProfileAndContactsLoader(context);
-    }
-
-    @Override
     protected void onItemClick(int position, long id) {
         final Uri uri = getAdapter().getContactUri(position);
         if (uri == null) {
@@ -94,15 +89,6 @@ public class DefaultContactBrowseListFragment extends ContactBrowseListFragment 
         viewContact(uri);
     }
 
-    @Override
-    protected ContactListAdapter createListAdapter() {
-        DefaultContactListAdapter adapter = new DefaultContactListAdapter(getContext());
-        adapter.setSectionHeaderDisplayEnabled(isSectionHeaderDisplayEnabled());
-        adapter.setDisplayPhotos(true);
-        adapter.setPhotoPosition(
-                ContactListItemView.getDefaultPhotoPosition(/* opposite = */ false));
-        return adapter;
-    }
 
     @Override
     protected View inflateView(LayoutInflater inflater, ViewGroup container) {
@@ -126,7 +112,7 @@ public class DefaultContactBrowseListFragment extends ContactBrowseListFragment 
         FrameLayout headerContainer = new FrameLayout(inflater.getContext());
         mSearchHeaderView = inflater.inflate(R.layout.search_header, null, false);
         headerContainer.addView(mSearchHeaderView);
-        getListView().addHeaderView(headerContainer, null, false);
+        //getListView().addHeaderView(headerContainer, null, false);
         checkHeaderViewVisibility();
 
         mSearchProgress = getView().findViewById(R.id.search_progress);
@@ -182,7 +168,7 @@ public class DefaultContactBrowseListFragment extends ContactBrowseListFragment 
         showEmptyUserProfile(!mUserProfileExists && !isSearchMode());
 
         if (isSearchMode()) {
-            ContactListAdapter adapter = getAdapter();
+            ContactCardListViewAdapter adapter = getAdapter();
             if (adapter == null) {
                 return;
             }
@@ -236,14 +222,14 @@ public class DefaultContactBrowseListFragment extends ContactBrowseListFragment 
      * 2. A button that prompts the user to create a local profile
      */
     private void addEmptyUserProfileHeader(LayoutInflater inflater) {
-        ListView list = getListView();
+        ContactCardListView list = getListView();
         // Add a header with the "ME" name. The view is embedded in a frame view since you cannot
         // change the visibility of a view in a ListView without having a parent view.
         mProfileHeader = inflater.inflate(R.layout.user_profile_header, null, false);
         mProfileTitle = (TextView) mProfileHeader.findViewById(R.id.profile_title);
         mProfileHeaderContainer = new FrameLayout(inflater.getContext());
         mProfileHeaderContainer.addView(mProfileHeader);
-        list.addHeaderView(mProfileHeaderContainer, null, false);
+        //list.addHeaderView(mProfileHeaderContainer, null, false);
 
         // Add a button with a message inviting the user to create a local profile
         mProfileMessage = (Button) mProfileHeader.findViewById(R.id.user_profile_button);

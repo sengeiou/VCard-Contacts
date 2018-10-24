@@ -2,7 +2,9 @@ package com.chebyr.vcardrealm.contacts.view;
 
 import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.common.widget.CompositeCursorAdapter;
+import com.android.contacts.common.ContactPhotoManager;
+import com.android.contacts.common.list.ContactListFilter;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.data.Contact;
+
+import java.util.TreeSet;
 
 public class ContactCardListViewAdapter extends PagedListAdapter<Contact, ContactCardListViewAdapter.ContactCardsViewHolder>
 {
@@ -95,4 +102,151 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         }
 
     }
+
+
+
+    // Dummp for now
+    public TreeSet<Long> getSelectedContactIds()
+    {
+        return null;
+    }
+
+    public void setSelectedContactIds(TreeSet<Long> selectedContactIds)
+    {
+
+    }
+
+    public void setSelectedContactsListener(Fragment fragment)
+    {
+
+    }
+
+    public void setDisplayCheckBoxes(boolean displayCheckBoxes)
+    {
+    }
+
+    public Uri getContactUri(int position)
+    {
+        return null;
+    }
+
+    public boolean hasProfile()
+    {
+        return true;
+    }
+
+    public void toggleSelectionOfContactId(long contactID)
+    {
+
+    }
+
+    public boolean isDisplayingCheckBoxes()
+    {
+        return false;
+    }
+
+    public boolean areAllPartitionsEmpty()
+    {
+        return true;
+    }
+
+    public boolean isLoading()
+    {
+        return false;
+    }
+
+    public void setFilter(ContactListFilter mFilter)
+    {
+
+    }
+
+    public void setIncludeProfile(boolean searchMode)
+    {
+
+    }
+
+    public int getPartitionCount()
+    {
+        return 0;
+    }
+
+    public CompositeCursorAdapter.Partition getPartition(int i)
+    {
+        return null;
+    }
+
+    public void setSelectedContact(long mSelectedContactDirectoryId, String mSelectedContactLookupKey, long mSelectedContactId)
+    {
+
+    }
+
+    public int getSelectedContactPosition()
+    {
+        return 0;
+    }
+
+    public int getCount()
+    {
+        return 0;
+    }
+
+    public Uri getFirstContactUri()
+    {
+        return null;
+    }
+
+    public void setPhotoLoader(ContactPhotoManager photoLoader)
+    {
+
+    }
+
+    public void clearPartitions()
+    {
+
+    }
+
+    public void onDataReload()
+    {
+
+    }
+
+    public void setSectionHeaderDisplayEnabled(boolean flag)
+    {
+
+    }
+
+    public void setSearchMode(boolean flag)
+    {
+
+    }
+
+    public void removeDirectoriesAfterDefault()
+    {
+
+    }
+
+    public void configureDefaultPartition(boolean value, boolean flag)
+    {
+
+    }
+
+    public void setQueryString(String queryString)
+    {
+
+    }
+
+    public void setContactNameDisplayOrder(int displayOrder){}
+
+    public void setSortOrder(int sortOrder){}
+
+    public void setFragmentRootView(View view){}
+    
+    public void setQuickContactEnabled(boolean mQuickContactEnabled){}
+    public void setAdjustSelectionBoundsEnabled(boolean mAdjustSelectionBoundsEnabled){}
+    public void setDirectorySearchMode(int mDirectorySearchMode){}
+    public void setPinnedPartitionHeadersEnabled(boolean value){}
+    public void setSelectionVisible(boolean mSelectionVisible){}
+    public void setDirectoryResultLimit(int mDirectoryResultLimit){}
+    public void setDarkTheme(boolean mDarkTheme){}
+
 }

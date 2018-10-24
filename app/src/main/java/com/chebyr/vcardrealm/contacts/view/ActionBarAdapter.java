@@ -16,13 +16,13 @@
 
 package com.chebyr.vcardrealm.contacts.view;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -380,14 +380,17 @@ public class ActionBarAdapter implements OnCloseListener {
                     mToolbar.getContentInsetEnd());
         }
 
-        if (mSelectionMode) {
+        if (mSelectionMode)
+        {
             // Minimize the horizontal width of the Toolbar since the selection container is placed
             // behind the toolbar and its left hand side needs to be clickable.
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mToolbar.getLayoutParams();
             params.width = LayoutParams.WRAP_CONTENT;
             params.gravity = Gravity.END;
             mToolbar.setLayoutParams(params);
-        } else {
+        }
+        else
+        {
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mToolbar.getLayoutParams();
             params.width = LayoutParams.MATCH_PARENT;
             params.gravity = Gravity.END;
@@ -556,7 +559,7 @@ public class ActionBarAdapter implements OnCloseListener {
                 mListener.onSelectedTabChanged();
             }
         }
-        updateDisplayOptionsInner();
+        //updateDisplayOptionsInner();
     }
 
     @Override

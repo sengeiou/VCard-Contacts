@@ -15,17 +15,18 @@ import android.view.ViewGroup;
 
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.data.Contact;
+import com.chebyr.vcardrealm.contacts.list.MultiSelectContactsListFragment;
 import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ContactCardsFragment extends Fragment implements ContactCardListView.OnItemClickCallBack
+public class ContactCardsFragment extends MultiSelectContactsListFragment implements ContactCardListViewAdapter.OnItemClickCallBack, ContactCardListView.Callback
 {
     private static String TAG = ContactCardsFragment.class.getSimpleName();
 
     private ContactCardListView contactCardListView;
-    private ContactCardListView.OnItemClickCallBack callBack;
+    private ContactCardListViewAdapter mContactCardListViewAdapter;
 
     public ContactCardsFragment()
     {
@@ -35,6 +36,7 @@ public class ContactCardsFragment extends Fragment implements ContactCardListVie
     public void onAttach(Context context)
     {
         super.onAttach(context);
+        setContext(context);
     }
 
     @Override
@@ -42,9 +44,12 @@ public class ContactCardsFragment extends Fragment implements ContactCardListVie
     {
         FragmentActivity activity = getActivity();
 
+        createListAdapter();
+
         View rootView = inflater.inflate(R.layout.contact_list_fragment, container, false);
         contactCardListView = rootView.findViewById(R.id.contact_card_list_view);
-        contactCardListView.initialize(activity);
+        contactCardListView.setAdapter(mContactCardListViewAdapter);
+        contactCardListView.initialize(activity, this);
 
         ContactViewModel contactViewModel = ViewModelProviders.of(activity).get(ContactViewModel.class);
         Log.d(TAG, "ViewModel created: " + contactViewModel.toString());
@@ -60,12 +65,26 @@ public class ContactCardsFragment extends Fragment implements ContactCardListVie
     private void onContactsListChanged(PagedList<Contact> contactList)
     {
         Log.d(TAG, "onContactsListChanged. No of contacts: " + contactList.size());
-        contactCardListView.setContactList(contactList);
+        mContactCardListViewAdapter.submitList(contactList);
     }
 
     @Override
     public void onSelectionCleared(int type, String extra)
     {
-        callBack.onSelectionCleared(type,extra);
+
+    }
+
+    @Override
+    protected ContactCardListViewAdapter createListAdapter()
+    {
+        mContactCardListViewAdapter = new ContactCardListViewAdapter();
+        mContactCardListViewAdapter.setCallback(this);
+        return mContactCardListViewAdapter;
+    }
+
+    @Override
+    public void onScrollStateChanged(int newState)
+    {
+        mContactCardListViewAdapter.onScrollStateChanged(newState);
     }
 }

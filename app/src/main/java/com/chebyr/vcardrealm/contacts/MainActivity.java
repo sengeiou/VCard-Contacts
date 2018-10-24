@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -41,7 +40,6 @@ import com.android.contacts.common.preference.DisplayOptionsPreferenceFragment;
 import com.android.contacts.common.util.AccountFilterUtil;
 import com.android.contacts.common.util.Constants;
 import com.android.contacts.common.util.ImplicitIntentsUtil;
-import com.android.contacts.common.util.ViewUtil;
 import com.android.contacts.common.widget.FloatingActionButtonController;
 import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
 import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
@@ -59,6 +57,7 @@ import com.chebyr.vcardrealm.contacts.util.AccountPromptUtils;
 import com.chebyr.vcardrealm.contacts.util.ContactsBindHelpUtils;
 import com.chebyr.vcardrealm.contacts.util.DialogManager;
 import com.chebyr.vcardrealm.contacts.view.ActionBarAdapter;
+import com.chebyr.vcardrealm.contacts.view.ContactCardsFragment;
 
 import java.util.List;
 import java.util.Locale;
@@ -103,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements
     private ContactsRequest mRequest;
 
     private ActionBarAdapter mActionBarAdapter;
-    private FloatingActionButtonController mFloatingActionButtonController;
-    private View mFloatingActionButtonContainer;
+    private FloatingActionButton floatingActionButton;
     private boolean wasLastFabAnimationScaleIn = false;
 
     private ContactListFilterController mContactListFilterController;
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Showing a list of Contacts. Also used for showing search results in search mode.
      */
-    private MultiSelectContactsListFragment mAllFragment;
+    private ContactCardsFragment/*MultiSelectContactsListFragment*/ mAllFragment;
 
     private boolean mEnableDebugMenuOptions;
 
@@ -243,11 +241,11 @@ public class MainActivity extends AppCompatActivity implements
         final Toolbar toolbar = getView(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //mAllFragment = (MultiSelectContactsListFragment) fragmentManager.findFragmentById(R.id.contacts_container);
-        //mAllFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
-        //mAllFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
+        mAllFragment = (ContactCardsFragment) fragmentManager.findFragmentById(R.id.contacts_container);
+        mAllFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
+        mAllFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
 
-        mActionBarAdapter = new ActionBarAdapter(this, this, getActionBar(), toolbar);
+        mActionBarAdapter = new ActionBarAdapter(this, this, getSupportActionBar(), toolbar);
         mActionBarAdapter.initialize(savedState, mRequest);
 
         // Add shadow under toolbar
@@ -293,20 +291,6 @@ public class MainActivity extends AppCompatActivity implements
 
 //        if (BuildConfig.DEBUG)
 //            StrictModeDebugUtils.enableStrictMode();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
@@ -531,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements
         makeMenuItemVisible(menu, R.id.menu_share, showSelectedContactOptions);
         makeMenuItemVisible(menu, R.id.menu_delete, showSelectedContactOptions);
         makeMenuItemVisible(menu, R.id.menu_join, showSelectedContactOptions);
-        makeMenuItemEnabled(menu, R.id.menu_join, mAllFragment.getSelectedContactIds().size() > 1);
+        //makeMenuItemEnabled(menu, R.id.menu_join, mAllFragment.getSelectedContactIds().size() > 1);
 
         // Debug options need to be visible even in search mode.
         makeMenuItemVisible(menu, R.id.export_database, mEnableDebugMenuOptions);
@@ -666,36 +650,29 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initializeFabVisibility()
     {
-        // Configure floating action button
-        mFloatingActionButtonContainer = findViewById(R.id.floating_action_button_container);
-        final ImageButton floatingActionButton
-                = (ImageButton) findViewById(R.id.floating_action_button);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_action_button);
         floatingActionButton.setOnClickListener(this);
-        mFloatingActionButtonController = new FloatingActionButtonController(this,
-                mFloatingActionButtonContainer, floatingActionButton);
 
         final boolean hideFab = mActionBarAdapter.isSearchMode()
                 || mActionBarAdapter.isSelectionMode();
-        mFloatingActionButtonContainer.setVisibility(hideFab ? View.GONE : View.VISIBLE);
-        mFloatingActionButtonController.resetIn();
+
+        floatingActionButton.setVisibility(hideFab ? View.GONE : View.VISIBLE);
         wasLastFabAnimationScaleIn = !hideFab;
     }
 
     private void showFabWithAnimation(boolean showFab) {
-        if (mFloatingActionButtonContainer == null) {
+        if (floatingActionButton == null) {
             return;
         }
         if (showFab) {
             if (!wasLastFabAnimationScaleIn) {
-                mFloatingActionButtonContainer.setVisibility(View.VISIBLE);
-                mFloatingActionButtonController.scaleIn(0);
+                floatingActionButton.setVisibility(View.VISIBLE);
             }
             wasLastFabAnimationScaleIn = true;
 
         } else {
             if (wasLastFabAnimationScaleIn) {
-                mFloatingActionButtonContainer.setVisibility(View.VISIBLE);
-                mFloatingActionButtonController.scaleOut();
+                floatingActionButton.setVisibility(View.VISIBLE);
             }
             wasLastFabAnimationScaleIn = false;
         }

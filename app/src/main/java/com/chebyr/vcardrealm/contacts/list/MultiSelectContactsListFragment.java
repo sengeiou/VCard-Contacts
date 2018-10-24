@@ -25,6 +25,7 @@ import com.android.contacts.common.list.ContactListItemView;
 //import com.android.contacts.common.list.DefaultContactListAdapter;
 
 import com.chebyr.vcardrealm.contacts.list.MultiSelectEntryContactListAdapter.SelectedContactsListener;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListViewAdapter;
 
 import java.util.TreeSet;
 
@@ -32,7 +33,7 @@ import java.util.TreeSet;
  * Fragment containing a contact list used for browsing contacts and optionally selecting
  * multiple contacts via checkboxes.
  */
-public class MultiSelectContactsListFragment extends DefaultContactBrowseListFragment
+public abstract class MultiSelectContactsListFragment extends DefaultContactBrowseListFragment
         implements SelectedContactsListener {
 
     public interface OnCheckBoxListActionListener {
@@ -80,13 +81,13 @@ public class MultiSelectContactsListFragment extends DefaultContactBrowseListFra
     }
 
     public TreeSet<Long> getSelectedContactIds() {
-        final MultiSelectEntryContactListAdapter adapter = getAdapter();
+        final ContactCardListViewAdapter adapter = getAdapter();
         return adapter.getSelectedContactIds();
     }
 
     @Override
-    public MultiSelectEntryContactListAdapter getAdapter() {
-        return (MultiSelectEntryContactListAdapter) super.getAdapter();
+    public ContactCardListViewAdapter getAdapter() {
+        return (ContactCardListViewAdapter) super.getAdapter();
     }
 
     @Override
@@ -151,15 +152,5 @@ public class MultiSelectContactsListFragment extends DefaultContactBrowseListFra
         if (mCheckBoxListListener != null && getAdapter().getSelectedContactIds().size() == 0) {
             mCheckBoxListListener.onStopDisplayingCheckBoxes();
         }
-    }
-
-    @Override
-    protected ContactListAdapter createListAdapter() {
-        DefaultContactListAdapter adapter = new MultiSelectEntryContactListAdapter(getContext());
-        adapter.setSectionHeaderDisplayEnabled(isSectionHeaderDisplayEnabled());
-        adapter.setDisplayPhotos(true);
-        adapter.setPhotoPosition(
-                ContactListItemView.getDefaultPhotoPosition(/* opposite = */ false));
-        return adapter;
     }
 }

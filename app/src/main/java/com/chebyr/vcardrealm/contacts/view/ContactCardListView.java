@@ -11,10 +11,10 @@ import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.data.Contact;
 
-public class ContactCardListView extends RecyclerView implements ContactCardListViewAdapter.OnItemClickCallBack
+public class ContactCardListView extends RecyclerView
 {
     private static String TAG = ContactCardListView.class.getSimpleName();
-    private ContactCardListViewAdapter mContactCardListViewAdapter;
+    private Callback callback;
 
     public ContactCardListView(Context context)
     {
@@ -26,12 +26,10 @@ public class ContactCardListView extends RecyclerView implements ContactCardList
         super(context, attributeSet);
     }
 
-    public void initialize(Activity activity)
+    public void initialize(Activity activity, Callback callback)
     {
         Log.d(TAG, "initialize");
-        mContactCardListViewAdapter = new ContactCardListViewAdapter();
-        mContactCardListViewAdapter.setCallback(this);
-        setAdapter(mContactCardListViewAdapter);
+        this.callback = callback;
 
         setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(activity);
@@ -45,24 +43,14 @@ public class ContactCardListView extends RecyclerView implements ContactCardList
             public void onScrollStateChanged(RecyclerView recyclerView, int newState)
             {
                 super.onScrollStateChanged(recyclerView, newState);
-                mContactCardListViewAdapter.onScrollStateChanged(newState);
+                callback.onScrollStateChanged(newState);
+
             }
         });
     }
 
-    public void setContactList(PagedList<Contact> contactList)
+    interface Callback
     {
-        mContactCardListViewAdapter.submitList(contactList);
-    }
-
-    @Override
-    public void onSelectionCleared(int type, String extra)
-    {
-
-    }
-
-    public interface OnItemClickCallBack
-    {
-        void onSelectionCleared(int type, String extra);
+        void onScrollStateChanged(int newState);
     }
 }

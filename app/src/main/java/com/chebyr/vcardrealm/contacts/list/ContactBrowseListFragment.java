@@ -30,7 +30,6 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Directory;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -39,6 +38,7 @@ import com.android.contacts.common.list.AutoScrollListView;
 import com.android.contacts.common.list.ContactListFilter;
 import com.android.contacts.common.list.DirectoryPartition;
 import com.android.contacts.common.util.ContactLoaderUtils;
+import com.chebyr.vcardrealm.contacts.view.ContactCardListViewAdapter;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ import java.util.List;
  * picking a contact with one of the PICK intents).
  */
 public abstract class ContactBrowseListFragment extends
-        ContactEntryListFragment<ContactListAdapter> {
+        ContactEntryListFragment<ContactCardListViewAdapter> {
 
     private static final String TAG = "ContactList";
 
@@ -338,11 +338,11 @@ public abstract class ContactBrowseListFragment extends
             if (!willReloadData) {
                 // Configure the adapter to show the selection based on the
                 // lookup key extracted from the URI
-                ContactListAdapter adapter = getAdapter();
+                ContactCardListViewAdapter adapter = getAdapter();
                 if (adapter != null) {
                     adapter.setSelectedContact(mSelectedContactDirectoryId,
                             mSelectedContactLookupKey, mSelectedContactId);
-                    getListView().invalidateViews();
+                    //getListView().invalidateViews();
                 }
             }
 
@@ -384,7 +384,7 @@ public abstract class ContactBrowseListFragment extends
     protected void configureAdapter() {
         super.configureAdapter();
 
-        ContactListAdapter adapter = getAdapter();
+        ContactCardListViewAdapter adapter = getAdapter();
         if (adapter == null) {
             return;
         }
@@ -403,19 +403,6 @@ public abstract class ContactBrowseListFragment extends
         adapter.setIncludeProfile(!searchMode);
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        super.onLoadFinished(loader, data);
-        mSelectionVerified = false;
-
-        // Refresh the currently selected lookup in case it changed while we were sleeping
-        refreshSelectedContactUri();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
     private void checkSelection() {
         if (mSelectionVerified) {
             return;
@@ -429,7 +416,7 @@ public abstract class ContactBrowseListFragment extends
             return;
         }
 
-        ContactListAdapter adapter = getAdapter();
+        ContactCardListViewAdapter adapter = getAdapter();
         if (adapter == null) {
             return;
         }
@@ -514,7 +501,7 @@ public abstract class ContactBrowseListFragment extends
             requestSelectionToScreen(selectedPosition);
         }
 
-        getListView().invalidateViews();
+        //getListView().invalidateViews();
 
         if (mListener != null) {
             mListener.onSelectionChange();
@@ -542,7 +529,7 @@ public abstract class ContactBrowseListFragment extends
 
     protected void selectDefaultContact() {
         Uri contactUri = null;
-        ContactListAdapter adapter = getAdapter();
+        ContactCardListViewAdapter adapter = getAdapter();
         if (mLastSelectedPosition != -1) {
             int count = adapter.getCount();
             int pos = mLastSelectedPosition;
@@ -560,13 +547,13 @@ public abstract class ContactBrowseListFragment extends
     }
 
     protected void requestSelectionToScreen(int selectedPosition) {
-        if (selectedPosition != -1) {
+/*        if (selectedPosition != -1) {
             AutoScrollListView listView = (AutoScrollListView)getListView();
             listView.requestPositionToScreen(
                     selectedPosition + listView.getHeaderViewsCount(), mSmoothScrollRequested);
             mSelectionToScreenRequested = false;
         }
-    }
+  */  }
 
     @Override
     public boolean isLoading() {
