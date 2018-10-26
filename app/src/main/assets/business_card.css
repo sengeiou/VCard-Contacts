@@ -86,7 +86,7 @@
         width: 100%;
         border-style: inset;
         border-color: tan;
-        border-width: thick;
+        border-width: 5%;
     }
     #display_name
     {

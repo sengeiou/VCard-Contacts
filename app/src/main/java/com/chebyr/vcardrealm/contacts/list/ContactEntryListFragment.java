@@ -108,7 +108,7 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
 
     private T mAdapter;
     private View mView;
-    private ContactCardListView mListView;
+    //private ContactCardListView mListView;
 
     /**
      * Used for keeping track of the scroll state of the list.
@@ -207,7 +207,7 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
     }
 
     public ContactCardListView getListView() {
-        return mListView;
+        return null;//mListView;
     }
 
     @Override
@@ -228,9 +228,9 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
         outState.putInt(KEY_DIRECTORY_RESULT_LIMIT, mDirectoryResultLimit);
         outState.putBoolean(KEY_DARK_THEME, mDarkTheme);
 
-        if (mListView != null) {
+        //if (mListView != null) {
             //outState.putParcelable(KEY_LIST_STATE, mListView.onSaveInstanceState());
-        }
+        //}
     }
 
     @Override
@@ -429,12 +429,12 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
     private void configureVerticalScrollbar() {
         boolean hasScrollbar = isVisibleScrollbarEnabled() && isSectionHeaderDisplayEnabled();
 
-        if (mListView != null) {
+        //if (mListView != null) {
             //mListView.setFastScrollEnabled(hasScrollbar);
             //mListView.setFastScrollAlwaysVisible(hasScrollbar);
-            mListView.setVerticalScrollbarPosition(mVerticalScrollbarPosition);
-            mListView.setScrollBarStyle(ListView.SCROLLBARS_OUTSIDE_OVERLAY);
-        }
+            //mListView.setVerticalScrollbarPosition(mVerticalScrollbarPosition);
+            //mListView.setScrollBarStyle(ListView.SCROLLBARS_OUTSIDE_OVERLAY);
+        //}
     }
 
     public void setPhotoLoaderEnabled(boolean flag) {
@@ -501,9 +501,9 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
                 mAdapter.configureDefaultPartition(false, flag);
             }
 
-            if (mListView != null) {
+            //if (mListView != null) {
                 //mListView.setFastScrollEnabled(!flag);
-            }
+            //}
         }
     }
 
@@ -517,13 +517,13 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
 
     public void setQueryString(String queryString, boolean delaySelection) {
         if (!TextUtils.equals(mQueryString, queryString)) {
-            if (mShowEmptyListForEmptyQuery && mAdapter != null && mListView != null) {
+            if (mShowEmptyListForEmptyQuery && mAdapter != null /*&& mListView != null*/) {
                 if (TextUtils.isEmpty(mQueryString)) {
                     // Restore the adapter if the query used to be empty.
-                    mListView.setAdapter(mAdapter);
+                    //mListView.setAdapter(mAdapter);
                 } else if (TextUtils.isEmpty(queryString)) {
                     // Instantly clear the list view if the new query is empty.
-                    mListView.setAdapter(null);
+                    //mListView.setAdapter(null);
                 }
             }
 
@@ -605,31 +605,34 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        onCreateView(inflater, container);
+        //onCreateView(inflater, container);
 
         boolean searchMode = isSearchMode();
         mAdapter.setSearchMode(searchMode);
         mAdapter.configureDefaultPartition(false, searchMode);
         mAdapter.setPhotoLoader(mPhotoManager);
-        mListView.setAdapter(mAdapter);
+        //mListView.setAdapter(mAdapter);
 
         if (!isSearchMode()) {
-            mListView.setFocusableInTouchMode(true);
-            mListView.requestFocus();
+            //mListView.setFocusableInTouchMode(true);
+            //mListView.requestFocus();
         }
 
         return mView;
     }
 
-    protected void onCreateView(LayoutInflater inflater, ViewGroup container) {
+    protected void onCreateView(LayoutInflater inflater, ViewGroup container)
+    {
+        Log.d(TAG, "onCreateView");
         mView = inflateView(inflater, container);
 
+        /*
         mListView = (ContactCardListView) mView.findViewById(android.R.id.list);
         if (mListView == null) {
             throw new RuntimeException(
                     "Your content must have a ListView whose id attribute is " +
                     "'android.R.id.list'");
-        }
+        }*/
 
         View emptyView = mView.findViewById(android.R.id.empty);
         if (emptyView != null) {
@@ -638,8 +641,8 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
 
         //mListView.setOnItemClickListener(this);
         //mListView.setOnItemLongClickListener(this);
-        mListView.setOnFocusChangeListener(this);
-        mListView.setOnTouchListener(this);
+        //mListView.setOnFocusChangeListener(this);
+        //mListView.setOnTouchListener(this);
         //mListView.setFastScrollEnabled(!isSearchMode());
 
         // Tell list view to not show dividers. We'll do it ourself so that we can *not* show
@@ -647,7 +650,7 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
         //mListView.setDividerHeight(0);
 
         // We manually save/restore the listview state
-        mListView.setSaveEnabled(false);
+        //mListView.setSaveEnabled(false);
 
         configureVerticalScrollbar();
         configurePhotoLoader();
@@ -672,9 +675,9 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
             if (mPhotoManager == null) {
                 mPhotoManager = ContactPhotoManager.getInstance(mContext);
             }
-            if (mListView != null) {
+            //if (mListView != null) {
                 //mListView.setOnScrollListener(this);
-            }
+            //}
             if (mAdapter != null) {
                 mAdapter.setPhotoLoader(mPhotoManager);
             }
@@ -738,7 +741,7 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
         // Hide soft keyboard, if visible
         InputMethodManager inputMethodManager = (InputMethodManager)
                 mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
+        //inputMethodManager.hideSoftInputFromWindow(mListView.getWindowToken(), 0);
     }
 
     /**
@@ -746,9 +749,9 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
      */
     @Override
     public void onFocusChange(View view, boolean hasFocus) {
-        if (view == mListView && hasFocus) {
-            hideSoftKeyboard();
-        }
+        //if (view == mListView && hasFocus) {
+        //    hideSoftKeyboard();
+        //}
     }
 
     /**
@@ -756,9 +759,9 @@ public abstract class ContactEntryListFragment<T extends ContactCardListViewAdap
      */
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        if (view == mListView) {
-            hideSoftKeyboard();
-        }
+        //if (view == mListView) {
+            //hideSoftKeyboard();
+        //}
         return false;
     }
 

@@ -42,6 +42,7 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment implem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        Log.d(TAG, "onCreateView");
         FragmentActivity activity = getActivity();
 
         createListAdapter();

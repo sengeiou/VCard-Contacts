@@ -1,6 +1,9 @@
 package com.chebyr.vcardrealm.contacts.view;
 
+import android.app.Activity;
 import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,38 +28,40 @@ public class ContactSearchView implements SearchView.OnQueryTextListener
     // Stores the previously selected search item so that on a configuration change the same item can be reselected again
     public int mPreviouslySelectedSearchItem = 0;
 
-
     private Callback callback;
+    private Activity activity;
 
-    public ContactSearchView(Context context, Callback callback)
+    public ContactSearchView(Activity activity, Callback callback)
     {
+        this.activity = activity;
         this.callback = callback;
-
     }
 
     public void configureSearchView(MenuItem searchItem)
     {
+        Log.d(TAG, "searchItem: " + searchItem);
+
+        searchItem.expandActionView();
         // Retrieves the system search manager service
-        //final SearchManager searchManager = (SearchManager) mMainActivity.getSystemService(Context.SEARCH_SERVICE);
-        //Log.d(TAG, "searchManager: " + searchManager.toString());
+        final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        Log.d(TAG, "searchManager: " + searchManager.toString());
 
         // Retrieves the SearchView from the search menu item
-        //final SearchView searchView = (SearchView) searchItem.getActionView();
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        //searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        SearchView searchView = (SearchView) searchItem.getActionView();
-
-        Log.d(TAG, "searchView: " + searchView.toString());
-
-        //ComponentName componentName = mMainActivity.getComponentName();
+        ComponentName componentName = activity.getComponentName();
         // Assign searchable info to SearchView
 
         //Log.d(TAG, "componentName: " + componentName.toString());
 
-        //SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
 
         //Log.d(TAG, searchableInfo.toString());
+        searchView.setSearchableInfo(searchableInfo);
 
-        //searchView.setSearchableInfo(searchableInfo);
+        searchView.setIconifiedByDefault(false);
+
 
         // Set listeners for SearchView
         searchView.setOnQueryTextListener(this);

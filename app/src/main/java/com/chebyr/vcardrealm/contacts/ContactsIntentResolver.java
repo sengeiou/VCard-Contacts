@@ -50,49 +50,46 @@ public class ContactsIntentResolver {
         this.mContext = context;
     }
 
-    public ContactsRequest resolveIntent(Intent intent) {
+    public ContactsRequest resolveIntent(Intent intent)
+    {
         ContactsRequest request = new ContactsRequest();
 
         String action = intent.getAction();
 
         Log.i(TAG, "Called with action: " + action);
 
-        if (UiIntentActions.LIST_DEFAULT.equals(action) ) {
+        if (UiIntentActions.LIST_DEFAULT.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_DEFAULT);
-        } else if (UiIntentActions.LIST_ALL_CONTACTS_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_ALL_CONTACTS_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_ALL_CONTACTS);
-        } else if (UiIntentActions.LIST_CONTACTS_WITH_PHONES_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_CONTACTS_WITH_PHONES_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_CONTACTS_WITH_PHONES);
-        } else if (UiIntentActions.LIST_STARRED_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_STARRED_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_STARRED);
-        } else if (UiIntentActions.LIST_FREQUENT_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_FREQUENT_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_FREQUENT);
-        } else if (UiIntentActions.LIST_STREQUENT_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_STREQUENT_ACTION.equals(action)) {
             request.setActionCode(ContactsRequest.ACTION_STREQUENT);
-        } else if (UiIntentActions.LIST_GROUP_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.LIST_GROUP_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_GROUP);
             // We no longer support UiIntentActions.GROUP_NAME_EXTRA_KEY
-        } else if (Intent.ACTION_PICK.equals(action)) {
-            final String resolvedType = intent.resolveType(mContext);
-            if (Contacts.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_CONTACT);
-            } else if (People.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_CONTACT);
-                request.setLegacyCompatibilityMode(true);
-            } else if (Phone.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_PHONE);
-            } else if (Phones.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_PHONE);
-                request.setLegacyCompatibilityMode(true);
-            } else if (StructuredPostal.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_POSTAL);
-            } else if (ContactMethods.CONTENT_POSTAL_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_POSTAL);
-                request.setLegacyCompatibilityMode(true);
-            } else if (Email.CONTENT_TYPE.equals(resolvedType)) {
-                request.setActionCode(ContactsRequest.ACTION_PICK_EMAIL);
-            }
-        } else if (Intent.ACTION_CREATE_SHORTCUT.equals(action)) {
+        }
+        else if (Intent.ACTION_PICK.equals(action))
+            request = resolveActionPickIntent(intent);
+        else if (Intent.ACTION_CREATE_SHORTCUT.equals(action))
+        {
             String component = intent.getComponent().getClassName();
             if (component.equals("alias.DialShortcut")) {
                 request.setActionCode(ContactsRequest.ACTION_CREATE_SHORTCUT_CALL);
@@ -101,7 +98,9 @@ public class ContactsIntentResolver {
             } else {
                 request.setActionCode(ContactsRequest.ACTION_CREATE_SHORTCUT_CONTACT);
             }
-        } else if (Intent.ACTION_GET_CONTENT.equals(action)) {
+        }
+        else if (Intent.ACTION_GET_CONTENT.equals(action))
+        {
             String type = intent.getType();
             if (Contacts.CONTENT_ITEM_TYPE.equals(type)) {
                 request.setActionCode(ContactsRequest.ACTION_PICK_OR_CREATE_CONTACT);
@@ -115,25 +114,19 @@ public class ContactsIntentResolver {
             } else if (ContactMethods.CONTENT_POSTAL_ITEM_TYPE.equals(type)) {
                 request.setActionCode(ContactsRequest.ACTION_PICK_POSTAL);
                 request.setLegacyCompatibilityMode(true);
-            }  else if (People.CONTENT_ITEM_TYPE.equals(type)) {
+            } else if (People.CONTENT_ITEM_TYPE.equals(type)) {
                 request.setActionCode(ContactsRequest.ACTION_PICK_OR_CREATE_CONTACT);
                 request.setLegacyCompatibilityMode(true);
             }
-        } else if (Intent.ACTION_INSERT_OR_EDIT.equals(action)) {
+        }
+        else if (Intent.ACTION_INSERT_OR_EDIT.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_INSERT_OR_EDIT_CONTACT);
-        } else if (Intent.ACTION_SEARCH.equals(action)) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            // If the {@link SearchManager.QUERY} is empty, then check if a phone number
-            // or email is specified, in that priority.
-            if (TextUtils.isEmpty(query)) {
-                query = intent.getStringExtra(Insert.PHONE);
-            }
-            if (TextUtils.isEmpty(query)) {
-                query = intent.getStringExtra(Insert.EMAIL);
-            }
-            request.setQueryString(query);
-            request.setSearchMode(true);
-        } else if (Intent.ACTION_VIEW.equals(action)) {
+        }
+        else if (Intent.ACTION_SEARCH.equals(action))
+            request = resolveSearchIntent(intent);
+        else if (Intent.ACTION_VIEW.equals(action))
+        {
             final String resolvedType = intent.resolveType(mContext);
             if (Contacts.CONTENT_TYPE.equals(resolvedType)
                     || People.CONTENT_TYPE.equals(resolvedType)) {
@@ -144,22 +137,82 @@ public class ContactsIntentResolver {
                 intent.setAction(Intent.ACTION_DEFAULT);
                 intent.setData(null);
             }
-        // Since this is the filter activity it receives all intents
-        // dispatched from the SearchManager for security reasons
-        // so we need to re-dispatch from here to the intended target.
-        } else if (Intents.SEARCH_SUGGESTION_CLICKED.equals(action)) {
+            // Since this is the filter activity it receives all intents
+            // dispatched from the SearchManager for security reasons
+            // so we need to re-dispatch from here to the intended target.
+        }
+        else if (Intents.SEARCH_SUGGESTION_CLICKED.equals(action))
+        {
             Uri data = intent.getData();
             request.setActionCode(ContactsRequest.ACTION_VIEW_CONTACT);
             request.setContactUri(data);
             intent.setAction(Intent.ACTION_DEFAULT);
             intent.setData(null);
-        } else if (UiIntentActions.PICK_JOIN_CONTACT_ACTION.equals(action)) {
+        }
+        else if (UiIntentActions.PICK_JOIN_CONTACT_ACTION.equals(action))
+        {
             request.setActionCode(ContactsRequest.ACTION_PICK_JOIN);
         }
         // Allow the title to be set to a custom String using an extra on the intent
         String title = intent.getStringExtra(UiIntentActions.TITLE_EXTRA_KEY);
         if (title != null) {
             request.setActivityTitle(title);
+        }
+        return request;
+    }
+
+    private ContactsRequest resolveSearchIntent(Intent intent)
+    {
+        ContactsRequest request = new ContactsRequest();
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        // If the {@link SearchManager.QUERY} is empty, then check if a phone number
+        // or email is specified, in that priority.
+        if (TextUtils.isEmpty(query)) {
+            query = intent.getStringExtra(Insert.PHONE);
+        }
+        if (TextUtils.isEmpty(query)) {
+            query = intent.getStringExtra(Insert.EMAIL);
+        }
+        request.setQueryString(query);
+        request.setSearchMode(true);
+        return request;
+    }
+
+    private ContactsRequest resolveActionPickIntent(Intent intent)
+    {
+        ContactsRequest request = new ContactsRequest();
+        final String resolvedType = intent.resolveType(mContext);
+
+        if (Contacts.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_CONTACT);
+        }
+        else if (People.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_CONTACT);
+            request.setLegacyCompatibilityMode(true);
+        }
+        else if (Phone.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_PHONE);
+        }
+        else if (Phones.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_PHONE);
+            request.setLegacyCompatibilityMode(true);
+        }
+        else if (StructuredPostal.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_POSTAL);
+        }
+        else if (ContactMethods.CONTENT_POSTAL_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_POSTAL);
+            request.setLegacyCompatibilityMode(true);
+        }
+        else if (Email.CONTENT_TYPE.equals(resolvedType))
+        {
+            request.setActionCode(ContactsRequest.ACTION_PICK_EMAIL);
         }
         return request;
     }

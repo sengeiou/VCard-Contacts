@@ -11,7 +11,6 @@ import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +24,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.contacts.common.ContactsUtils;
@@ -40,7 +38,6 @@ import com.android.contacts.common.preference.DisplayOptionsPreferenceFragment;
 import com.android.contacts.common.util.AccountFilterUtil;
 import com.android.contacts.common.util.Constants;
 import com.android.contacts.common.util.ImplicitIntentsUtil;
-import com.android.contacts.common.widget.FloatingActionButtonController;
 import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
 import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
 import com.chebyr.vcardrealm.contacts.interactions.ContactMultiDeletionInteraction;
@@ -58,6 +55,7 @@ import com.chebyr.vcardrealm.contacts.util.ContactsBindHelpUtils;
 import com.chebyr.vcardrealm.contacts.util.DialogManager;
 import com.chebyr.vcardrealm.contacts.view.ActionBarAdapter;
 import com.chebyr.vcardrealm.contacts.view.ContactCardsFragment;
+import com.chebyr.vcardrealm.contacts.view.ContactSearchView;
 
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements
         ContactListFilterController.ContactListFilterListener,
         ProviderStatusWatcher.ProviderStatusListener,
         ContactMultiDeletionInteraction.MultiContactDeleteListener,
-        JoinContactsDialogFragment.JoinContactsListener
+        JoinContactsDialogFragment.JoinContactsListener,
+        ContactSearchView.Callback
 {
     /**
      * Initialize fragments that are (or may not be) in the layout.
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
     private ContactsIntentResolver mIntentResolver;
     private ContactsRequest mRequest;
 
-    private ActionBarAdapter mActionBarAdapter;
+    //private ActionBarAdapter mActionBarAdapter;
     private FloatingActionButton floatingActionButton;
     private boolean wasLastFabAnimationScaleIn = false;
 
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Showing a list of Contacts. Also used for showing search results in search mode.
      */
-    private ContactCardsFragment/*MultiSelectContactsListFragment*/ mAllFragment;
+    private ContactCardsFragment contactCardsFragment;
 
     private boolean mEnableDebugMenuOptions;
 
@@ -189,72 +188,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Resolve the intent and initialize {@link #mRequest}, and launch another activity if redirect
-     * is needed.
-     *
-     * @param forNewIntent set true if it's called from {@link #onNewIntent(Intent)}.
-     * @return {@code true} if {@link MainActivity} should continue running.  {@code false}
-     *         if it shouldn't, in which case the caller should finish() itself and shouldn't do
-     *         farther initialization.
-     */
-    private boolean processIntent(boolean forNewIntent) {
-        // Extract relevant information from the intent
-        mRequest = mIntentResolver.resolveIntent(getIntent());
-        if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, this + " processIntent: forNewIntent=" + forNewIntent
-                    + " intent=" + getIntent() + " request=" + mRequest);
-        }
-        if (!mRequest.isValid()) {
-            setResult(RESULT_CANCELED);
-            return false;
-        }
-
-        if (mRequest.getActionCode() == ContactsRequest.ACTION_VIEW_CONTACT) {
-            final Intent intent = ImplicitIntentsUtil.composeQuickContactIntent(
-                    mRequest.getContactUri(), QuickContactActivity.MODE_FULLY_EXPANDED);
-            ImplicitIntentsUtil.startActivityInApp(this, intent);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void onUpButtonPressed() {
         onBackPressed();
     }
 
-    private void createViewsAndFragments(Bundle savedState) {
-        // Disable the ActionBar so that we can use a Toolbar. This needs to be called before
-        // setContentView().
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        //setContentView(R.layout.people_activity);
-        setContentView(R.layout.activity_main);
-
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-
-        // Hide all tabs (the current tab will later be reshown once a tab is selected)
-        //final FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-        // Configure toolbar and toolbar tabs. If in landscape mode, we  configure tabs differntly.
-        final Toolbar toolbar = getView(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        mAllFragment = (ContactCardsFragment) fragmentManager.findFragmentById(R.id.contacts_container);
-        mAllFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
-        mAllFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
-
-        mActionBarAdapter = new ActionBarAdapter(this, this, getSupportActionBar(), toolbar);
-        mActionBarAdapter.initialize(savedState, mRequest);
-
-        // Add shadow under toolbar
-        //ViewUtil.addRectangularOutlineProvider(findViewById(R.id.toolbar_parent), getResources());
-
-        initializeFabVisibility();
-
-        invalidateOptionsMenuIfNeeded();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -293,6 +231,70 @@ public class MainActivity extends AppCompatActivity implements
 //            StrictModeDebugUtils.enableStrictMode();
     }
 
+    /**
+     * Resolve the intent and initialize {@link #mRequest}, and launch another activity if redirect
+     * is needed.
+     *
+     * @param forNewIntent set true if it's called from {@link #onNewIntent(Intent)}.
+     * @return {@code true} if {@link MainActivity} should continue running.  {@code false}
+     *         if it shouldn't, in which case the caller should finish() itself and shouldn't do
+     *         farther initialization.
+     */
+    private boolean processIntent(boolean forNewIntent)
+    {
+        // Extract relevant information from the intent
+        mRequest = mIntentResolver.resolveIntent(getIntent());
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.d(TAG, this + " processIntent: forNewIntent=" + forNewIntent
+                    + " intent=" + getIntent() + " request=" + mRequest);
+        }
+        if (!mRequest.isValid()) {
+            setResult(RESULT_CANCELED);
+            return false;
+        }
+
+        if (mRequest.getActionCode() == ContactsRequest.ACTION_VIEW_CONTACT) {
+            final Intent intent = ImplicitIntentsUtil.composeQuickContactIntent(
+                    mRequest.getContactUri(), QuickContactActivity.MODE_FULLY_EXPANDED);
+            ImplicitIntentsUtil.startActivityInApp(this, intent);
+            return false;
+        }
+        return true;
+    }
+
+    private void createViewsAndFragments(Bundle savedState)
+    {
+        // Disable the ActionBar so that we can use a Toolbar. This needs to be called before
+        // setContentView().
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        //setContentView(R.layout.people_activity);
+        setContentView(R.layout.activity_main);
+
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Hide all tabs (the current tab will later be reshown once a tab is selected)
+        //final FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        // Configure toolbar and toolbar tabs. If in landscape mode, we  configure tabs differntly.
+        final Toolbar toolbar = getView(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        contactCardsFragment = (ContactCardsFragment) fragmentManager.findFragmentById(R.id.contacts_container);
+        contactCardsFragment.setOnContactListActionListener(new MainActivity.ContactBrowserActionListener());
+        contactCardsFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
+
+        //mActionBarAdapter = new ActionBarAdapter(this, this, getSupportActionBar(), toolbar);
+        //mActionBarAdapter.initialize(savedState, mRequest);
+
+        // Add shadow under toolbar
+        //ViewUtil.addRectangularOutlineProvider(findViewById(R.id.toolbar_parent), getResources());
+
+        initializeFabVisibility();
+
+        invalidateOptionsMenuIfNeeded();
+    }
+
     @Override
     public void onAttachFragment(Fragment fragment) {
         if (fragment instanceof ContactsUnavailableFragment) {
@@ -309,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements
             finish();
             return;
         }
-        mActionBarAdapter.initialize(null, mRequest);
+        //mActionBarAdapter.initialize(null, mRequest);
 
         mContactListFilterController.checkFilterValidity(false);
 
@@ -326,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onAction(int action) {
         switch (action) {
             case Action.START_SELECTION_MODE:
-                mAllFragment.displayCheckBoxes(true);
+                contactCardsFragment.displayCheckBoxes(true);
                 // Fall through:
             case Action.START_SEARCH_MODE:
                 // Tell the fragments that we're in the search mode or selection mode
@@ -345,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements
                 showFabWithAnimation(/* showFabWithAnimation = */ true);
                 break;
             case Action.CHANGE_SEARCH_QUERY:
-                final String queryString = mActionBarAdapter.getQueryString();
+                final String queryString = "";//mActionBarAdapter.getQueryString();
                 setQueryTextToFragment(queryString);
                 updateDebugOptionsVisibility(
                         ENABLE_DEBUG_OPTIONS_HIDDEN_CODE.equals(queryString));
@@ -357,17 +359,17 @@ public class MainActivity extends AppCompatActivity implements
 
     private void deleteSelectedContacts() {
         ContactMultiDeletionInteraction.start(MainActivity.this,
-                mAllFragment.getSelectedContactIds());
+                contactCardsFragment.getSelectedContactIds());
     }
 
     @Override
     public void onDeletionFinished() {
-        mActionBarAdapter.setSelectionMode(false);
+        //mActionBarAdapter.setSelectionMode(false);
     }
 
     @Override
     public void onContactsJoined() {
-        mActionBarAdapter.setSelectionMode(false);
+        //mActionBarAdapter.setSelectionMode(false);
     }
 
     @Override
@@ -377,11 +379,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onContactListFilterChanged() {
-        if (mAllFragment == null || !mAllFragment.isAdded()) {
+        if (contactCardsFragment == null || !contactCardsFragment.isAdded()) {
             return;
         }
 
-        mAllFragment.setFilter(mContactListFilterController.getFilter());
+        contactCardsFragment.setFilter(mContactListFilterController.getFilter());
 
         invalidateOptionsMenuIfNeeded();
     }
@@ -431,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Re-register the listener, which may have been cleared when onSaveInstanceState was
         // called.  See also: onSaveInstanceState
-        mActionBarAdapter.setListener(this);
+        //mActionBarAdapter.setListener(this);
         mDisableOptionItemSelected = false;
 
         // Current tab may have changed since the last onSaveInstanceState().  Make sure
@@ -445,8 +447,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Some of variables will be null if this Activity redirects Intent.
         // See also onCreate() or other methods called during the Activity's initialization.
-        if (mActionBarAdapter != null) {
-            mActionBarAdapter.setListener(null);
+        //if (mActionBarAdapter != null)
+        {
+            //mActionBarAdapter.setListener(null);
         }
         if (mContactListFilterController != null) {
             mContactListFilterController.removeListener(this);
@@ -467,8 +470,23 @@ public class MainActivity extends AppCompatActivity implements
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.people_options, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        ContactSearchView contactSearchView = new ContactSearchView(this, this);
+        contactSearchView.configureSearchView(searchMenuItem);
 
         return true;
+    }
+
+    @Override
+    public void onDataSetChanged()
+    {
+
+    }
+
+    @Override
+    public void onSelectionCleared()
+    {
+
     }
 
     @Override
@@ -483,8 +501,7 @@ public class MainActivity extends AppCompatActivity implements
         final MenuItem clearFrequentsMenu = menu.findItem(R.id.menu_clear_frequents);
         final MenuItem helpMenu = menu.findItem(R.id.menu_help);
 
-        final boolean isSearchOrSelectionMode = mActionBarAdapter.isSearchMode()
-                || mActionBarAdapter.isSelectionMode();
+        final boolean isSearchOrSelectionMode = false;//mActionBarAdapter.isSearchMode() || mActionBarAdapter.isSelectionMode();
         if (isSearchOrSelectionMode) {
             contactsFilterMenu.setVisible(false);
             clearFrequentsMenu.setVisible(false);
@@ -510,12 +527,11 @@ public class MainActivity extends AppCompatActivity implements
         makeMenuItemVisible(menu, R.id.menu_settings,
                 showMiscOptions && !ContactsPreferenceActivity.isEmpty(this));
 
-        final boolean showSelectedContactOptions = mActionBarAdapter.isSelectionMode()
-                && mAllFragment.getSelectedContactIds().size() != 0;
+        final boolean showSelectedContactOptions = false;//mActionBarAdapter.isSelectionMode() && contactCardsFragment.getSelectedContactIds().size() != 0;
         makeMenuItemVisible(menu, R.id.menu_share, showSelectedContactOptions);
         makeMenuItemVisible(menu, R.id.menu_delete, showSelectedContactOptions);
         makeMenuItemVisible(menu, R.id.menu_join, showSelectedContactOptions);
-        //makeMenuItemEnabled(menu, R.id.menu_join, mAllFragment.getSelectedContactIds().size() > 1);
+        //makeMenuItemEnabled(menu, R.id.menu_join, contactCardsFragment.getSelectedContactIds().size() > 1);
 
         // Debug options need to be visible even in search mode.
         makeMenuItemVisible(menu, R.id.export_database, mEnableDebugMenuOptions);
@@ -536,11 +552,11 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case android.R.id.home: {
                 // The home icon on the action bar is pressed
-                if (mActionBarAdapter.isUpShowing()) {
+                //if (mActionBarAdapter.isUpShowing()) {
                     // "UP" icon press -- should be treated as "back".
-                    onBackPressed();
-                }
-                return true;
+                    //onBackPressed();
+                //}
+                //return true;
             }
             case R.id.menu_settings: {
                 final Intent intent = new Intent(this, ContactsPreferenceActivity.class);
@@ -639,7 +655,7 @@ public class MainActivity extends AppCompatActivity implements
                 searchMode = false;
             }
 
-            mActionBarAdapter.setSearchMode(searchMode);
+            //mActionBarAdapter.setSearchMode(searchMode);
             configureContactListFragmentForRequest();
         }
 
@@ -653,8 +669,7 @@ public class MainActivity extends AppCompatActivity implements
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floating_action_button);
         floatingActionButton.setOnClickListener(this);
 
-        final boolean hideFab = mActionBarAdapter.isSearchMode()
-                || mActionBarAdapter.isSelectionMode();
+        final boolean hideFab = false;//mActionBarAdapter.isSearchMode() || mActionBarAdapter.isSelectionMode();
 
         floatingActionButton.setVisibility(hideFab ? View.GONE : View.VISIBLE);
         wasLastFabAnimationScaleIn = !hideFab;
@@ -685,9 +700,9 @@ public class MainActivity extends AppCompatActivity implements
     private void updateFragmentsVisibility() {
         // Disable ViewPager int tab = mActionBarAdapter.getCurrentTab();
 
-        if (mActionBarAdapter.isSearchMode() || mActionBarAdapter.isSelectionMode()) {
+        //if (mActionBarAdapter.isSearchMode() || mActionBarAdapter.isSelectionMode()) {
             // Disable ViewPager mTabPagerAdapter.setTabsHidden(true);
-        } else {
+        //} else {
             // No smooth scrolling if quitting from the search/selection mode.
             // Disable ViewPager final boolean wereTabsHidden = mTabPagerAdapter.areTabsHidden()
             // Disable ViewPager || mActionBarAdapter.isSelectionMode();
@@ -695,10 +710,10 @@ public class MainActivity extends AppCompatActivity implements
             // Disable ViewPager if (mTabPager.getCurrentItem() != tab) {
             // Disable ViewPager mTabPager.setCurrentItem(tab, !wereTabsHidden);
             // Disable ViewPager}
-        }
-        if (!mActionBarAdapter.isSelectionMode()) {
-            mAllFragment.displayCheckBoxes(false);
-        }
+        //}
+        //if (!mActionBarAdapter.isSelectionMode()) {
+            //contactCardsFragment.displayCheckBoxes(false);
+        //}
         invalidateOptionsMenu();
         // Disable ViewPager showEmptyStateForTab(tab);
     }
@@ -723,32 +738,32 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setQueryTextToFragment(String query) {
-        mAllFragment.setQueryString(query, true);
-        mAllFragment.setVisibleScrollbarEnabled(!mAllFragment.isSearchMode());
+        contactCardsFragment.setQueryString(query, true);
+        contactCardsFragment.setVisibleScrollbarEnabled(!contactCardsFragment.isSearchMode());
     }
 
     private void configureContactListFragmentForRequest() {
         Uri contactUri = mRequest.getContactUri();
         if (contactUri != null) {
-            mAllFragment.setSelectedContactUri(contactUri);
+            contactCardsFragment.setSelectedContactUri(contactUri);
         }
 
-        mAllFragment.setFilter(mContactListFilterController.getFilter());
-        setQueryTextToFragment(mActionBarAdapter.getQueryString());
+        contactCardsFragment.setFilter(mContactListFilterController.getFilter());
+        //setQueryTextToFragment(mActionBarAdapter.getQueryString());
 
         if (mRequest.isDirectorySearchEnabled()) {
-            mAllFragment.setDirectorySearchMode(DirectoryListLoader.SEARCH_MODE_DEFAULT);
+            contactCardsFragment.setDirectorySearchMode(DirectoryListLoader.SEARCH_MODE_DEFAULT);
         } else {
-            mAllFragment.setDirectorySearchMode(DirectoryListLoader.SEARCH_MODE_NONE);
+            contactCardsFragment.setDirectorySearchMode(DirectoryListLoader.SEARCH_MODE_NONE);
         }
     }
 
     private void configureContactListFragment() {
         // Filter may be changed when this Activity is in background.
-        mAllFragment.setFilter(mContactListFilterController.getFilter());
+        contactCardsFragment.setFilter(mContactListFilterController.getFilter());
 
-        mAllFragment.setVerticalScrollbarPosition(getScrollBarPosition());
-        mAllFragment.setSelectionVisible(false);
+        contactCardsFragment.setVerticalScrollbarPosition(getScrollBarPosition());
+        contactCardsFragment.setSelectionVisible(false);
     }
 
     private int getScrollBarPosition() {
@@ -766,17 +781,17 @@ public class MainActivity extends AppCompatActivity implements
                 && (mProviderStatus.equals(providerStatus))) return;
         mProviderStatus = providerStatus;
 
-        View contactsUnavailableView = findViewById(R.id.contacts_unavailable_view);
+        //View contactsUnavailableView = findViewById(R.id.contacts_unavailable_view);
 
         if (mProviderStatus.equals(ContactsContract.ProviderStatus.STATUS_NORMAL)) {
             // Ensure that the mTabPager is visible; we may have made it invisible below.
-            contactsUnavailableView.setVisibility(View.GONE);
+            //contactsUnavailableView.setVisibility(View.GONE);
             /*if (mTabPager != null) {
                 mTabPager.setVisibility(View.VISIBLE);
             }*/
 
-            if (mAllFragment != null) {
-                mAllFragment.setEnabled(true);
+            if (contactCardsFragment != null) {
+                contactCardsFragment.setEnabled(true);
             }
         } else {
             // If there are no accounts on the device and we should show the "no account" prompt
@@ -797,22 +812,23 @@ public class MainActivity extends AppCompatActivity implements
 
             // Otherwise, continue setting up the page so that the user can still use the app
             // without an account.
-            if (mAllFragment != null) {
-                mAllFragment.setEnabled(false);
+            if (contactCardsFragment != null) {
+                contactCardsFragment.setEnabled(false);
             }
             if (mContactsUnavailableFragment == null) {
                 mContactsUnavailableFragment = new ContactsUnavailableFragment();
                 mContactsUnavailableFragment.setOnContactsUnavailableActionListener(
                         new ContactsUnavailableFragmentListener());
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.contacts_unavailable_container, mContactsUnavailableFragment)
-                        .commitAllowingStateLoss();
+
+                //getSupportFragmentManager().beginTransaction()
+                  //      .replace(R.id.contacts_unavailable_container, mContactsUnavailableFragment)
+                    //    .commitAllowingStateLoss();
             }
             mContactsUnavailableFragment.updateStatus(mProviderStatus);
 
             // Show the contactsUnavailableView, and hide the mTabPager so that we don't
             // see it sliding in underneath the contactsUnavailableView at the edges.
-            contactsUnavailableView.setVisibility(View.VISIBLE);
+            //contactsUnavailableView.setVisibility(View.VISIBLE);
             /*if (mTabPager != null) {
                 mTabPager.setVisibility(View.GONE);
             }
@@ -825,9 +841,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onSearchRequested() { // Search key pressed.
-        if (!mActionBarAdapter.isSelectionMode()) {
-            mActionBarAdapter.setSearchMode(true);
-        }
+        //if (!mActionBarAdapter.isSelectionMode()) {
+            //mActionBarAdapter.setSearchMode(true);
+        //}
         return true;
     }
 
@@ -844,7 +860,7 @@ public class MainActivity extends AppCompatActivity implements
             // anymore
             case ContactEntryListFragment.ACTIVITY_REQUEST_CODE_PICKER:
                 if (resultCode == RESULT_OK) {
-                    mAllFragment.onPickerResult(data);
+                    contactCardsFragment.onPickerResult(data);
                 }
 
 // TODO fix or remove multipicker code
@@ -867,16 +883,16 @@ public class MainActivity extends AppCompatActivity implements
                 // If COMBINING_ACCENT is set, it's not a unicode character.
                 && ((unicodeChar & KeyCharacterMap.COMBINING_ACCENT) == 0)
                 && !Character.isWhitespace(unicodeChar)) {
-            if (mActionBarAdapter.isSelectionMode()) {
+            //if (mActionBarAdapter.isSelectionMode()) {
                 // Ignore keyboard input when in selection mode.
-                return true;
-            }
+              //  return true;
+            //}
             String query = new String(new int[]{unicodeChar}, 0, 1);
-            if (!mActionBarAdapter.isSearchMode()) {
-                mActionBarAdapter.setSearchMode(true);
-                mActionBarAdapter.setQueryString(query);
-                return true;
-            }
+            //if (!mActionBarAdapter.isSearchMode()) {
+                //mActionBarAdapter.setSearchMode(true);
+                //mActionBarAdapter.setQueryString(query);
+                //return true;
+            //}
         }
 
         return super.onKeyDown(keyCode, event);
@@ -885,13 +901,13 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mActionBarAdapter.onSaveInstanceState(outState);
+        //mActionBarAdapter.onSaveInstanceState(outState);
 
         // Clear the listener to make sure we don't get callbacks after onSaveInstanceState,
         // in order to avoid doing fragment transactions after it.
         // TODO Figure out a better way to deal with the issue.
         mDisableOptionItemSelected = true;
-        mActionBarAdapter.setListener(null);
+        //mActionBarAdapter.setListener(null);
     }
 
     @Override
@@ -900,21 +916,21 @@ public class MainActivity extends AppCompatActivity implements
         // In our own lifecycle, the focus is saved and restore but later taken away by the
         // ViewPager. As a hack, we force focus on the SearchView if we know that we are searching.
         // This fixes the keyboard going away on screen rotation
-        if (mActionBarAdapter.isSearchMode()) {
-            mActionBarAdapter.setFocusOnSearchView();
-        }
+        //if (mActionBarAdapter.isSearchMode()) {
+            //mActionBarAdapter.setFocusOnSearchView();
+        //}
     }
 
     @Override
     public void onBackPressed() {
-        if (mActionBarAdapter.isSelectionMode()) {
-            mActionBarAdapter.setSelectionMode(false);
-            mAllFragment.displayCheckBoxes(false);
-        } else if (mActionBarAdapter.isSearchMode()) {
-            mActionBarAdapter.setSearchMode(false);
-        } else {
+        //if (mActionBarAdapter.isSelectionMode()) {
+            //mActionBarAdapter.setSelectionMode(false);
+            //contactCardsFragment.displayCheckBoxes(false);
+        //} else if (mActionBarAdapter.isSearchMode()) {
+            //mActionBarAdapter.setSearchMode(false);
+        //} else {
             super.onBackPressed();
-        }
+        //}
     }
 
 
@@ -929,7 +945,7 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         }
 
-        if (mAllFragment != null && mAllFragment.isOptionsMenuChanged()) {
+        if (contactCardsFragment != null && contactCardsFragment.isOptionsMenuChanged()) {
             return true;
         }
 
@@ -960,13 +976,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Share all contacts that are currently selected in mAllFragment. This method is pretty
+     * Share all contacts that are currently selected in contactCardsFragment. This method is pretty
      * inefficient for handling large numbers of contacts. I don't expect this to be a problem.
      */
     private void shareSelectedContacts() {
         final StringBuilder uriListBuilder = new StringBuilder();
         boolean firstIteration = true;
-        for (Long contactId : mAllFragment.getSelectedContactIds()) {
+        for (Long contactId : contactCardsFragment.getSelectedContactIds()) {
             if (!firstIteration)
                 uriListBuilder.append(':');
             final Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
@@ -984,7 +1000,7 @@ public class MainActivity extends AppCompatActivity implements
         ImplicitIntentsUtil.startActivityOutsideApp(this, intent);
     }
     private void joinSelectedContacts() {
-        JoinContactsDialogFragment.start(this, mAllFragment.getSelectedContactIds());
+        JoinContactsDialogFragment.start(this, contactCardsFragment.getSelectedContactIds());
     }
 
     @Override
@@ -1045,16 +1061,16 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onInvalidSelection() {
             ContactListFilter filter;
-            ContactListFilter currentFilter = mAllFragment.getFilter();
+            ContactListFilter currentFilter = contactCardsFragment.getFilter();
             if (currentFilter != null
                     && currentFilter.filterType == ContactListFilter.FILTER_TYPE_SINGLE_CONTACT) {
                 filter = ContactListFilter.createFilterWithType(
                         ContactListFilter.FILTER_TYPE_ALL_ACCOUNTS);
-                mAllFragment.setFilter(filter);
+                contactCardsFragment.setFilter(filter);
             } else {
                 filter = ContactListFilter.createFilterWithType(
                         ContactListFilter.FILTER_TYPE_SINGLE_CONTACT);
-                mAllFragment.setFilter(filter, false);
+                contactCardsFragment.setFilter(filter, false);
             }
             mContactListFilterController.setContactListFilter(filter, true);
         }
@@ -1064,19 +1080,19 @@ public class MainActivity extends AppCompatActivity implements
     {
         @Override
         public void onStartDisplayingCheckBoxes() {
-            mActionBarAdapter.setSelectionMode(true);
+            //mActionBarAdapter.setSelectionMode(true);
             invalidateOptionsMenu();
         }
 
         @Override
         public void onSelectedContactIdsChanged() {
-            mActionBarAdapter.setSelectionCount(mAllFragment.getSelectedContactIds().size());
+            //mActionBarAdapter.setSelectionCount(contactCardsFragment.getSelectedContactIds().size());
             invalidateOptionsMenu();
         }
 
         @Override
         public void onStopDisplayingCheckBoxes() {
-            mActionBarAdapter.setSelectionMode(false);
+            //mActionBarAdapter.setSelectionMode(false);
         }
     }
 

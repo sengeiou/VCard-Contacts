@@ -96,8 +96,10 @@ public abstract class DefaultContactBrowseListFragment extends ContactBrowseList
     }
 
     @Override
-    protected void onCreateView(LayoutInflater inflater, ViewGroup container) {
-        super.onCreateView(inflater, container);
+    protected void onCreateView(LayoutInflater inflater, ViewGroup container)
+    {
+        Log.d(TAG, "onCreateView");
+        //super.onCreateView(inflater, container);
 
         mAccountFilterHeader = getView().findViewById(R.id.account_filter_header_container);
         mAccountFilterHeader.setOnClickListener(mFilterHeaderClickListener);
