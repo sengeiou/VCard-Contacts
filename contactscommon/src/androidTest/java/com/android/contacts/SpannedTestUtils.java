@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.contacts.common.format;
+package com.android.contacts;
 
-import android.test.suitebuilder.annotation.SmallTest;
+import android.support.test.filters.SmallTest;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;

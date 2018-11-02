@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.contacts.common.test;
+package com.android.contacts;
 
 import android.app.Activity;
 import android.os.Bundle;

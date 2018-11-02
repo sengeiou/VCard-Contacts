@@ -8,6 +8,7 @@
     tools:context="com.chebyr.vcardrealm.contacts.MainActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -23,9 +24,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <fragment
+        android:id="@+id/contacts_container"
+        android:name="com.chebyr.vcardrealm.contacts.view.ContactCardsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:layout="@layout/contact_list_fragment"/>
 
-    <!--FrameLayout
+    <FrameLayout
         android:id="@+id/contacts_unavailable_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,7 +42,7 @@
             android:id="@+id/contacts_unavailable_container"
             android:layout_height="match_parent"
             android:layout_width="match_parent" />
-    </FrameLayout-->
+    </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_action_button"

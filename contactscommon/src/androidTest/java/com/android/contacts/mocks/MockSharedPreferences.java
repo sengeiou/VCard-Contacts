@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.contacts.common.test.mocks;
+package com.android.contacts.mocks;
 
 import android.content.SharedPreferences;
 

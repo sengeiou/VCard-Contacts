@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.contacts.common.test.mocks;
+package com.android.contacts.mocks;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,6 +25,9 @@ import android.content.pm.ProviderInfo;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.test.mock.MockContentResolver;
+
+import com.android.contacts.mocks.ContactsMockPackageManager;
+import com.android.contacts.mocks.MockContentProvider;
 
 /**
  * A mock context for contacts unit tests. Forwards everything to

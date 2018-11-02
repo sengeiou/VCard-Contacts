@@ -236,7 +236,7 @@
                 <data android:mimeType="vnd.android.cursor.dir/raw_contact"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.android.contacts.common.test.FragmentTestActivity">
+        <activity android:name="com.android.contacts.FragmentTestActivity">
             <intent-filter>
                 <category android:name="android.intent.category.TEST"/>
             </intent-filter>
