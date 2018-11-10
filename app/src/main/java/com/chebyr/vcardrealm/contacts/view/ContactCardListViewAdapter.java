@@ -9,6 +9,7 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -59,6 +60,7 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = layoutInflater.inflate(R.layout.contact_card, viewGroup, false);
         ContactCardsViewHolder contactCardsViewHolder = new ContactCardsViewHolder(itemView);
+
         return contactCardsViewHolder;
     }
 
@@ -82,10 +84,10 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
 
     public interface OnItemClickCallBack
     {
-        public void onSelectionCleared(int type, String extra);
+        void onSelectionCleared(int type, String extra);
     }
 
-    public static class ContactCardsViewHolder extends RecyclerView.ViewHolder
+    public static class ContactCardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         ContactCardView contactCardView;
 
@@ -94,6 +96,14 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
             super(itemView);
             contactCardView = itemView.findViewById(R.id.contact_card_view);
             contactCardView.initialize();
+            contactCardView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view)
+        {
+            int adapterPosition = getAdapterPosition();
+            Log.d(TAG, "Contact card clicked: " + adapterPosition);
         }
 
         public void setContact(Contact contact)

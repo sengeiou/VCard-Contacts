@@ -13,18 +13,41 @@
 <resources>
 
     <declare-styleable name="InterpolatingLayout_Layout">
-    <attr name="layout_narrowParentWidth" format="dimension"/>
-    <attr name="layout_narrowWidth" format="dimension"/>
-    <attr name="layout_narrowMarginLeft" format="dimension"/>
-    <attr name="layout_narrowMarginRight" format="dimension"/>
-    <attr name="layout_narrowPaddingLeft" format="dimension"/>
-    <attr name="layout_narrowPaddingRight" format="dimension"/>
-    <attr name="layout_wideParentWidth" format="dimension"/>
-    <attr name="layout_wideWidth" format="dimension"/>
-    <attr name="layout_wideMarginLeft" format="dimension"/>
-    <attr name="layout_wideMarginRight" format="dimension"/>
-    <attr name="layout_widePaddingLeft" format="dimension"/>
-    <attr name="layout_widePaddingRight" format="dimension"/>
-</declare-styleable>
+        <attr name="layout_narrowParentWidth" format="dimension"/>
+        <attr name="layout_narrowWidth" format="dimension"/>
+        <attr name="layout_narrowMarginLeft" format="dimension"/>
+        <attr name="layout_narrowMarginRight" format="dimension"/>
+        <attr name="layout_narrowPaddingLeft" format="dimension"/>
+        <attr name="layout_narrowPaddingRight" format="dimension"/>
+        <attr name="layout_wideParentWidth" format="dimension"/>
+        <attr name="layout_wideWidth" format="dimension"/>
+        <attr name="layout_wideMarginLeft" format="dimension"/>
+        <attr name="layout_wideMarginRight" format="dimension"/>
+        <attr name="layout_widePaddingLeft" format="dimension"/>
+        <attr name="layout_widePaddingRight" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircularMenu">
+        <!-- Array of buttons icons. -->
+        <attr name="button_icons" format="reference"/>
+        <!-- Array of buttons colors. -->
+        <attr name="button_colors" format="reference"/>
+        <!-- Menu default icon. -->
+        <attr name="icon_menu" format="reference"/>
+        <!-- Menu closed icon. -->
+        <attr name="icon_close" format="reference"/>
+        <!-- Menu icon color. -->
+        <attr name="icon_color" format="color"/>
+        <!-- Ring effect duration. -->
+        <attr name="duration_ring" format="integer"/>
+        <!-- On long click ring effect duration. -->
+        <attr name="long_click_duration_ring" format="integer"/>
+        <!-- Menu opening animation duration. -->
+        <attr name="duration_open" format="integer"/>
+        <!-- Menu closing animation duration. -->
+        <attr name="duration_close" format="integer"/>
+        <!-- Distance between center button and buttons. -->
+        <attr name="distance" format="dimension"/>
+    </declare-styleable>
 
 </resources>

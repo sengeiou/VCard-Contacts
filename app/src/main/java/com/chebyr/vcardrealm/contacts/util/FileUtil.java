@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.utils;
+package com.chebyr.vcardrealm.contacts.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -26,9 +26,11 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
 {
     private static final String TAG = FileUtil.class.getSimpleName();
 
-    Context context;
-    AssetManager assetManager;
-    ContentResolver contentResolver;
+    private Context context;
+    private AssetManager assetManager;
+    private ContentResolver contentResolver;
+
+    public static String assetsPath = "file:///android_asset/";
 
     public FileUtil(Context context)
     {
@@ -37,11 +39,11 @@ public class FileUtil implements MediaScannerConnection.OnScanCompletedListener
         contentResolver = context.getContentResolver();
     }
 
-    public String initVCardsDirectory()
+    public String initializeDirectory(String directoryName)
     {
-        Log.d(TAG, "Create VCardCallerID Directory and copy VCards from Assets");
+        Log.d(TAG, "Create Directory in external storage and copy Assets");
 
-        File directory = createDirectoryInExternalStorage("VCardCallerID");
+        File directory = createDirectoryInExternalStorage(directoryName);
         if(directory == null)
             return null;
 

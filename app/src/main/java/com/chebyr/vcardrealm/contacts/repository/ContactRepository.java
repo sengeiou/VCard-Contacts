@@ -24,7 +24,7 @@ public class ContactRepository
 {
     private static String TAG = ContactRepository.class.getSimpleName();
 
-    private static int pageSize = 10;
+    private static int pageSize = 4;
 
     private ContactDataSource.Factory contactsDataSourceFactory;
 

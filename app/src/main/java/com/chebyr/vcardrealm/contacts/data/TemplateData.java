@@ -8,4 +8,5 @@ public class TemplateData
     public String css;
     public String logoPhotoPath;
     public String backgroundPhotoPath;
+    public String folderPath;
 }
