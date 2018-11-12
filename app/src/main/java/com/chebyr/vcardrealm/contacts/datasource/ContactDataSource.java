@@ -15,7 +15,7 @@ import com.chebyr.vcardrealm.contacts.datasource.queries.ContactQuery;
 import com.chebyr.vcardrealm.contacts.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.repository.ContactsSectionIndexer;
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.utils.FileUtil;
+import com.chebyr.vcardrealm.contacts.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;

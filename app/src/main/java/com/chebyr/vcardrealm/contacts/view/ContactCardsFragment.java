@@ -75,9 +75,10 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment implem
     }
 
     @Override
-    public void onSelectionCleared(int type, String extra)
+    public void onContactCardClick(float yPosition, Contact contact)
     {
-
+        Log.d(TAG, contact.data.displayName);
+        circularMenu.setY(yPosition);
     }
 
     @Override

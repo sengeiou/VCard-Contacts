@@ -19,7 +19,12 @@
         <!--item name="android:textColorPrimary">#616161</item>
         <item name="android:textColorSecondary">#757575</item>
         <item name="actionMenuTextColor">#616161</item-->
+        <!--item name="searchViewStyle">@style/MySearchViewStyle</item-->
     </style>
+
+    <!--style name="MySearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="voiceIcon">...</item>
+    </style-->
 
     <style name="DetailActivityTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ContactsActionBarStyle</item>

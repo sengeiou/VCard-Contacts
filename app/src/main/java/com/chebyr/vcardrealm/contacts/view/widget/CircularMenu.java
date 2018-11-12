@@ -236,11 +236,13 @@ public class CircularMenu extends FrameLayout
     private void initButtons(@NonNull Context context, @NonNull List<Integer> icons, @NonNull List<Integer> colors) {
 
         final int buttonsCount = Math.min(icons.size(), colors.size());
+        final int colorAccent = getResources().getColor(R.color.colorAccent, null);
 
-        for (int i = 0; i < buttonsCount; i++) {
+        for (int i = 0; i < buttonsCount; i++)
+        {
             final FloatingActionButton button = new FloatingActionButton(context);
             button.setImageResource(icons.get(i));
-            button.setBackgroundTintList(ColorStateList.valueOf(colors.get(i)));
+            button.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
             button.setClickable(true);
             button.setOnClickListener(new OnButtonClickListener());
             button.setOnLongClickListener(new OnButtonLongClickListener());
@@ -375,7 +377,6 @@ public class CircularMenu extends FrameLayout
                 if (fraction >= 0.5f && !iconChanged)
                 {
                     iconChanged = true;
-                    //mMenuButton.setImageResource(mIconClose);
                 }
             }
         });
@@ -400,13 +401,11 @@ public class CircularMenu extends FrameLayout
             }
         });
 
-        buttonsAppear.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+        buttonsAppear.addUpdateListener((ValueAnimator valueAnimator) ->
+        {
                 final float fraction = valueAnimator.getAnimatedFraction();
                 final float value = (float) valueAnimator.getAnimatedValue();
                 offsetAndScaleButtons(centerX, centerY, angleStep, value, fraction);
-            }
         });
 
         final AnimatorSet result = new AnimatorSet();

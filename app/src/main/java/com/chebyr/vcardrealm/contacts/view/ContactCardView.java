@@ -76,6 +76,11 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
         loadDataWithBaseURL(baseUrl,contact.vcardHtml, "text/html", null, null);
     }
 
+    public Contact getContact()
+    {
+        return contact;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
@@ -95,7 +100,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
     public boolean performClick()
     {
         super.performClick();
-        Log.d(TAG, "WebView clicked");
+//        Log.d(TAG, "WebView clicked");
         return true;
     }
 

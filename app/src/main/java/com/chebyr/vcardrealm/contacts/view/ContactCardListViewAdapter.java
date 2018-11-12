@@ -84,12 +84,12 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
 
     public interface OnItemClickCallBack
     {
-        void onSelectionCleared(int type, String extra);
+        void onContactCardClick(float yPosition, Contact contact);
     }
 
-    public static class ContactCardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public class ContactCardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        ContactCardView contactCardView;
+        private ContactCardView contactCardView;
 
         public ContactCardsViewHolder(View itemView)
         {
@@ -103,7 +103,11 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         public void onClick(View view)
         {
             int adapterPosition = getAdapterPosition();
-            Log.d(TAG, "Contact card clicked: " + adapterPosition);
+
+            float yPosition = contactCardView.getY();
+            Contact contact = contactCardView.getContact();
+            Log.d(TAG, "Contact card clicked: " + adapterPosition + " yPosition: " + yPosition);
+            callBack.onContactCardClick(yPosition, contact);
         }
 
         public void setContact(Contact contact)
