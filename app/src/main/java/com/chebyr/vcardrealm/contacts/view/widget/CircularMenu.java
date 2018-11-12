@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * CircularMenu
  */
-public class CircularMenu extends FrameLayout
+public class CircularMenu extends FrameLayout implements View.OnClickListener
 {
     private static final int DEFAULT_BUTTON_SIZE = 56;
     private static final float DEFAULT_DISTANCE = DEFAULT_BUTTON_SIZE * 1.5f;
@@ -57,6 +57,7 @@ public class CircularMenu extends FrameLayout
 
     private float mDistance;
 
+    private AnimatorListenerAdapter animListener;
     private EventListener mListener;
 
     public CircularMenu(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -170,6 +171,35 @@ public class CircularMenu extends FrameLayout
         }
     }
 
+    @Override
+    public void onClick(final View view) {
+        if (mIsAnimating) {
+            return;
+        }
+
+        final Animator click = getButtonClickAnimation((FloatingActionButton) view);
+        click.setDuration(mDurationRing);
+        click.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (mListener != null) {
+                    mListener.onButtonClickAnimationStart(CircularMenu.this, mButtons.indexOf(view));
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mClosedState = true;
+                if (mListener != null) {
+                    mListener.onButtonClickAnimationEnd(CircularMenu.this, mButtons.indexOf(view));
+                }
+            }
+        });
+
+        click.start();
+    }
+
     private void initLayout(@NonNull Context context)
     {
         LayoutInflater.from(context).inflate(R.layout.circular_menu, this, true);
@@ -187,26 +217,37 @@ public class CircularMenu extends FrameLayout
         mRingView = findViewById(R.id.ring_view);
     }
 
-    private void initMenu(int menuButtonColor) {
-        final AnimatorListenerAdapter animListener = new AnimatorListenerAdapter() {
-
+    private void initMenu(int menuButtonColor)
+    {
+        animListener = new AnimatorListenerAdapter()
+        {
             @Override
-            public void onAnimationStart(Animator animation) {
-                if (mListener != null) {
-                    if (mClosedState) {
+            public void onAnimationStart(Animator animation)
+            {
+                if (mListener != null)
+                {
+                    if (mClosedState)
+                    {
                         mListener.onMenuOpenAnimationStart(CircularMenu.this);
-                    } else {
+                    }
+                    else
+                    {
                         mListener.onMenuCloseAnimationStart(CircularMenu.this);
                     }
                 }
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mListener != null) {
-                    if (mClosedState) {
+            public void onAnimationEnd(Animator animation)
+            {
+                if (mListener != null)
+                {
+                    if (mClosedState)
+                    {
                         mListener.onMenuOpenAnimationEnd(CircularMenu.this);
-                    } else {
+                    }
+                    else
+                    {
                         mListener.onMenuCloseAnimationEnd(CircularMenu.this);
                     }
                 }
@@ -216,21 +257,36 @@ public class CircularMenu extends FrameLayout
         };
 
         mMenuButton = findViewById(R.id.circle_menu_main_button);
-        //mMenuButton.setImageResource(mIconMenu);
         mMenuButton.setBackgroundTintList(ColorStateList.valueOf(menuButtonColor));
+        mMenuButton.setOnClickListener((View view) -> toggleMenu());
+    }
 
-        mMenuButton.setOnClickListener((View view) ->
-        {
-            if (mIsAnimating)
-            {
-                return;
-            }
+    public void toggleMenu()
+    {
+        if(mClosedState)
+            openMenu();
+        else
+            closeMenu();
+    }
 
-            final Animator animation = mClosedState ? getOpenMenuAnimation() : getCloseMenuAnimation();
-            animation.setDuration(mClosedState ? mDurationClose : mDurationOpen);
-            animation.addListener(animListener);
-            animation.start();
-        });
+    public void openMenu()
+    {
+        if (mIsAnimating)
+            return;
+
+        final Animator animation = getOpenMenuAnimation();
+        animation.addListener(animListener);
+        animation.start();
+    }
+
+    public void closeMenu()
+    {
+        if (mIsAnimating)
+            return;
+
+        final Animator animation = getCloseMenuAnimation();
+        animation.addListener(animListener);
+        animation.start();
     }
 
     private void initButtons(@NonNull Context context, @NonNull List<Integer> icons, @NonNull List<Integer> colors) {
@@ -244,8 +300,7 @@ public class CircularMenu extends FrameLayout
             button.setImageResource(icons.get(i));
             button.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
             button.setClickable(true);
-            button.setOnClickListener(new OnButtonClickListener());
-            button.setOnLongClickListener(new OnButtonLongClickListener());
+            button.setOnClickListener(this);
             button.setScaleX(0);
             button.setScaleY(0);
             button.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -424,6 +479,7 @@ public class CircularMenu extends FrameLayout
             }
         });
 
+        result.setDuration(mDurationOpen);
         return result;
     }
 
@@ -453,6 +509,7 @@ public class CircularMenu extends FrameLayout
                 mMenuButton.setRotation(60f);
             }
         });
+        result.setDuration(mDurationClose);
         return result;
     }
 
@@ -549,7 +606,6 @@ public class CircularMenu extends FrameLayout
         openOrClose(false, animate);
     }
 
-
     //     CircleMenu event listener.
     public interface EventListener {
 
@@ -624,71 +680,4 @@ public class CircularMenu extends FrameLayout
          */
         void onButtonLongClickAnimationEnd(@NonNull CircularMenu view, int buttonIndex);
     }
-
-    private class OnButtonClickListener implements View.OnClickListener
-    {
-        @Override
-        public void onClick(final View view) {
-            if (mIsAnimating) {
-                return;
-            }
-
-            final Animator click = getButtonClickAnimation((FloatingActionButton) view);
-            click.setDuration(mDurationRing);
-            click.addListener(new AnimatorListenerAdapter() {
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    if (mListener != null) {
-                        mListener.onButtonClickAnimationStart(CircularMenu.this, mButtons.indexOf(view));
-                    }
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mClosedState = true;
-                    if (mListener != null) {
-                        mListener.onButtonClickAnimationEnd(CircularMenu.this, mButtons.indexOf(view));
-                    }
-                }
-            });
-
-            click.start();
-        }
-    }
-
-    private class OnButtonLongClickListener implements View.OnLongClickListener
-    {
-        @Override
-        public boolean onLongClick(final View view) {
-            if (mListener == null) {
-                return false;
-            }
-
-            final boolean result = mListener.onButtonLongClick(CircularMenu.this, mButtons.indexOf(view));
-
-            if (result && !mIsAnimating) {
-                final Animator click = getButtonClickAnimation((FloatingActionButton) view);
-                click.setDuration(mLongClickDurationRing);
-                click.addListener(new AnimatorListenerAdapter() {
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        mListener.onButtonLongClickAnimationStart(CircularMenu.this, mButtons.indexOf(view));
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mClosedState = true;
-                        mListener.onButtonLongClickAnimationEnd(CircularMenu.this, mButtons.indexOf(view));
-                    }
-                });
-
-                click.start();
-            }
-
-            return result;
-        }
-    }
-
-}
+ }

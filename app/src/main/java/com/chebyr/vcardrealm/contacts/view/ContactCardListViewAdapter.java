@@ -89,11 +89,13 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
 
     public class ContactCardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
+        private View itemView;
         private ContactCardView contactCardView;
 
         public ContactCardsViewHolder(View itemView)
         {
             super(itemView);
+            this.itemView = itemView;
             contactCardView = itemView.findViewById(R.id.contact_card_view);
             contactCardView.initialize();
             contactCardView.setOnClickListener(this);
@@ -104,7 +106,7 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         {
             int adapterPosition = getAdapterPosition();
 
-            float yPosition = contactCardView.getY();
+            float yPosition = itemView.getY();
             Contact contact = contactCardView.getContact();
             Log.d(TAG, "Contact card clicked: " + adapterPosition + " yPosition: " + yPosition);
             callBack.onContactCardClick(yPosition, contact);

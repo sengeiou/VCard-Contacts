@@ -22,7 +22,10 @@ import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ContactCardsFragment extends MultiSelectContactsListFragment implements ContactCardListViewAdapter.OnItemClickCallBack, ContactCardListView.Callback
+public class ContactCardsFragment extends MultiSelectContactsListFragment
+        implements ContactCardListViewAdapter.OnItemClickCallBack,
+        ContactCardListView.Callback,
+        View.OnScrollChangeListener
 {
     private static String TAG = ContactCardsFragment.class.getSimpleName();
 
@@ -53,6 +56,7 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment implem
         contactCardListView = rootView.findViewById(R.id.contact_card_list_view);
         contactCardListView.setAdapter(mContactCardListViewAdapter);
         contactCardListView.initialize(activity, this);
+        contactCardListView.setOnScrollChangeListener(this);
 
         circularMenu = rootView.findViewById(R.id.circular_menu);
         circularMenu.setEventListener(new MenuEventListener());
@@ -79,6 +83,13 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment implem
     {
         Log.d(TAG, contact.data.displayName);
         circularMenu.setY(yPosition);
+        circularMenu.openMenu();
+    }
+
+    @Override
+    public void onScrollChange(View view, int i, int i1, int i2, int i3)
+    {
+        circularMenu.closeMenu();
     }
 
     @Override
