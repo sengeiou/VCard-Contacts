@@ -11,14 +11,16 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
-import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.ActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
@@ -33,6 +35,10 @@ import java.util.List;
  */
 public class CircularMenu extends FrameLayout implements View.OnClickListener
 {
+    private static String TAG = CircularMenu.class.getSimpleName();
+
+    private Context context;
+
     private static final int DEFAULT_BUTTON_SIZE = 56;
     private static final float DEFAULT_DISTANCE = DEFAULT_BUTTON_SIZE * 1.5f;
     private static final float DEFAULT_RING_SCALE_RATIO = 1.3f;
@@ -49,105 +55,96 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
     private boolean mIsAnimating = false;
 
     private int mDurationRing;
-    private int mLongClickDurationRing;
     private int mDurationOpen;
     private int mDurationClose;
     private int mDesiredSize;
-    private int mRingRadius;
 
     private float mDistance;
 
-    private AnimatorListenerAdapter animListener;
-    private EventListener mListener;
+    private Callback callback;
 
-    public CircularMenu(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public CircularMenu(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
-
-        super(context, attrs, defStyleAttr);
-
-        if (attrs == null) {
-            throw new IllegalArgumentException("No buttons icons or colors set");
-        }
-
-        final int menuButtonColor;
-        final List<Integer> icons;
-        final List<Integer> colors;
-
-        final TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircularMenu, 0, 0);
-
-        try
-        {
-            final int iconArrayId = a.getResourceId(R.styleable.CircularMenu_button_icons, 0);
-            final int colorArrayId = a.getResourceId(R.styleable.CircularMenu_button_colors, 0);
-
-            final TypedArray iconsIds = getResources().obtainTypedArray(iconArrayId);
-
-            try
-            {
-                final int[] colorsIds = getResources().getIntArray(colorArrayId);
-                final int buttonsCount = Math.min(iconsIds.length(), colorsIds.length);
-
-                icons = new ArrayList<>(buttonsCount);
-                colors = new ArrayList<>(buttonsCount);
-
-                for (int i = 0; i < buttonsCount; i++) {
-                    icons.add(iconsIds.getResourceId(i, -1));
-                    colors.add(colorsIds[i]);
-                }
-
-            }
-            finally {
-                iconsIds.recycle();
-            }
-
-            mDurationRing = a.getInteger(R.styleable.CircularMenu_duration_ring, getResources().getInteger(android.R.integer.config_mediumAnimTime));
-            mLongClickDurationRing = a.getInteger(R.styleable.CircularMenu_long_click_duration_ring, getResources().getInteger(android.R.integer.config_longAnimTime));
-            mDurationOpen = a.getInteger(R.styleable.CircularMenu_duration_open, getResources().getInteger(android.R.integer.config_mediumAnimTime));
-            mDurationClose = a.getInteger(R.styleable.CircularMenu_duration_close, getResources().getInteger(android.R.integer.config_mediumAnimTime));
-
-            final float density = context.getResources().getDisplayMetrics().density;
-            final float defaultDistance = DEFAULT_DISTANCE * density;
-
-            mDistance = a.getDimension(R.styleable.CircularMenu_distance, defaultDistance);
-
-            menuButtonColor = a.getColor(R.styleable.CircularMenu_icon_color, Color.WHITE);
-        }
-        finally {
-            a.recycle();
-        }
-
-        initLayout(context);
-        initMenu(menuButtonColor);
-        initButtons(context, icons, colors);
+    public CircularMenu(@NonNull Context context, @Nullable AttributeSet attrs)
+    {
+        super(context, attrs);
+        this.context = context;
     }
 
     /**
      * Constructor for creation CircleMenuView in code, not in xml-layout.
-     *
      * @param context current context, will be used to access resources.
      * @param icons   buttons icons resource ids array. Items must be @DrawableRes.
-     * @param colors  buttons colors resource ids array. Items must be @DrawableRes.
      */
-    public CircularMenu(@NonNull Context context, @NonNull List<Integer> icons, @NonNull List<Integer> colors) {
-
+    public CircularMenu(@NonNull Context context, @NonNull List<Integer> icons)
+    {
         super(context);
+        this.context = context;
+    }
 
-        final float density = context.getResources().getDisplayMetrics().density;
-        final float defaultDistance = DEFAULT_DISTANCE * density;
-
+    /**
+     * See {@link Callback }
+     * @param callback new event callback or null.
+     */
+    public void initialize(Menu menu, @Nullable Callback callback)
+    {
+        this.callback = callback;
+//    }
+//
+//    private void initialize(@NonNull Context context, @NonNull List<Integer> icons)
+//    {
         mDurationRing = getResources().getInteger(android.R.integer.config_mediumAnimTime);
-        mLongClickDurationRing = getResources().getInteger(android.R.integer.config_longAnimTime);
         mDurationOpen = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mDurationClose = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
-        mDistance = defaultDistance;
+        final float density = context.getResources().getDisplayMetrics().density;
+        mDistance = DEFAULT_DISTANCE * density;
 
-        initLayout(context);
-        initMenu(Color.WHITE);
-        initButtons(context, icons, colors);
+        LayoutInflater.from(context).inflate(R.layout.circular_menu, this, true);
+
+        setWillNotDraw(true);
+        setClipChildren(false);
+        setClipToPadding(false);
+
+        final float buttonSize = DEFAULT_BUTTON_SIZE * density;
+
+        int ringRadius = (int) (buttonSize + (mDistance - buttonSize / 2));
+        mDesiredSize = (int) (ringRadius * 2 * DEFAULT_RING_SCALE_RATIO);
+
+        mRingView = findViewById(R.id.ring_view);
+
+        mMenuButton = findViewById(R.id.circle_menu_main_button);
+        mMenuButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+        mMenuButton.setOnClickListener((View view) -> toggleMenu());
+
+        final int buttonsCount = menu.size();//icons.size();
+        Log.d(TAG, "Number of items: " + buttonsCount);
+
+        final int colorAccent = getResources().getColor(R.color.colorAccent, null);
+
+        MenuItem menuItem;
+
+
+        for (int i = 0; i < buttonsCount; i++)
+        {
+            menuItem = menu.getItem(i);
+            if(menuItem.getGroupId() == R.id.circular_menu_group)
+            {
+                Log.d(TAG, "Menu Title: " + menuItem.getTitle());
+
+                final FloatingActionButton button = new FloatingActionButton(context);
+                button.setId(menuItem.getItemId());
+                //button.setImageResource(icons.get(i));
+                button.setImageDrawable(menuItem.getIcon());
+                button.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
+                button.setClickable(true);
+                button.setOnClickListener(this);
+                button.setScaleX(0);
+                button.setScaleY(0);
+                button.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+                addView(button);
+                mButtons.add(button);
+            }
+        }
     }
 
     @Override
@@ -172,93 +169,32 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
     }
 
     @Override
-    public void onClick(final View view) {
-        if (mIsAnimating) {
+    public void onClick(final View view)
+    {
+        if (mIsAnimating)
             return;
-        }
 
         final Animator click = getButtonClickAnimation((FloatingActionButton) view);
         click.setDuration(mDurationRing);
-        click.addListener(new AnimatorListenerAdapter() {
-
+        click.addListener(new AnimatorListenerAdapter()
+        {
             @Override
-            public void onAnimationStart(Animator animation) {
-                if (mListener != null) {
-                    mListener.onButtonClickAnimationStart(CircularMenu.this, mButtons.indexOf(view));
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(Animator animation)
+            {
                 mClosedState = true;
-                if (mListener != null) {
-                    mListener.onButtonClickAnimationEnd(CircularMenu.this, mButtons.indexOf(view));
-                }
+
+                if (callback != null)
+                    callback.onMenuButtonClick(view.getId());//mButtons.indexOf(view));
             }
         });
 
         click.start();
     }
 
-    private void initLayout(@NonNull Context context)
+    public void setMidCoordinate(float midCoordinate)
     {
-        LayoutInflater.from(context).inflate(R.layout.circular_menu, this, true);
-
-        setWillNotDraw(true);
-        setClipChildren(false);
-        setClipToPadding(false);
-
-        final float density = context.getResources().getDisplayMetrics().density;
-        final float buttonSize = DEFAULT_BUTTON_SIZE * density;
-
-        mRingRadius = (int) (buttonSize + (mDistance - buttonSize / 2));
-        mDesiredSize = (int) (mRingRadius * 2 * DEFAULT_RING_SCALE_RATIO);
-
-        mRingView = findViewById(R.id.ring_view);
-    }
-
-    private void initMenu(int menuButtonColor)
-    {
-        animListener = new AnimatorListenerAdapter()
-        {
-            @Override
-            public void onAnimationStart(Animator animation)
-            {
-                if (mListener != null)
-                {
-                    if (mClosedState)
-                    {
-                        mListener.onMenuOpenAnimationStart(CircularMenu.this);
-                    }
-                    else
-                    {
-                        mListener.onMenuCloseAnimationStart(CircularMenu.this);
-                    }
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation)
-            {
-                if (mListener != null)
-                {
-                    if (mClosedState)
-                    {
-                        mListener.onMenuOpenAnimationEnd(CircularMenu.this);
-                    }
-                    else
-                    {
-                        mListener.onMenuCloseAnimationEnd(CircularMenu.this);
-                    }
-                }
-
-                mClosedState = !mClosedState;
-            }
-        };
-
-        mMenuButton = findViewById(R.id.circle_menu_main_button);
-        mMenuButton.setBackgroundTintList(ColorStateList.valueOf(menuButtonColor));
-        mMenuButton.setOnClickListener((View view) -> toggleMenu());
+        float yPosition = midCoordinate - getHeight() / 2;
+        setY(yPosition);
     }
 
     public void toggleMenu()
@@ -275,7 +211,15 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
             return;
 
         final Animator animation = getOpenMenuAnimation();
-        animation.addListener(animListener);
+
+        animation.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                mClosedState = false;
+            }
+        });
         animation.start();
     }
 
@@ -285,29 +229,16 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
             return;
 
         final Animator animation = getCloseMenuAnimation();
-        animation.addListener(animListener);
-        animation.start();
-    }
 
-    private void initButtons(@NonNull Context context, @NonNull List<Integer> icons, @NonNull List<Integer> colors) {
-
-        final int buttonsCount = Math.min(icons.size(), colors.size());
-        final int colorAccent = getResources().getColor(R.color.colorAccent, null);
-
-        for (int i = 0; i < buttonsCount; i++)
+        animation.addListener(new AnimatorListenerAdapter()
         {
-            final FloatingActionButton button = new FloatingActionButton(context);
-            button.setImageResource(icons.get(i));
-            button.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
-            button.setClickable(true);
-            button.setOnClickListener(this);
-            button.setScaleX(0);
-            button.setScaleY(0);
-            button.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-            addView(button);
-            mButtons.add(button);
-        }
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                mClosedState = true;
+            }
+        });
+        animation.start();
     }
 
     private void offsetAndScaleButtons(float centerX, float centerY, float angleStep, float offset, float scale) {
@@ -513,41 +444,9 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
         return result;
     }
 
-    /**
-     * See {@link R.styleable#CircularMenu_distance}
-     *
-     * @return current distance in pixels.
-     */
-
-    public float getDistance() {
-        return mDistance;
-    }
-
-    /**
-     * See {@link R.styleable#CircularMenu_distance}
-     *
-     * @param distance in pixels.
-     */
-
-    public void setDistance(float distance) {
-        mDistance = distance;
-        invalidate();
-    }
-
-    /**
-     * See {@link CircularMenu.EventListener }
-     *
-     * @param listener new event listener or null.
-     */
-
-    public void setEventListener(@Nullable EventListener listener) {
-        mListener = listener;
-    }
-
     private void openOrClose(boolean open, boolean animate) {
-        if (mIsAnimating) {
+        if (mIsAnimating)
             return;
-        }
 
         if (open && !mClosedState) {
             return;
@@ -572,8 +471,6 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
             final float offset = open ? mDistance : 0f;
             final float scale = open ? 1f : 0f;
 
-            //mMenuButton.setImageResource(open ? mIconClose : mIconMenu);
-
             mMenuButton.setAlpha(open ? DEFAULT_CLOSE_ICON_ALPHA : 1f);
 
             final int visibility = open ? View.VISIBLE : View.INVISIBLE;
@@ -588,96 +485,27 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
 
     /**
      * Open menu programmatically
-     *
      * @param animate open with animation or not
      */
-
     public void open(boolean animate) {
         openOrClose(true, animate);
     }
 
     /**
      * Close menu programmatically
-     *
      * @param animate close with animation or not
      */
-
     public void close(boolean animate) {
         openOrClose(false, animate);
     }
 
     //     CircleMenu event listener.
-    public interface EventListener {
-
-        /**
-         * Invoked on menu button click, before animation start.
-         *
-         * @param view current CircleMenuView instance.
-         */
-        void onMenuOpenAnimationStart(@NonNull CircularMenu view);
-
-        /**
-         * Invoked on menu button click, after animation end.
-         *
-         * @param view - current CircleMenuView instance.
-         */
-        void onMenuOpenAnimationEnd(@NonNull CircularMenu view);
-
-        /**
-         * Invoked on close menu button click, before animation start.
-         *
-         * @param view - current CircleMenuView instance.
-         */
-        void onMenuCloseAnimationStart(@NonNull CircularMenu view);
-
-        /**
-         * Invoked on close menu button click, after animation end.
-         *
-         * @param view - current CircleMenuView instance.
-         */
-        void onMenuCloseAnimationEnd(@NonNull CircularMenu view);
-
-        /**
-         * Invoked on button click, before animation start.
-         *
+    public interface Callback
+    {
+        /* Invoked on button click, after animation end.
          * @param view        - current CircleMenuView instance.
          * @param buttonIndex - clicked button zero-based index.
          */
-        void onButtonClickAnimationStart(@NonNull CircularMenu view, int buttonIndex);
-
-        /**
-         * Invoked on button click, after animation end.
-         *
-         * @param view        - current CircleMenuView instance.
-         * @param buttonIndex - clicked button zero-based index.
-         */
-        void onButtonClickAnimationEnd(@NonNull CircularMenu view, int buttonIndex);
-
-        /**
-         * Invoked on button long click. Invokes {@see onButtonLongClickAnimationStart} and {@see onButtonLongClickAnimationEnd}
-         * <p>
-         * if returns true.
-         *
-         * @param view        current CircleMenuView instance.
-         * @param buttonIndex clicked button zero-based index.
-         * @return true if the callback consumed the long click, false otherwise.
-         */
-        boolean onButtonLongClick(@NonNull CircularMenu view, int buttonIndex);
-
-        /**
-         * Invoked on button long click, before animation start.
-         *
-         * @param view        - current CircleMenuView instance.
-         * @param buttonIndex - clicked button zero-based index.
-         */
-        void onButtonLongClickAnimationStart(@NonNull CircularMenu view, int buttonIndex);
-
-        /**
-         * Invoked on button long click, after animation end.
-         *
-         * @param view        - current CircleMenuView instance.
-         * @param buttonIndex - clicked button zero-based index.
-         */
-        void onButtonLongClickAnimationEnd(@NonNull CircularMenu view, int buttonIndex);
+        void onMenuButtonClick(int buttonIndex);
     }
  }

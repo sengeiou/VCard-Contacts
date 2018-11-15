@@ -5,11 +5,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -25,13 +27,17 @@ import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 public class ContactCardsFragment extends MultiSelectContactsListFragment
         implements ContactCardListViewAdapter.OnItemClickCallBack,
         ContactCardListView.Callback,
-        View.OnScrollChangeListener
+        View.OnScrollChangeListener,
+        CircularMenu.Callback
 {
     private static String TAG = ContactCardsFragment.class.getSimpleName();
 
     private ContactCardListView contactCardListView;
     private ContactCardListViewAdapter mContactCardListViewAdapter;
     private CircularMenu circularMenu;
+    private boolean initScroll;
+    private int clickedItemPosition;
+    private Menu menu;
 
     public ContactCardsFragment()
     {
@@ -45,21 +51,28 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public void onCreate(Bundle savedState)
+    {
+        super.onCreate(savedState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState)
     {
         Log.d(TAG, "onCreateView");
         FragmentActivity activity = getActivity();
 
         createListAdapter();
 
-        View rootView = inflater.inflate(R.layout.contact_list_fragment, container, false);
+        View rootView = layoutInflater.inflate(R.layout.contact_list_fragment, container, false);
+
         contactCardListView = rootView.findViewById(R.id.contact_card_list_view);
         contactCardListView.setAdapter(mContactCardListViewAdapter);
         contactCardListView.initialize(activity, this);
         contactCardListView.setOnScrollChangeListener(this);
 
         circularMenu = rootView.findViewById(R.id.circular_menu);
-        circularMenu.setEventListener(new MenuEventListener());
 
         ContactViewModel contactViewModel = ViewModelProviders.of(activity).get(ContactViewModel.class);
         Log.d(TAG, "ViewModel created: " + contactViewModel.toString());
@@ -72,6 +85,16 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater)
+    {
+        super.onCreateOptionsMenu(menu, menuInflater);
+
+        menuInflater.inflate(R.menu.circular_menu, menu);
+        this.menu = menu;
+        circularMenu.initialize(menu, this);
+    }
+
     private void onContactsListChanged(PagedList<Contact> contactList)
     {
         Log.d(TAG, "onContactsListChanged. No of contacts: " + contactList.size());
@@ -79,17 +102,37 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     }
 
     @Override
-    public void onContactCardClick(float yPosition, Contact contact)
+    public void onContactCardClick(int position, Contact contact)
     {
-        Log.d(TAG, contact.data.displayName);
-        circularMenu.setY(yPosition);
-        circularMenu.openMenu();
+        clickedItemPosition = position;
+
+        if(contactCardListView.checkVisible(position))
+            showCircularMenu();
+        else
+        {
+            initScroll = true;
+            contactCardListView.scrollToPosition(position);
+        }
     }
 
     @Override
     public void onScrollChange(View view, int i, int i1, int i2, int i3)
     {
-        circularMenu.closeMenu();
+        if(initScroll)
+        {
+            initScroll = false;
+            showCircularMenu();
+        }
+        else
+            circularMenu.closeMenu();
+    }
+
+    private void showCircularMenu()
+    {
+        View itemView = contactCardListView.getChildAt(clickedItemPosition);
+        float midCoordinate = itemView.getY() + itemView.getHeight() / 2;
+        circularMenu.setMidCoordinate(midCoordinate);
+        circularMenu.openMenu();
     }
 
     @Override
@@ -106,61 +149,41 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
         mContactCardListViewAdapter.onScrollStateChanged(newState);
     }
 
-    private class MenuEventListener implements CircularMenu.EventListener
+    // Simulate menu button click
+    @Override
+    public void onMenuButtonClick(int index)
     {
-        @Override
-        public void onMenuOpenAnimationStart(@NonNull CircularMenu view)
+        Log.d("D", "onMenuButtonClick| index: " + index);
+        onOptionsItemSelected(menu.findItem(index));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
         {
-            Log.d("D", "onMenuOpenAnimationStart");
+            case R.id.call_phone:
+                return true;
+
+            case R.id.send_sms:
+                return true;
+
+            case R.id.open_whatsapp:
+                return true;
+
+            case R.id.open_map:
+                return true;
+
+            case R.id.open_facebook:
+                return true;
+
+            case R.id.send_email:
+                return true;
+
+            case R.id.share_contact:
+                return true;
         }
 
-        @Override
-        public void onMenuOpenAnimationEnd(@NonNull CircularMenu view)
-        {
-            Log.d("D", "onMenuOpenAnimationEnd");
-        }
-
-        @Override
-        public void onMenuCloseAnimationStart(@NonNull CircularMenu view)
-        {
-            Log.d("D", "onMenuCloseAnimationStart");
-        }
-
-        @Override
-        public void onMenuCloseAnimationEnd(@NonNull CircularMenu view)
-        {
-            Log.d("D", "onMenuCloseAnimationEnd");
-        }
-
-        @Override
-        public void onButtonClickAnimationStart(@NonNull CircularMenu view, int index)
-        {
-            Log.d("D", "onButtonClickAnimationStart| index: " + index);
-        }
-
-        @Override
-        public void onButtonClickAnimationEnd(@NonNull CircularMenu view, int index)
-        {
-            Log.d("D", "onButtonClickAnimationEnd| index: " + index);
-        }
-
-        @Override
-        public boolean onButtonLongClick(@NonNull CircularMenu view, int index)
-        {
-            Log.d("D", "onButtonLongClick| index: " + index);
-            return true;
-        }
-
-        @Override
-        public void onButtonLongClickAnimationStart(@NonNull CircularMenu view, int index)
-        {
-            Log.d("D", "onButtonLongClickAnimationStart| index: " + index);
-        }
-
-        @Override
-        public void onButtonLongClickAnimationEnd(@NonNull CircularMenu view, int index)
-        {
-            Log.d("D", "onButtonLongClickAnimationEnd| index: " + index);
-        }
+        return super.onOptionsItemSelected(item);
     }
 }

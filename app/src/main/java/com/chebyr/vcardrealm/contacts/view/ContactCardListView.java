@@ -15,6 +15,7 @@ public class ContactCardListView extends RecyclerView
 {
     private static String TAG = ContactCardListView.class.getSimpleName();
     private Callback callback;
+    private LinearLayoutManager llm;
 
     public ContactCardListView(Context context)
     {
@@ -32,7 +33,7 @@ public class ContactCardListView extends RecyclerView
         this.callback = callback;
 
         setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(activity);
+        llm = new LinearLayoutManager(activity);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         setLayoutManager(llm);
         setItemAnimator(new DefaultItemAnimator());
@@ -47,6 +48,17 @@ public class ContactCardListView extends RecyclerView
 
             }
         });
+    }
+
+    public boolean checkVisible(int itemPosition)
+    {
+        int firstVisible = llm.findFirstCompletelyVisibleItemPosition();
+        int lastVisible = llm.findLastCompletelyVisibleItemPosition();
+
+        if((itemPosition >= firstVisible) && (itemPosition <= lastVisible))
+            return true;
+
+        return false;
     }
 
     interface Callback

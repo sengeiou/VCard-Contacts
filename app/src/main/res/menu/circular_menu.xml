@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/circular_menu_group">
+    <item
+        android:id="@+id/open_website"
+        android:title="open_website"
+        android:icon="@mipmap/ic_home_white_24dp"/>
+
+    <item
+        android:id="@+id/call_phone"
+        android:title="call_phone"
+        android:icon="@mipmap/ic_search_white_24dp"/>
+
+    <item
+        android:id="@+id/send_sms"
+        android:title="send_sms"
+        android:icon="@mipmap/ic_notifications_white_24dp"/>
+
+    <item
+        android:id="@+id/open_whatsapp"
+        android:title="open_whatsapp"
+        android:icon="@mipmap/ic_settings_white_24dp"/>
+
+    <item
+        android:id="@+id/open_map"
+        android:title="open_map"
+        android:icon="@mipmap/ic_place_white_24dp"/>
+
+    <item
+        android:id="@+id/open_facebook"
+        android:title="open_facebook"
+        android:icon="@mipmap/ic_star_24dp"/>
+
+    <item
+        android:id="@+id/send_email"
+        android:title="send_email"
+        android:icon="@mipmap/ic_star_24dp"/>
+
+    <item
+        android:id="@+id/share_contact"
+        android:title="share_contact"
+        android:icon="@mipmap/ic_star_24dp"/>
+    </group>
+</menu>
