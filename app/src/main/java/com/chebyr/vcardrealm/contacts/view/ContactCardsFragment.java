@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.data.Contact;
 import com.chebyr.vcardrealm.contacts.list.MultiSelectContactsListFragment;
+import com.chebyr.vcardrealm.contacts.util.IndentUtil;
 import com.chebyr.vcardrealm.contacts.view.widget.CircularMenu;
 import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 
@@ -38,6 +39,7 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     private boolean initScroll;
     private int clickedItemPosition;
     private Menu menu;
+    private Contact selectedContact;
 
     public ContactCardsFragment()
     {
@@ -105,6 +107,7 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     public void onContactCardClick(int position, Contact contact)
     {
         clickedItemPosition = position;
+        selectedContact = contact;
 
         if(contactCardListView.checkVisible(position))
             showCircularMenu();
@@ -160,30 +163,47 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId())
-        {
-            case R.id.call_phone:
-                return true;
+        try {
+            IndentUtil indentUtil = new IndentUtil(getContext());
+            String uriText;
 
-            case R.id.send_sms:
-                return true;
+            switch (item.getItemId()) {
+                case R.id.call_phone:
+                    uriText = "tel:" + selectedContact.details.phoneNumbers;
+                    indentUtil.launchApplication(IndentUtil.ANDROID_DIALER, uriText);
+                    return true;
 
-            case R.id.open_whatsapp:
-                return true;
+                case R.id.send_sms:
+                    uriText = "smsto:" + selectedContact.details.phoneNumbers;
+                    indentUtil.launchApplication(IndentUtil.ANDROID_SMS, uriText);
+                    return true;
 
-            case R.id.open_map:
-                return true;
+                case R.id.open_whatsapp:
+//                indentUtil.launchApplication(IndentUtil.WHATSAPP);
+                    return true;
 
-            case R.id.open_facebook:
-                return true;
+                case R.id.open_map:
+//                indentUtil.launchApplication(IndentUtil.GOOGLE_MAPS);
+                    return true;
 
-            case R.id.send_email:
-                return true;
+                case R.id.open_facebook:
+//                indentUtil.launchApplication(IndentUtil.FACEBOOK_APP);
+                    return true;
 
-            case R.id.share_contact:
-                return true;
+                case R.id.send_email:
+                    uriText = "mailto:" + selectedContact.details.eMails;
+                    indentUtil.launchApplication(IndentUtil.GMAIL, uriText);
+                    return true;
+
+                case R.id.share_contact:
+//                indentUtil.launchApplication(IndentUtil.);
+                    return true;
+            }
         }
-
+        catch (Exception e)
+        {
+            Log.d(TAG, e.getMessage());
+        }
         return super.onOptionsItemSelected(item);
     }
 }

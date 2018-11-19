@@ -9,23 +9,27 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.chebyr.vcardrealm.contacts.R;
+import com.chebyr.vcardrealm.contacts.util.IndentUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,10 +91,7 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
     public void initialize(Menu menu, @Nullable Callback callback)
     {
         this.callback = callback;
-//    }
-//
-//    private void initialize(@NonNull Context context, @NonNull List<Integer> icons)
-//    {
+
         mDurationRing = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mDurationOpen = getResources().getInteger(android.R.integer.config_mediumAnimTime);
         mDurationClose = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -115,15 +116,11 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
         mMenuButton.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         mMenuButton.setOnClickListener((View view) -> toggleMenu());
 
-        final int buttonsCount = menu.size();//icons.size();
-        Log.d(TAG, "Number of items: " + buttonsCount);
-
         final int colorAccent = getResources().getColor(R.color.colorAccent, null);
 
         MenuItem menuItem;
 
-
-        for (int i = 0; i < buttonsCount; i++)
+        for (int i = 0; i < menu.size(); i++)
         {
             menuItem = menu.getItem(i);
             if(menuItem.getGroupId() == R.id.circular_menu_group)
@@ -131,10 +128,23 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
                 Log.d(TAG, "Menu Title: " + menuItem.getTitle());
 
                 final FloatingActionButton button = new FloatingActionButton(context);
-                button.setId(menuItem.getItemId());
-                //button.setImageResource(icons.get(i));
-                button.setImageDrawable(menuItem.getIcon());
-                button.setBackgroundTintList(ColorStateList.valueOf(colorAccent));
+                int itemId = menuItem.getItemId();
+                button.setId(itemId);
+
+                Drawable icon = menuItem.getIcon();
+
+                icon = getApplicationIcon(itemId);
+
+                button.setImageDrawable(icon);
+
+                GradientDrawable gradientDrawable = new GradientDrawable();
+                gradientDrawable.setStroke(0, Color.WHITE);
+                gradientDrawable.setAlpha(50);
+                gradientDrawable.setShape(GradientDrawable.OVAL);
+                gradientDrawable.setColor(Color.WHITE);
+                //button.setScaleType(ImageView.ScaleType.FIT_XY);
+                button.setBackgroundTintList(null);
+                button.setBackground(gradientDrawable);
                 button.setClickable(true);
                 button.setOnClickListener(this);
                 button.setScaleX(0);
@@ -144,6 +154,49 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
                 addView(button);
                 mButtons.add(button);
             }
+        }
+    }
+
+    private Drawable getApplicationIcon(int itemId)
+    {
+        try
+        {
+            IndentUtil indentUtil = new IndentUtil(context);
+            Drawable icon = null;
+            switch (itemId)
+            {
+                case R.id.send_sms:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.ANDROID_SMS);
+                    break;
+
+                case R.id.send_email:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.GMAIL);
+                    break;
+
+                case R.id.open_website:
+                    break;
+
+                case R.id.open_facebook:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.FACEBOOK_APP);
+                    break;
+
+                case R.id.open_map:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.GOOGLE_MAPS);
+                    break;
+
+                case R.id.open_whatsapp:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.WHATSAPP);
+                    break;
+
+                case R.id.call_phone:
+                    icon = indentUtil.getApplicationIcon(IndentUtil.ANDROID_DIALER);
+            }
+            return icon;
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, e.getMessage());
+            return null;
         }
     }
 
@@ -184,7 +237,7 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
                 mClosedState = true;
 
                 if (callback != null)
-                    callback.onMenuButtonClick(view.getId());//mButtons.indexOf(view));
+                    callback.onMenuButtonClick(view.getId());
             }
         });
 
