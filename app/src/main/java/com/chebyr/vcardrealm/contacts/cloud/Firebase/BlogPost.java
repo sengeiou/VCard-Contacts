@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.networking.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.Firebase;
 
 /**
  * Created by Murloc Nightcrawler on 1/29/2016.
