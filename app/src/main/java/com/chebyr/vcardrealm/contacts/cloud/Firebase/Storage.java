@@ -1,18 +1,10 @@
-package com.chebyr.vcardrealm.contacts.networking.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.Firebase;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
@@ -21,51 +13,18 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 
-public class FirebaseClient
+public class Storage
 {
-    private static String TAG = FirebaseClient.class.getSimpleName();
-    private FirebaseDatabase databaseInstance;
-    DatabaseReference databaseReference;
+    private static String TAG = Storage.class.getSimpleName();
+
     private StorageReference storageReference;
     private StorageReference riversRef;
 
-    protected void FirebaseClient(Context context)
+    public Storage()
     {
-        databaseInstance = FirebaseDatabase.getInstance();
-        databaseReference = databaseInstance.getReference("message");
-
         storageReference = FirebaseStorage.getInstance().getReference();
         riversRef = storageReference.child("images/rivers.jpg");
-    }
 
-    public void readDatabase()
-    {
-        // Read from the databaseInstance
-        databaseReference.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error)
-            {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }
-
-    public void writeDatabase()
-    {
-        // Write a message to the databaseInstance
-
-        databaseReference.setValue("Hello, World!");
     }
 
     public void uploadFile()
@@ -91,8 +50,8 @@ public class FirebaseClient
 
         uploadTask.addOnFailureListener((@NonNull Exception exception) ->
         {
-                // Handle unsuccessful uploads
-                // ...
+            // Handle unsuccessful uploads
+            // ...
         });
     }
 
@@ -120,4 +79,5 @@ public class FirebaseClient
             Log.d(TAG, e.getMessage());
         }
     }
+
 }

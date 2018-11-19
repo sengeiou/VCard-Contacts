@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.networking.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.Firebase;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
