@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.cloud.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;

@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.cloud.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

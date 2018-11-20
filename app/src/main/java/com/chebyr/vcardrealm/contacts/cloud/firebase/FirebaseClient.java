@@ -1,6 +1,4 @@
-package com.chebyr.vcardrealm.contacts.cloud.Firebase;
-
-import android.content.Context;
+package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
 public class FirebaseClient
 {

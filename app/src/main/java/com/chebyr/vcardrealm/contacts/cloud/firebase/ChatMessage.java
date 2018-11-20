@@ -1,4 +1,4 @@
-package com.chebyr.vcardrealm.contacts.cloud.Firebase;
+package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
 public class ChatMessage {
     String message;
