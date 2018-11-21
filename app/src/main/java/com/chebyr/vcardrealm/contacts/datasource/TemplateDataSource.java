@@ -27,8 +27,8 @@ public class TemplateDataSource
 
     public TemplateData loadTemplate(long contactID)
     {
-        String htmlPath = folderPath + "business_card.html";
-        String cssPath = folderPath + "business_card.css";
+        String htmlPath = folderPath + "index.html";
+        String cssPath = folderPath + "style.css";
 
         TemplateData templateData = new TemplateData();
 

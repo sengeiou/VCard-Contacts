@@ -1,0 +1,126 @@
+﻿
+body {
+  background: none;
+  color: #222;
+  font-family: 'Trebuchet MS', 'Lucida Sans', Arial, sans-serif;
+}
+
+.vcard {
+  max-width: 460px;
+  margin: 10px auto;
+  border: 10px solid #f4f4f4;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 24px;
+  box-shadow: 0 0 1px #333;
+  overflow: hidden;
+  background: url(background.jpg) center top repeat-y;
+}
+
+p {
+  margin: 4px 0;
+  clear: both;
+  font-size: 14px;
+  line-height: 18px;
+  color: #333;
+}
+
+p.address {
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+p span {
+  color: #222;
+}
+
+p.nickname {
+  clear: both;
+  font-size: 14px;
+  line-height: 14px;
+  margin: 0;
+  text-align: center;
+  float: none;
+  color: #fff;
+  text-shadow: 0 0 1px #000;
+}
+
+.col-75 {
+  width: 70%;
+  float: left;
+}
+
+.col-25 {
+  width: 30%;
+  float: left;
+  text-align: center;
+}
+
+.container {
+  padding: 0 0 0 4px;
+}
+
+img.logo {
+  height: 60px;
+  width: auto;
+  float: left;
+  max-width: 100%;
+}
+
+h1.full-name {
+  clear: both;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  margin: 8px 0 2px 0;
+  color: #fff;
+  text-shadow: 0 0 1px #000;
+}
+
+h2.title {
+  clear: both;
+  font-size: 16px;
+  line-height: 20px;
+  margin: 4px 0 4px 0;
+  color: #fff;
+  text-shadow: 0 0 1px #000;
+}
+
+h3.organisation {
+  float: left;
+  clear: both;
+  font-size: 18px;
+  line-height: 24px;
+  margin: 10px 0 10px 0;
+}
+
+a.url,
+a.tel,
+a.email {
+  color: #de3131;
+  font-size: 14px;
+  line-height: 18px;
+  text-decoration: none;
+}
+
+img.photo {
+  width: auto;
+  height: 120px;
+  margin: 0 auto;
+  max-width: 100%;
+  display: block;
+}
+
+
+/* responsive */
+
+@media only screen and (max-width: 460px) { 
+
+img.photo {
+  height: auto;
+  max-height: 120px;
+}
+
+}

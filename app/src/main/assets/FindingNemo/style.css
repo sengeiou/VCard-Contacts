@@ -1,0 +1,124 @@
+@import "https://fonts.googleapis.com/css?family=Caudex";
+body {
+  
+background: #5e6367;
+}
+
+.vcard {
+background: url(background.jpeg);
+background-size: cover;
+background-position: 0% 50%;
+position: relative;
+height: 100%;
+width: 480px;
+margin: 20px auto;
+height: 274.28px;
+color: white;
+padding: 20px/ 15px 5px 15px;
+font-family: "Caudex", serif;
+font-weight: 700;
+overflow: hidden;
+}
+.vcard img.background {
+position: absolute;
+z-index: -999;
+filter: blur(3px);
+width: 100%;
+}
+
+.logo {
+filter: invert(100%);
+width: 40%;
+right: -6px;
+top: 25px;
+position: absolute;
+}
+
+.images {
+overflow: auto;
+width: 25%;
+position: absolute;
+text-align: center;
+right: 0px;
+}
+.images .photo {
+width: 100%;
+border-radius: 100%;
+}
+
+div {
+margin: 5px;
+}
+
+.wrapper {
+margin: 5px 0px;
+font-size: 1.2em;
+position: absolute;
+left: 0px;
+width: 50%;
+}
+.wrapper p {
+margin: 7px;
+}
+
+.info p {
+font-size: .8em;
+}
+
+.line_after:after {
+content: '';
+background: #fff;
+height: 1px;
+width: 60px;
+display: block;
+margin: 10px 0px;
+}
+
+a {
+color: #ccc;
+text-decoration: none;
+}
+
+.contact {
+position: absolute;
+bottom: 0px;
+right: 0px;
+background: rgba(68, 68, 68, 0.48);
+text-align: center;
+width: 100%;
+margin: 0px auto;
+}
+.contact p {
+margin: 5px 0px;
+}
+.contact ul {
+padding: 0px;
+margin: 10px 0px;
+}
+.contact ul li {
+width: 30%;
+margin: 0.2%;
+display: inline;
+}
+
+.nickname {
+font-size: .8em;
+opacity: .8;
+font-style: italic;
+}
+
+@media only screen and (max-width: 800px) and (orientation: landscape) {
+.vcard {
+width: 100%;
+height: 100vh;
+margin: 0px;
+}
+
+.wrapper, .fn {
+font-size: 1.4em;
+}
+
+.wrapper {
+margin: 65px 0px;
+}
+}

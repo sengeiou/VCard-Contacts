@@ -10,10 +10,10 @@ public class MessagingService extends FirebaseMessagingService
     private static String TAG = MessagingService.class.getSimpleName();
 
     @Override
-    public void onNewToken(String s)
+    public void onNewToken(String token)
     {
-        super.onNewToken(s);
-        Log.d(TAG, "New token: " + s);
+        super.onNewToken(token);
+        Log.d(TAG, "New token: " + token);
     }
 
     @Override

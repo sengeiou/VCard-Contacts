@@ -19,12 +19,13 @@ public class Storage
 
     private StorageReference storageReference;
     private StorageReference riversRef;
+    private Callback callback;
 
-    public Storage()
+    public Storage(Callback callback)
     {
         storageReference = FirebaseStorage.getInstance().getReference();
         riversRef = storageReference.child("images/rivers.jpg");
-
+        this.callback = callback;
     }
 
     public void uploadFile()
@@ -41,6 +42,7 @@ public class Storage
                 StorageMetadata storageMetadata = taskSnapshot.getMetadata();
                 StorageReference storageReference = storageMetadata.getReference();
                 Task<Uri> downloadUrl = storageReference.getDownloadUrl();
+                callback.fileUploadSuccess(downloadUrl.getResult());
             }
             catch (Exception e)
             {
@@ -51,7 +53,7 @@ public class Storage
         uploadTask.addOnFailureListener((@NonNull Exception exception) ->
         {
             // Handle unsuccessful uploads
-            // ...
+            callback.fileUploadFail(exception.getMessage());
         });
     }
 
@@ -65,7 +67,7 @@ public class Storage
             fileDownloadTask.addOnSuccessListener((FileDownloadTask.TaskSnapshot taskSnapshot) ->
             {
                 // Successfully downloaded data to local file
-                // ...
+
             });
 
             fileDownloadTask.addOnFailureListener((@NonNull Exception exception) ->
@@ -80,4 +82,9 @@ public class Storage
         }
     }
 
+    public interface Callback
+    {
+        void fileUploadSuccess(Uri uri);
+        void fileUploadFail(String errorMessage);
+    }
 }
