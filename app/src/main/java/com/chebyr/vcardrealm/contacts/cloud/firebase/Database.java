@@ -1,5 +1,6 @@
 package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -9,10 +10,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class Database
 {
     private static String TAG = Database.class.getSimpleName();
-
+    private static String TEMPLATES = "Templates";
     private FirebaseDatabase databaseInstance;
     private DatabaseReference databaseReference;
 
@@ -55,4 +60,26 @@ public class Database
         databaseReference.setValue("Hello, World!");
     }
 
+
+    protected void doInBackground(String trialId) {
+//        boolean isFinished;
+
+        databaseReference.child(TEMPLATES).child(trialId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Uri> uriList = new ArrayList<>();
+                Iterator<DataSnapshot> iterator = dataSnapshot.getChildren().iterator();
+                while (iterator.hasNext()) {
+                    Uri uri = iterator.next().getValue(Uri.class);
+                    uriList.add(uri);
+                }
+//                isFinished = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

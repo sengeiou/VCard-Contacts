@@ -440,7 +440,8 @@ public class TemplateParser
             else
                 {
                 //photoView.setVisibility(INVISIBLE);
-                photoView.attr("visibility", "hidden");
+                if(photoView != null)
+                    photoView.attr("visibility", "hidden");
             }
             setContactField(incomingNumberView, contact.incomingNumber);
             setContactField(displayNameView, contact.data.displayName);

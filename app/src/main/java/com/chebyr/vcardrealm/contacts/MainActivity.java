@@ -1,64 +1,34 @@
 package com.chebyr.vcardrealm.contacts;
 
-import android.content.ActivityNotFoundException;
-import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.UserManager;
-import android.preference.PreferenceActivity;
 import android.provider.ContactsContract;
-import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.widget.Toast;
 
 import com.android.contacts.common.ContactsUtils;
 import com.android.contacts.common.activity.RequestPermissionsActivity;
-import com.android.contacts.common.dialog.ClearFrequentsDialog;
-import com.android.contacts.common.interactions.ImportExportDialogFragment;
-import com.android.contacts.common.list.ContactEntryListFragment;
-import com.android.contacts.common.list.ContactListFilter;
 import com.android.contacts.common.list.ContactListFilterController;
-import com.android.contacts.common.list.DirectoryListLoader;
-import com.android.contacts.common.preference.DisplayOptionsPreferenceFragment;
-import com.android.contacts.common.util.AccountFilterUtil;
 import com.android.contacts.common.util.Constants;
-import com.android.contacts.common.util.ImplicitIntentsUtil;
-import com.chebyr.vcardrealm.contacts.editor.EditorIntents;
-import com.chebyr.vcardrealm.contacts.interactions.ContactDeletionInteraction;
-import com.chebyr.vcardrealm.contacts.interactions.ContactMultiDeletionInteraction;
-import com.chebyr.vcardrealm.contacts.interactions.JoinContactsDialogFragment;
 import com.chebyr.vcardrealm.contacts.list.ContactsRequest;
 import com.chebyr.vcardrealm.contacts.list.ContactsUnavailableFragment;
-import com.chebyr.vcardrealm.contacts.list.MultiSelectContactsListFragment;
-import com.chebyr.vcardrealm.contacts.list.OnContactBrowserActionListener;
-import com.chebyr.vcardrealm.contacts.list.OnContactsUnavailableActionListener;
 import com.chebyr.vcardrealm.contacts.list.ProviderStatusWatcher;
-import com.chebyr.vcardrealm.contacts.preference.ContactsPreferenceActivity;
-import com.chebyr.vcardrealm.contacts.quickcontact.QuickContactActivity;
-import com.chebyr.vcardrealm.contacts.util.AccountPromptUtils;
-import com.chebyr.vcardrealm.contacts.util.ContactsBindHelpUtils;
 import com.chebyr.vcardrealm.contacts.util.DialogManager;
-import com.chebyr.vcardrealm.contacts.view.ActionBarAdapter;
+import com.chebyr.vcardrealm.contacts.util.FileManager;
+import com.chebyr.vcardrealm.contacts.util.PermissionManager;
+import com.chebyr.vcardrealm.contacts.util.PersistenceManager;
 import com.chebyr.vcardrealm.contacts.view.ContactCardsFragment;
 import com.chebyr.vcardrealm.contacts.view.ContactSearchView;
 
-import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -89,13 +59,19 @@ public class MainActivity extends AppCompatActivity implements
      */
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    private static String VCARD_REALM = "VCardRealm";
     private static final String ENABLE_DEBUG_OPTIONS_HIDDEN_CODE = "debug debug!";
+
+    private boolean appInitialized;
+    private int appInitializedVersion;
 
     // These values needs to start at 2. See {@link ContactEntryListFragment}.
     private static final int SUBACTIVITY_ACCOUNT_FILTER = 2;
 
     private final DialogManager mDialogManager = new DialogManager(this);
+    private PersistenceManager persistenceManager;
+    private FileManager fileManager;
+    private PermissionManager permissionManager;
 
     private ContactsIntentResolver mIntentResolver;
     private ContactsRequest mRequest;
@@ -206,6 +182,26 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
+        persistenceManager = new PersistenceManager(this);
+        fileManager = new FileManager(this);
+        permissionManager = new PermissionManager(this);
+
+        appInitializedVersion = persistenceManager.getAppInitializedVersion();
+
+//        if(appInitializedVersion == BuildConfig.VERSION_CODE)
+//        {
+//            appInitialized = true;
+//            Log.d(TAG, "App already initialized");
+//        }
+//        else
+//        {
+//            appInitialized = false;
+//            appInitializedVersion = BuildConfig.VERSION_CODE;
+            if(permissionManager.getStorageWritePermission())
+                fileManager.copyAssets(this, VCARD_REALM);
+//        }
+
+
         //if (!processIntent(false)) {
           //  finish();
             //return;
@@ -229,6 +225,17 @@ public class MainActivity extends AppCompatActivity implements
 
 //        if (BuildConfig.DEBUG)
 //            StrictModeDebugUtils.enableStrictMode();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        int permissionResult = permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(permissionResult == PermissionManager.PERMISSION_WRITE_EXTERNAL_STORAGE)
+            fileManager.copyAssets(this, VCARD_REALM);
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**

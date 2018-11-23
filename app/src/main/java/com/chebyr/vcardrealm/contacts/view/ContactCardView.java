@@ -15,12 +15,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.util.FileUtil;
+import com.chebyr.vcardrealm.contacts.util.FileManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import static com.chebyr.vcardrealm.contacts.util.FileUtil.assetsPath;
+import static com.chebyr.vcardrealm.contacts.util.FileManager.assetsPath;
 
 public class ContactCardView extends WebView implements WebView.OnClickListener
 {
@@ -130,15 +130,15 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
     static class WebViewResourceProvider extends WebViewClient
     {
         private static String TAG = WebViewResourceProvider.class.getSimpleName();
-        private static String PHOTO_URL = "photo.jpg";
-        private static String PHOTO_PATH = "Woody/photo.jpg";
+        private static String PHOTO_URL = "photo.png";
+        private static String PHOTO_PATH = "Woody/photo.png";
 
         private Contact contact;
-        private FileUtil fileUtil;
+        private FileManager fileManager;
 
         public WebViewResourceProvider(Context context)
         {
-            fileUtil = new FileUtil(context);
+            fileManager = new FileManager(context);
         }
 
         public void setContact(Contact contact)
@@ -179,7 +179,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
             if(contact.data.photoUri != null)
             {
-                InputStream bitmapStream = fileUtil.getBitmapContentStream(contact.data.photoUri);
+                InputStream bitmapStream = fileManager.getBitmapContentStream(contact.data.photoUri);
                 Log.d(TAG, "bitmapStream: " + bitmapStream);
                 WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
                 Log.d(TAG, "webResourceResponse: " + webResourceResponse);
@@ -187,7 +187,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
             }
             else if(contact.data.photoThumbnailUri != null)
             {
-                InputStream bitmapStream = fileUtil.getBitmapContentStream(contact.data.photoThumbnailUri);
+                InputStream bitmapStream = fileManager.getBitmapContentStream(contact.data.photoThumbnailUri);
                 Log.d(TAG, "bitmapStream: " + bitmapStream);
                 WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
                 Log.d(TAG, "webResourceResponse: " + webResourceResponse);
@@ -195,7 +195,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
             }
             else
             {
-                InputStream bitmapStream = fileUtil.getBitmapAssetStream(PHOTO_PATH);
+                InputStream bitmapStream = fileManager.getBitmapAssetStream(PHOTO_PATH);
                 Log.d(TAG, "bitmapStream: " + bitmapStream);
                 WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
                 Log.d(TAG, "webResourceResponse: " + webResourceResponse);

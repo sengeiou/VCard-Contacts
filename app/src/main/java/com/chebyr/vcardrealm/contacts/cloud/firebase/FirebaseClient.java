@@ -1,6 +1,8 @@
 package com.chebyr.vcardrealm.contacts.cloud.firebase;
 
-public class FirebaseClient
+import android.net.Uri;
+
+public class FirebaseClient implements Storage.Callback
 {
     private static String TAG = FirebaseClient.class.getSimpleName();
 
@@ -11,9 +13,17 @@ public class FirebaseClient
     protected FirebaseClient()
     {
         authenticator = new Authenticator();
-        storage = new Storage();
+        storage = new Storage(this);
         database = new Database();
     }
 
+    @Override
+    public void onFileUploadSuccess(Uri uri) {
 
+    }
+
+    @Override
+    public void onFileUploadFail(String errorMessage) {
+
+    }
 }

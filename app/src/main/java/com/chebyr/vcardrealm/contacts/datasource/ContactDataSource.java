@@ -15,7 +15,7 @@ import com.chebyr.vcardrealm.contacts.datasource.queries.ContactQuery;
 import com.chebyr.vcardrealm.contacts.repository.ContactRepository;
 import com.chebyr.vcardrealm.contacts.repository.ContactsSectionIndexer;
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.util.FileUtil;
+import com.chebyr.vcardrealm.contacts.util.FileManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
     private TemplateDataSource templateDataSource;
     private TemplateParser templateParser;
     private String filterState;
-    private FileUtil fileUtil;
+    private FileManager fileManager;
 
     private boolean mDataValid;
 
@@ -59,7 +59,7 @@ public class ContactDataSource extends PositionalDataSource<Contact>
             startContactLoader("");
         }
         contactsSectionIndexer = new ContactsSectionIndexer(context, ContactQuery.SORT_KEY);
-        fileUtil = new FileUtil(context);
+        fileManager = new FileManager(context);
     }
 
     @Override

@@ -75,7 +75,8 @@ public abstract class ContactsActivity extends TransactionSafeActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         ContactSaveService.registerListener(this);
         super.onCreate(savedInstanceState);
     }
