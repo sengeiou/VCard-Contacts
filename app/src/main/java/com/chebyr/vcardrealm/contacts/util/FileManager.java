@@ -2,18 +2,22 @@ package com.chebyr.vcardrealm.contacts.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,25 +27,24 @@ import java.net.URL;
 public class FileManager
 {
     private static final String TAG = FileManager.class.getSimpleName();
+    public static String vcardDirectoryPath = null;
 
-    private AssetManager assetManager;
-    private ContentResolver contentResolver;
+    public AssetManager assetManager;
 
     public static String assetsPath = "file:///android_asset/";
 
     public FileManager(Context context)
     {
         assetManager = context.getAssets();
-        contentResolver = context.getContentResolver();
     }
 
-    public void copyAssets(Context context, String directoryName)
+    public void initVCardDirectory(Context context, String directoryName)
     {
         Log.d(TAG, "Create Directory in external storage and copy Assets");
 
-        ASyncFileCopier ASyncFileCopier = new ASyncFileCopier();
-        ASyncFileCopier.initialize(directoryName);
-        ASyncFileCopier.execute(context);
+        AsyncFileCopier AsyncFileCopier = new AsyncFileCopier();
+        AsyncFileCopier.setDirectory(directoryName);
+        AsyncFileCopier.execute(context);
     }
 
     public InputStream getBitmapStream(Bitmap photo)
@@ -56,12 +59,10 @@ public class FileManager
 
     public byte[] readTextAsset(String assetName)
     {
-        try
+        try(InputStream inputStream = assetManager.open(assetName))
         {
-            InputStream inputStream = assetManager.open(assetName);
             byte[] buffer = new byte[inputStream.available()];
             inputStream.read(buffer);
-            inputStream.close();
 
             return buffer;
         }
@@ -72,60 +73,25 @@ public class FileManager
         }
     }
 
-    public InputStream getBitmapAssetStream(String assetName)
+    public String readTextFile(String fileName)
     {
+        StringBuilder text = new StringBuilder();
         try
         {
-            InputStream inputStream = assetManager.open(assetName);
-            return inputStream;
-        }
-        catch (Exception exception)
-        {
-            Log.d(TAG, exception.toString());
-            return null;
-        }
-    }
-
-    public InputStream getBitmapContentStream(Uri uri)
-    {
-        try
-        {
-            InputStream inputStream = contentResolver.openInputStream(uri);
-            return inputStream;
-        }
-        catch (Exception exception)
-        {
-            Log.d(TAG, exception.toString());
-            return null;
-        }
-    }
-
-    public void readFile(String fileName)
-    {
-        InputStream mInputStream = null;
-        try
-        {
-            mInputStream = new FileInputStream(fileName);
-            //... do stuff to your streams
-        }
-        catch(FileNotFoundException fnex)
-        {
-            //Handle the error... but the streams are still open!
-        }
-        finally
-        {
-            //close input
-            if (mInputStream != null)
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line;
+            while ((line = br.readLine()) != null)
             {
-                try
-                {
-                    mInputStream.close();
-                }
-                catch(IOException ioex)
-                {
-                    //Very bad things just happened... handle it
-                }
+                text.append(line);
+                text.append('\n');
             }
+            br.close();
+            return text.toString();
+        }
+        catch(Exception e)
+        {
+            Log.d(TAG, e.getMessage());
+            return null;
         }
     }
 
@@ -198,7 +164,7 @@ public class FileManager
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
             outputStreamWriter.write(text);
             outputStreamWriter.close();
-            ASyncFileCopier.scanFile(context, fullFileName);
+            AsyncFileCopier.scanFile(context, fullFileName);
             return fullFileName;
         }
         catch (Exception e)
@@ -215,7 +181,7 @@ public class FileManager
             File file = new File(fullFileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-            ASyncFileCopier.scanFile(context, fullFileName);
+            AsyncFileCopier.scanFile(context, fullFileName);
             return fullFileName;
         }
         catch (Exception exception)
@@ -261,4 +227,134 @@ public class FileManager
     }
 
 
+    static class AsyncFileCopier extends AsyncTask<Context, String, Boolean>
+    {
+        private String directoryName;
+        private AssetManager assetManager;
+
+        public void setDirectory(String directoryName)
+        {
+            this.directoryName = directoryName;
+        }
+
+        @Override
+        protected Boolean doInBackground(Context... contexts)
+        {
+            Context context = contexts[0];
+            assetManager = context.getAssets();
+
+            // Get the directory for the user's public pictures directory.
+            File externalStorage = Environment.getExternalStorageDirectory();
+            String rootPath = externalStorage.getAbsolutePath();
+            Log.d(TAG, "externalStorage: " + rootPath);
+
+            File vcardDirectory = createDirectory(rootPath, directoryName);
+            if(vcardDirectory == null)
+                return false;
+
+            vcardDirectoryPath = vcardDirectory.getAbsolutePath();
+            copyAssets(context, "", vcardDirectoryPath);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean)
+        {
+            Log.d(TAG, "Assets copied");
+            super.onPostExecute(aBoolean);
+        }
+
+        private void copyAssets(Context context, String sourcePath, String destinationPath)
+        {
+            try
+            {
+                String[] assetNames = assetManager.list(sourcePath);
+
+                for (String assetName : assetNames)
+                {
+                    if(assetName.contains("index") || assetName.contains("photo") || assetName.contains("logo")
+                            || assetName.contains("background") || assetName.contains("style"))
+                    {
+                        String fullFileName = copyFile(sourcePath, assetName, destinationPath);
+                        Log.d(TAG, "File copied:" + fullFileName);
+                        scanFile(context, fullFileName);
+                    }
+                    else if(!assetName.contains("."))
+                    {
+                        Log.d(TAG, "Create directory: " + assetName);
+                        File directory = createDirectory(destinationPath, assetName);
+                        if(directory != null)
+                        {
+                            String subDirectory = destinationPath + "/" + assetName;
+                            copyAssets(context, assetName, subDirectory);
+                        }
+                    }
+                }
+                Log.d(TAG, "Scan Directory:" + destinationPath);
+                scanFile(context, destinationPath);
+            }
+            catch (Exception e)
+            {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        private String copyFile(String sourcePath, String assetName, String destDirectory)
+        {
+            String assetPath = sourcePath + "/" + assetName;
+            Log.d(TAG, "Copy file: " + assetPath + " to " + destDirectory);
+            File outFile = new File(destDirectory, assetName);
+
+            try(InputStream inputStream = assetManager.open(assetPath))
+            {
+                try(OutputStream outputStream = new FileOutputStream(outFile))
+                {
+                    byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = inputStream.read(buffer)) != -1)
+                        outputStream.write(buffer, 0, read);
+                }
+                catch (FileNotFoundException e)
+                {
+                    Log.d(TAG, e.getMessage());
+                    return null;
+                }
+            }
+            catch (IOException e)
+            {
+                Log.d(TAG, e.getMessage());
+                return null;
+            }
+
+            return outFile.getAbsolutePath();
+        }
+
+        private File createDirectory(String parent, String directoryName)
+        {
+            File file = new File(parent, directoryName);
+
+            if(file.isDirectory())
+            {
+                Log.d(TAG, "Directory already exists");
+                return file;
+            }
+
+            if (!file.mkdirs())
+            {
+                Log.d(TAG, "Directory not created");
+                return null;
+            }
+
+            Log.d(TAG, "Directory '" + file + "' created");
+            return file;
+        }
+
+        public static void scanFile(Context context, String fileName)
+        {
+            Intent mediaScannerIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri fileContentUri = Uri.parse(fileName); // With 'permFile' being the File object
+            mediaScannerIntent.setData(fileContentUri);
+            context.sendBroadcast(mediaScannerIntent); // With 'this' being the context, e.g. the activity
+        }
+    }
 }

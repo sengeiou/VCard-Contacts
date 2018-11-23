@@ -1,7 +1,6 @@
 package com.chebyr.vcardrealm.contacts;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
     /**
      * Initialize fragments that are (or may not be) in the layout.
      *
-     * For the fragments that are in the layout, we initialize them in
+     * For the fragments that are in the layout, we setDirectory them in
      * {@link #createViewsAndFragments(Bundle)} after inflating the layout.
      *
      * However, the {@link ContactsUnavailableFragment} is a special fragment which may not
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements
 //            appInitialized = false;
 //            appInitializedVersion = BuildConfig.VERSION_CODE;
             if(permissionManager.getStorageWritePermission())
-                fileManager.copyAssets(this, VCARD_REALM);
+                fileManager.initVCardDirectory(this, VCARD_REALM);
 //        }
 
 
@@ -233,13 +232,13 @@ public class MainActivity extends AppCompatActivity implements
         int permissionResult = permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(permissionResult == PermissionManager.PERMISSION_WRITE_EXTERNAL_STORAGE)
-            fileManager.copyAssets(this, VCARD_REALM);
+            fileManager.initVCardDirectory(this, VCARD_REALM);
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
-     * Resolve the intent and initialize {@link #mRequest}, and launch another activity if redirect
+     * Resolve the intent and setDirectory {@link #mRequest}, and launch another activity if redirect
      * is needed.
      *
      * @param /forNewIntent set true if it's called from {@link #onNewIntent(Intent)}.
@@ -292,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements
         //contactCardsFragment.setCheckBoxListListener(new MainActivity.CheckBoxListListener());
 
         //mActionBarAdapter = new ActionBarAdapter(this, this, getSupportActionBar(), toolbar);
-        //mActionBarAdapter.initialize(savedState, mRequest);
+        //mActionBarAdapter.setDirectory(savedState, mRequest);
 
         // Add shadow under toolbar
         //ViewUtil.addRectangularOutlineProvider(findViewById(R.id.toolbar_parent), getResources());
@@ -320,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements
 //            finish();
 //            return;
 //        }
-//        //mActionBarAdapter.initialize(null, mRequest);
+//        //mActionBarAdapter.setDirectory(null, mRequest);
 //
 //        mContactListFilterController.checkFilterValidity(false);
 //

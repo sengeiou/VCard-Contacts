@@ -29,7 +29,7 @@ public class ContactCardListView extends RecyclerView
 
     public void initialize(Activity activity, Callback callback)
     {
-        Log.d(TAG, "initialize");
+        Log.d(TAG, "setDirectory");
         this.callback = callback;
 
         setHasFixedSize(true);

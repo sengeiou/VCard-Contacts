@@ -1,5 +1,6 @@
 package com.chebyr.vcardrealm.contacts.view;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -15,12 +16,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.util.FileManager;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
-
-import static com.chebyr.vcardrealm.contacts.util.FileManager.assetsPath;
 
 public class ContactCardView extends WebView implements WebView.OnClickListener
 {
@@ -45,7 +44,6 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
     public void initialize()
     {
-        //webView = getRootView().findViewById(R.id.web_view);
         setOnClickListener(this);
 
         WebSettings webSettings = getSettings();
@@ -72,8 +70,8 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
         //Log.d(TAG, contact.vcardHtml);
         webViewResourceProvider.setContact(contact);
-        String baseUrl = assetsPath + contact.template.folderPath;
-        loadDataWithBaseURL(baseUrl,contact.vcardHtml, "text/html", null, null);
+        Log.d(TAG, contact.template.folderUrl);
+        loadDataWithBaseURL(contact.template.folderUrl,contact.vcardHtml, "text/html", null, null);
     }
 
     public Contact getContact()
@@ -131,14 +129,13 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
     {
         private static String TAG = WebViewResourceProvider.class.getSimpleName();
         private static String PHOTO_URL = "photo.png";
-        private static String PHOTO_PATH = "Woody/photo.png";
 
         private Contact contact;
-        private FileManager fileManager;
+        public ContentResolver contentResolver;
 
         public WebViewResourceProvider(Context context)
         {
-            fileManager = new FileManager(context);
+            contentResolver = context.getContentResolver();
         }
 
         public void setContact(Contact contact)
@@ -179,29 +176,51 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
             if(contact.data.photoUri != null)
             {
-                InputStream bitmapStream = fileManager.getBitmapContentStream(contact.data.photoUri);
-                Log.d(TAG, "bitmapStream: " + bitmapStream);
-                WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
-                Log.d(TAG, "webResourceResponse: " + webResourceResponse);
-                return webResourceResponse;
+                try(InputStream bitmapStream = contentResolver.openInputStream(contact.data.photoUri))
+                {
+                    return createWebResponse(bitmapStream);
+                }
+                catch (Exception exception)
+                {
+                    Log.d(TAG, exception.toString());
+                    return null;
+                }
             }
             else if(contact.data.photoThumbnailUri != null)
             {
-                InputStream bitmapStream = fileManager.getBitmapContentStream(contact.data.photoThumbnailUri);
-                Log.d(TAG, "bitmapStream: " + bitmapStream);
-                WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
-                Log.d(TAG, "webResourceResponse: " + webResourceResponse);
-                return webResourceResponse;
+                try(InputStream bitmapStream = contentResolver.openInputStream(contact.data.photoThumbnailUri))
+                {
+                    return createWebResponse(bitmapStream);
+                }
+                catch (Exception exception)
+                {
+                    Log.d(TAG, exception.toString());
+                    return null;
+                }
             }
             else
             {
-                InputStream bitmapStream = fileManager.getBitmapAssetStream(PHOTO_PATH);
-                Log.d(TAG, "bitmapStream: " + bitmapStream);
-                WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
-                Log.d(TAG, "webResourceResponse: " + webResourceResponse);
-                return webResourceResponse;
+                try(InputStream bitmapStream = new FileInputStream(contact.template.photoPath))
+                {
+                    return createWebResponse(bitmapStream);
+                }
+                catch (Exception exception)
+                {
+                    Log.d(TAG, exception.toString());
+                    return null;
+                }
+
             }
         }
+
+        private WebResourceResponse createWebResponse(InputStream bitmapStream)
+        {
+            Log.d(TAG, "bitmapStream: " + bitmapStream);
+            WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
+            Log.d(TAG, "webResourceResponse: " + webResourceResponse);
+            return webResourceResponse;
+        }
+
 
         // Inject CSS method: read style.css from assets folder
         // Append stylesheet to document head

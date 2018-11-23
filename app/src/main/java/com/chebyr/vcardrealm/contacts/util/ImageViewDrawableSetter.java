@@ -68,7 +68,7 @@ public class ImageViewDrawableSetter
     }
 
     /**
-     * Re-initialize to use new target. As a result, the next time a new image
+     * Re-setDirectory to use new target. As a result, the next time a new image
      * is set, it will immediately be applied to the target (there will be no
      * fade transition).
      */

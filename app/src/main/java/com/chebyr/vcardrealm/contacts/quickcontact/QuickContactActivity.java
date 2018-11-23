@@ -2210,7 +2210,7 @@ public class QuickContactActivity extends ContactsActivity
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Trace.beginSection("initialize recents card");
+                Trace.beginSection("setDirectory recents card");
 
                 if (allInteractions.size() > 0) {
                     mRecentCard.initialize(interactionsWrapper,

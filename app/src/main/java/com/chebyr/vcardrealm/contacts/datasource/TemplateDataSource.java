@@ -1,42 +1,49 @@
 package com.chebyr.vcardrealm.contacts.datasource;
 
-import android.content.ContentResolver;
 import android.content.Context;
+import android.util.SparseArray;
 
 import com.chebyr.vcardrealm.contacts.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.util.FileManager;
-
-import java.util.HashMap;
 
 public class TemplateDataSource
 {
     private static String TAG = TemplateDataSource.class.getSimpleName();
 
-    private static String folderPath = "GhostRider/";
-
-    private ContentResolver contentResolver;
     private FileManager fileManager;
 
-    private HashMap<Long, String> templateMap;
+    private SparseArray<String> templateArray;
 
     public TemplateDataSource(Context context)
     {
-        contentResolver = context.getContentResolver();
         fileManager = new FileManager(context);
+        templateArray = new SparseArray<>();
+        templateArray.append(0, "/Avatar/");
+        templateArray.append(1, "/BookStore/");
+        templateArray.append(2, "/Envelope/");
+        templateArray.append(3, "/Feyenoord/");
+        templateArray.append(4, "/FindingNemo/");
+        templateArray.append(5, "/GhostRider/");
+        templateArray.append(6, "/ModernBlue/");
+        templateArray.append(7, "/Origami/");
+        templateArray.append(8, "/RosesAndHearts/");
+        templateArray.append(9, "/Terminator/");
+        templateArray.append(10, "/Woody/");
     }
 
     public TemplateData loadTemplate(long contactID)
     {
-        String htmlPath = folderPath + "index.html";
-        String cssPath = folderPath + "style.css";
+        int templateID = (int)contactID % 11;
 
         TemplateData templateData = new TemplateData();
 
-        templateData.html = new String(fileManager.readTextAsset(htmlPath));
-        templateData.css = new String(fileManager.readTextAsset(cssPath));
+        String folderPath = FileManager.vcardDirectoryPath + templateArray.get(templateID);
+
+        templateData.folderUrl = "file://" + folderPath;
+        templateData.html = fileManager.readTextFile(folderPath + "index.html");
         templateData.logoPhotoPath = folderPath + "logo.png";
         templateData.backgroundPhotoPath = folderPath + "background.png";
-        templateData.folderPath = folderPath;
+        templateData.photoPath = folderPath + "photo.png";
 
         return templateData;
     }
