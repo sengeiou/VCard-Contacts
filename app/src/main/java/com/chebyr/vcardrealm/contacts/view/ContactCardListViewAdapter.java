@@ -1,6 +1,5 @@
 package com.chebyr.vcardrealm.contacts.view;
 
-import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -9,7 +8,6 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -47,7 +45,7 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
                     return oldContact.equals(newContact);
                 }
             };
-    
+
     public void setCallback(OnItemClickCallBack callBack)
     {
         this.callBack        = callBack;
@@ -71,14 +69,6 @@ public class ContactCardListViewAdapter extends PagedListAdapter<Contact, Contac
         Contact contact = getItem(position);
         if(contact != null)
             viewHolder.setContact(contact);
-    }
-
-    public void onScrollStateChanged(int newState)
-    {
-//        if (newState != RecyclerView.SCROLL_STATE_IDLE)
-//            contactImageLoader.setPauseWork(true);
-//        else
-//            contactImageLoader.setPauseWork(false);
     }
 
     public interface OnItemClickCallBack

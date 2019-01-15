@@ -10,10 +10,7 @@ import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.datasource.ContactsObserver;
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.repository.ContactRepository;
-
-import java.util.HashMap;
 
 public class ContactViewModel extends AndroidViewModel implements ContactsObserver.Callback
 {

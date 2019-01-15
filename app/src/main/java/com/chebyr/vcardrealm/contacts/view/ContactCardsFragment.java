@@ -7,6 +7,7 @@ import android.arch.paging.PagedList;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +29,6 @@ import com.chebyr.vcardrealm.contacts.viewmodel.ContactViewModel;
 public class ContactCardsFragment extends MultiSelectContactsListFragment
         implements ContactCardListViewAdapter.OnItemClickCallBack,
         ContactCardListView.Callback,
-        View.OnScrollChangeListener,
         CircularMenu.Callback
 {
     private static String TAG = ContactCardsFragment.class.getSimpleName();
@@ -72,7 +72,6 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
         contactCardListView = rootView.findViewById(R.id.contact_card_list_view);
         contactCardListView.setAdapter(mContactCardListViewAdapter);
         contactCardListView.initialize(activity, this);
-        contactCardListView.setOnScrollChangeListener(this);
 
         circularMenu = rootView.findViewById(R.id.circular_menu);
 
@@ -110,30 +109,31 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
         selectedContact = contact;
 
         if(contactCardListView.checkVisible(position))
+        {
+            Log.d(TAG, "View fully visible. showCircularMenu");
             showCircularMenu();
+        }
         else
         {
+            Log.d(TAG, "View not fully visible. scrollToPosition");
             initScroll = true;
+            circularMenu.closeMenu();
             contactCardListView.scrollToPosition(position);
         }
     }
 
-    @Override
-    public void onScrollChange(View view, int i, int i1, int i2, int i3)
-    {
-        if(initScroll)
-        {
-            initScroll = false;
-            showCircularMenu();
-        }
-        else
-            circularMenu.closeMenu();
-    }
-
     private void showCircularMenu()
     {
-        View itemView = contactCardListView.getChildAt(clickedItemPosition);
-        float midCoordinate = itemView.getY() + itemView.getHeight() / 2;
+        View itemView = contactCardListView.getChildView(clickedItemPosition);
+        if(itemView == null)
+        {
+            Log.d(TAG, "contactCardListView.getChildAt(clickedItemPosition " + clickedItemPosition + ") is null");
+            return;
+        }
+        float yPos =  itemView.getY();
+        float offset = itemView.getHeight() / 2;
+        float midCoordinate = yPos + offset;
+        Log.d(TAG, "showCircularMenu with yPos: " + yPos + " offset: " + offset + " midCoordinate: " + midCoordinate);
         circularMenu.setMidCoordinate(midCoordinate);
         circularMenu.openMenu();
     }
@@ -147,9 +147,17 @@ public class ContactCardsFragment extends MultiSelectContactsListFragment
     }
 
     @Override
-    public void onScrollStateChanged(int newState)
+    public void onScrolled()
     {
-        mContactCardListViewAdapter.onScrollStateChanged(newState);
+        Log.d(TAG, "Scroll completed");
+        if (initScroll)
+        {
+            Log.d(TAG, "Show menu at new position");
+            initScroll = false;
+            showCircularMenu();
+        }
+        else
+            circularMenu.closeMenu();
     }
 
     // Simulate menu button click

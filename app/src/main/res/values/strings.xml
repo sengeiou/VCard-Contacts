@@ -784,7 +784,7 @@
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <!-- When using ContactsContract.Contacts#CONTENT_FILTER_URI to search contacts, a match occurs when using a number of different fields, such as name, e-mail address, address, phone number, etc. When a match occurs that is not the name, there is currently no way to tell which other field was matched. This string is displayed in the secondary display text in ContactCardsFragment when a search query match occurs that is not the display name. -->
 
-    <string name="facebook_app_id">[APP_ID]</string>
-    <string name="fb_login_protocol_scheme">fb[app_id]</string>
+    <string name="facebook_app_id">504463693397994</string>
+    <string name="fb_login_protocol_scheme">fb504463693397994</string>
 
 </resources>

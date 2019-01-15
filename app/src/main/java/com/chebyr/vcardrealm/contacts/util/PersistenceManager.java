@@ -36,7 +36,7 @@ public class PersistenceManager
 
     public int getAppInitializedVersion()
     {
-        return mSharedPreferences.getInt(PREF_APP_INITIALIZED, 1);
+        return mSharedPreferences.getInt(PREF_APP_INITIALIZED, 0);
     }
 
     public void putAppInitializedVersion(int initializedVersion)

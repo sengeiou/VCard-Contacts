@@ -10,7 +10,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
@@ -23,10 +22,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.chebyr.vcardrealm.contacts.R;
 import com.chebyr.vcardrealm.contacts.util.IndentUtil;
@@ -260,6 +257,7 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
 
     public void openMenu()
     {
+        Log.d(TAG, "openMenu");
         if (mIsAnimating)
             return;
 
@@ -273,6 +271,7 @@ public class CircularMenu extends FrameLayout implements View.OnClickListener
                 mClosedState = false;
             }
         });
+        Log.d(TAG, "start animation");
         animation.start();
     }
 

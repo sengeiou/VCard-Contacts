@@ -1,6 +1,5 @@
 package com.chebyr.vcardrealm.contacts.util;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -27,11 +26,11 @@ import java.net.URL;
 public class FileManager
 {
     private static final String TAG = FileManager.class.getSimpleName();
-    public static String vcardDirectoryPath = null;
+    public static String assetsPath = "file:///android_asset/";
+    public static String rootPath;
+    public static String vcardDirectoryPath;
 
     public AssetManager assetManager;
-
-    public static String assetsPath = "file:///android_asset/";
 
     public FileManager(Context context)
     {
@@ -41,6 +40,11 @@ public class FileManager
     public void initVCardDirectory(Context context, String directoryName)
     {
         Log.d(TAG, "Create Directory in external storage and copy Assets");
+
+        File externalStorage = Environment.getExternalStorageDirectory();
+        rootPath = externalStorage.getAbsolutePath();
+        vcardDirectoryPath = rootPath + "/" + directoryName;
+        Log.d(TAG, "externalStorage: " + rootPath);
 
         AsyncFileCopier AsyncFileCopier = new AsyncFileCopier();
         AsyncFileCopier.setDirectory(directoryName);
@@ -97,30 +101,14 @@ public class FileManager
 
     public void writeFile(String fileName)
     {
-        OutputStream mOutputStream = null;
-        try
+        try(OutputStream outputStream = new FileOutputStream(fileName))
         {
-            mOutputStream = new FileOutputStream(fileName);
+
             //... do stuff to your streams
         }
-        catch(FileNotFoundException fnex)
+        catch(Exception e)
         {
             //Handle the error... but the streams are still open!
-        }
-        finally
-        {
-            //Close output
-            if (mOutputStream != null)
-            {
-                try
-                {
-                    mOutputStream.close();
-                }
-                catch(IOException ioex)
-                {
-                    //Very bad things just happened... handle it
-                }
-            }
         }
     }
 
@@ -243,16 +231,10 @@ public class FileManager
             Context context = contexts[0];
             assetManager = context.getAssets();
 
-            // Get the directory for the user's public pictures directory.
-            File externalStorage = Environment.getExternalStorageDirectory();
-            String rootPath = externalStorage.getAbsolutePath();
-            Log.d(TAG, "externalStorage: " + rootPath);
-
             File vcardDirectory = createDirectory(rootPath, directoryName);
             if(vcardDirectory == null)
                 return false;
 
-            vcardDirectoryPath = vcardDirectory.getAbsolutePath();
             copyAssets(context, "", vcardDirectoryPath);
             return true;
         }

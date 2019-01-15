@@ -107,7 +107,10 @@ public class TemplateParser
 
     public String getVCardHTML()
     {
-        return document.outerHtml();
+        if(document != null)
+            return document.outerHtml();
+        else
+            return null;
     }
 
     public void setVCardHTML(String vCardHTML)
@@ -146,7 +149,7 @@ public class TemplateParser
         return new VCardFieldFormat(ID, contentDescription, textColor, textSize, textStyle, visibility);
     }
 
-    enum VCardAttributeType {eTextColor, eTextSize, eTextStyleBold, eTextStyleItalic, eVisibility, eBackgroundColor, eBackgroundAlpha, eLayoutTopMargin};
+    enum VCardAttributeType {eTextColor, eTextSize, eTextStyleBold, eTextStyleItalic, eVisibility, eBackgroundColor, eBackgroundAlpha, eLayoutTopMargin}
 
     public boolean updateFieldAttribute(String ID, VCardAttributeType vCardAttribute, Number value)
     {

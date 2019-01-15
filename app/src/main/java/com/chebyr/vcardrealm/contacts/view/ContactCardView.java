@@ -172,7 +172,7 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
         private WebResourceResponse loadPhoto(String url)
         {
-            Log.d(TAG, "URL: " + url);
+            //Log.d(TAG, "URL: " + url);
 
             if(contact.data.photoUri != null)
             {
@@ -200,8 +200,9 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
             }
             else
             {
-                try(InputStream bitmapStream = new FileInputStream(contact.template.photoPath))
+                try
                 {
+                    InputStream bitmapStream = new FileInputStream(contact.template.photoPath);
                     return createWebResponse(bitmapStream);
                 }
                 catch (Exception exception)
@@ -215,9 +216,9 @@ public class ContactCardView extends WebView implements WebView.OnClickListener
 
         private WebResourceResponse createWebResponse(InputStream bitmapStream)
         {
-            Log.d(TAG, "bitmapStream: " + bitmapStream);
+            //Log.d(TAG, "bitmapStream: " + bitmapStream);
             WebResourceResponse webResourceResponse = new WebResourceResponse("image/png", "binary", bitmapStream);
-            Log.d(TAG, "webResourceResponse: " + webResourceResponse);
+            //Log.d(TAG, "webResourceResponse: " + webResourceResponse);
             return webResourceResponse;
         }
 

@@ -1,24 +1,15 @@
 package com.chebyr.vcardrealm.contacts.repository;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.paging.ItemKeyedDataSource;
 import android.arch.paging.LivePagedListBuilder;
-
 import android.arch.paging.PagedList;
-import android.arch.paging.PositionalDataSource;
+
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.datasource.ContactDataSource;
 import com.chebyr.vcardrealm.contacts.datasource.ContactsObserver;
-
-import com.chebyr.vcardrealm.contacts.datasource.TemplateDataSource;
-import com.chebyr.vcardrealm.contacts.data.TemplateData;
 import com.chebyr.vcardrealm.contacts.data.Contact;
-
-import java.util.HashMap;
-import java.util.List;
 
 public class ContactRepository
 {

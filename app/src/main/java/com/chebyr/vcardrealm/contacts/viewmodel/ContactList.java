@@ -1,18 +1,11 @@
 package com.chebyr.vcardrealm.contacts.viewmodel;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.paging.PagedList;
-import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
 import com.chebyr.vcardrealm.contacts.data.Contact;
-import com.chebyr.vcardrealm.contacts.data.TemplateData;
-import com.chebyr.vcardrealm.contacts.datasource.TemplateParser;
-
-import java.util.HashMap;
-import java.util.ListIterator;
 
 public class ContactList extends MediatorLiveData<PagedList<Contact>>
 {

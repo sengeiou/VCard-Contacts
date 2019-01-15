@@ -1,6 +1,5 @@
 package com.chebyr.vcardrealm.contacts.data;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class ContactData

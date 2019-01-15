@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity implements
     private static String VCARD_REALM = "VCardRealm";
     private static final String ENABLE_DEBUG_OPTIONS_HIDDEN_CODE = "debug debug!";
 
-    private boolean appInitialized;
-    private int appInitializedVersion;
-
     // These values needs to start at 2. See {@link ContactEntryListFragment}.
     private static final int SUBACTIVITY_ACCOUNT_FILTER = 2;
 
@@ -185,20 +182,20 @@ public class MainActivity extends AppCompatActivity implements
         fileManager = new FileManager(this);
         permissionManager = new PermissionManager(this);
 
-        appInitializedVersion = persistenceManager.getAppInitializedVersion();
-
-//        if(appInitializedVersion == BuildConfig.VERSION_CODE)
-//        {
-//            appInitialized = true;
-//            Log.d(TAG, "App already initialized");
-//        }
-//        else
-//        {
-//            appInitialized = false;
-//            appInitializedVersion = BuildConfig.VERSION_CODE;
+        if(persistenceManager.getAppInitializedVersion() == BuildConfig.VERSION_CODE)
+        {
+            FileManager.vcardDirectoryPath = persistenceManager.getDefaultDirectory();
+            Log.d(TAG, "App already initialized");
+        }
+        else
+        {
             if(permissionManager.getStorageWritePermission())
+            {
                 fileManager.initVCardDirectory(this, VCARD_REALM);
-//        }
+                persistenceManager.putDefaultDirectory(FileManager.vcardDirectoryPath);
+                persistenceManager.putAppInitializedVersion(BuildConfig.VERSION_CODE);
+            }
+        }
 
 
         //if (!processIntent(false)) {
